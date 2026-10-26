@@ -1,0 +1,34 @@
+# Bundler
+/.bundle
+
+# ログ・一時ファイル
+/log/*
+/tmp/*
+!/log/.keep
+!/tmp/.keep
+/tmp/pids/*
+!/tmp/pids/.keep
+/tmp/storage/*
+!/tmp/storage/.keep
+
+# アップロードされたファイル
+/storage/*
+!/storage/.keep
+
+# ビルド成果物
+/public/assets
+/app/assets/builds/*
+!/app/assets/builds/.keep
+/coverage
+/node_modules
+
+# 秘密情報（コミットしない）
+/config/master.key
+/config/credentials/*.key
+.env
+.env.*
+!.env.example
+
+# OS・エディタ
+.DS_Store
+.claude/settings.local.json
