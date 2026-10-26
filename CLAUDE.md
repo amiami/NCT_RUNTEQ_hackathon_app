@@ -6,5 +6,5 @@
 
 ## Claude Code 固有の設定
 
-- `.claude/settings.json`：よく使う Docker Compose のコマンドは確認なしで実行を許可し、`.env`・`config/master.key` の読み取りと `docker compose down -v` を禁止する（雛形の作成時に追加）
-- `.claude/hooks/`：Ruby ファイルの編集後に RuboCop の自動修正をかける（雛形の作成時に追加）
+- `.claude/settings.json`：よく使う Docker Compose のコマンドは確認なしで実行を許可し、`.env`・`config/master.key` の読み取りと `docker compose down -v` を禁止する
+- `.claude/hooks/`：Ruby ファイルの編集後に RuboCop の自動修正をかける（`web` コンテナが起動しているときだけ。`jq` が必要）

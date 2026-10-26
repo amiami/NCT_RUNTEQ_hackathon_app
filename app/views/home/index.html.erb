@@ -1,0 +1,18 @@
+<div class="mx-auto max-w-3xl p-8">
+  <h1 class="text-2xl font-bold"><%= t("app_name") %></h1>
+  <p class="mt-2 text-muted">開発環境が起動しています。画面はこれから作ります。</p>
+
+  <%# daisyUI と独自テーマ「cafe」が効いているかの確認用。色付きのボタンとバッジが表示されれば OK %>
+  <div class="card mt-6 border border-line bg-base-100">
+    <div class="card-body">
+      <h2 class="card-title">表示の確認</h2>
+      <div class="flex flex-wrap items-center gap-2">
+        <button type="button" class="btn btn-primary">保存する</button>
+        <button type="button" class="btn">キャンセル</button>
+        <span class="badge badge-secondary">学習中</span>
+        <span class="badge badge-warning">部長の確認待ち</span>
+      </div>
+      <p class="text-sm text-muted">現在時刻（日本時間）：<%= l(Time.current, format: :long) %></p>
+    </div>
+  </div>
+</div>

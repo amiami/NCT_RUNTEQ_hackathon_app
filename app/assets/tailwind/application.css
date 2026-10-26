@@ -1,0 +1,53 @@
+@import "tailwindcss";
+
+/*
+ * daisyUI v5（Node.js を使わない方式）
+ * daisyui.mjs / daisyui-theme.mjs は https://github.com/saadeghi/daisyui/releases から取得したファイルをそのまま置いている。
+ * 更新するときは、同じ場所から最新版をダウンロードして上書きする。
+ * 組み込みテーマは使わず、モックと同じ独自テーマ「cafe」だけを使う。
+ */
+@plugin "./daisyui.mjs" {
+  themes: false;
+}
+
+@plugin "./daisyui-theme.mjs" {
+  name: "cafe";
+  default: true;
+  color-scheme: light;
+  --color-base-100: #fff;
+  --color-base-200: #f4f6f4;
+  --color-base-300: #e1e6e2;
+  --color-base-content: #1d2421;
+  --color-primary: #0f6b5c;
+  --color-primary-content: #fff;
+  --color-secondary: #cde7e0;
+  --color-secondary-content: #073c33;
+  --color-accent: #86c9b8;
+  --color-accent-content: #073c33;
+  --color-neutral: #3f4a44;
+  --color-neutral-content: #fff;
+  --color-info: #5c8ca8;
+  --color-info-content: #fff;
+  --color-success: #0f6b5c;
+  --color-success-content: #fff;
+  --color-warning: #fff2d8;
+  --color-warning-content: #5c471c;
+  --color-error: #b42318;
+  --color-error-content: #fff;
+  --radius-selector: 0.5rem;
+  --radius-field: 0.5rem;
+  --radius-box: 0.75rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 0;
+  --noise: 0;
+}
+
+/* デザイントークン（モック準拠）。ビューでは 16 進数を直接書かず、ここのトークン名を使う */
+@theme {
+  --font-sans: "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic", sans-serif;
+
+  --color-line: #d5dbd6; /* 枠線・区切り線 */
+  --color-muted: #55605a; /* 補足の文字 */
+}
