@@ -1,5 +1,5 @@
 # プロジェクト名を固定し、フォルダ名に関係なくコンテナ名・ボリューム名を全員で揃える
-name: skill_bridge
+name: manuup
 
 x-app: &app
   build:

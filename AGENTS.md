@@ -1,4 +1,4 @@
-# AGENTS.md — 業務引き継ぎアプリ（仮）
+# AGENTS.md — マニュあっぷ
 
 AI 開発ツール（Claude Code・Codex・Cursor・GitHub Copilot など）に共通で読ませる開発ルールです。
 人が読んでもチームのルールとして通用するように書いています。ツール固有の設定は各ツールのファイル（`CLAUDE.md` など）に書き、共通のルールはこのファイルに集めます。
@@ -14,8 +14,8 @@ AI 開発ツール（Claude Code・Codex・Cursor・GitHub Copilot など）に�
 
 ## アプリの名前
 
-- 画面に出す名前は仮で「業務引き継ぎアプリ」。`config/locales/ja.yml` の `app_name` に1か所だけ書き、ビューでは `t("app_name")` を使う（文字列を直接書かない）
-- コードの中の名前は `SkillBridge`（DB は `skill_bridge_development` など、Compose のプロジェクト名は `skill_bridge`）
+- 画面に出す名前は「マニュあっぷ」。`config/locales/ja.yml` の `app_name` に1か所だけ書き、ビューでは `t("app_name")` を使う（文字列を直接書かない）
+- コードの中の名前は `Manuup`（DB は `manuup_development` など、Compose のプロジェクト名は `manuup`）
 
 ## 最初に読むもの
 

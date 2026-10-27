@@ -2,8 +2,8 @@
 # check=error=true
 
 # This Dockerfile is designed for production, not development. Use with Kamal or build'n'run by hand:
-# docker build -t skill_bridge .
-# docker run -d -p 80:3000 -e RAILS_MASTER_KEY=<value from config/master.key> --name skill_bridge skill_bridge
+# docker build -t manuup .
+# docker run -d -p 80:3000 -e RAILS_MASTER_KEY=<value from config/master.key> --name manuup manuup
 
 # For a containerized dev environment, see Dev Containers: https://guides.rubyonrails.org/getting_started_with_devcontainer.html
 

@@ -1,4 +1,4 @@
-# 業務引き継ぎアプリ（仮）
+# マニュあっぷ
 
 中小企業の総務・人事部で、業務マニュアル（業務手順）と担当者ごとの業務の習熟度（スキルレベル）を管理する Rails アプリです。
 
@@ -18,8 +18,8 @@
 
 | 種類 | 名前 | 書いてある場所 |
 |---|---|---|
-| 画面に出す名前（仮） | 業務引き継ぎアプリ | `config/locales/ja.yml` の `app_name`。ビューからは `t("app_name")` で使う |
-| コードの中の名前 | `SkillBridge`（DB は `skill_bridge_development` など） | `config/application.rb`・`config/database.yml` |
+| 画面に出す名前 | マニュあっぷ | `config/locales/ja.yml` の `app_name`。ビューからは `t("app_name")` で使う |
+| コードの中の名前 | `Manuup`（DB は `manuup_development` など） | `config/application.rb`・`config/database.yml` |
 
 ## はじめての準備
 
@@ -32,13 +32,13 @@ docker compose run --rm web bin/rails db:prepare   # DB を作る
 docker compose up -d                               # 起動する
 ```
 
-http://localhost:3000 を開き、「業務引き継ぎアプリ」のページに緑色の「保存する」ボタンが表示されれば準備完了です。
+http://localhost:3000 を開き、「マニュあっぷ」のページに緑色の「保存する」ボタンが表示されれば準備完了です。
 
 止めるときは `docker compose stop` です。
 
 ## コンテナの構成（compose.yaml）
 
-Compose のプロジェクト名は `skill_bridge` に固定しています（コンテナ名は `skill_bridge-web-1` など）。
+Compose のプロジェクト名は `manuup` に固定しています（コンテナ名は `manuup-web-1` など）。
 
 | サービス | 役割 |
 |---|---|
