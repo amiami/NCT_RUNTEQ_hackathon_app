@@ -3,6 +3,7 @@
 開発ルールは AGENTS.md に集約しています（Claude Code 以外の AI ツールと共通）。
 
 @AGENTS.md
+@.agents/knowledge/INDEX.md
 
 ## Claude Code 固有の設定
 

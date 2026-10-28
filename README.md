@@ -1,63 +1,98 @@
-# マニュあっぷ
+# マニュあっぷ — スキルレベル×マニュアル管理アプリ
 
-中小企業の総務・人事部で、業務マニュアル（業務手順）と担当者ごとの業務の習熟度（スキルレベル）を管理する Rails アプリです。
+人事部の作業ごとに「マニュアル」と「誰がどこまでできるか（スキルレベル）」をまとめて管理し、研修の割り振りまでつなげるアプリです。
+マニュアルの改定を誰が読んだか、誰に何を教えたか、できる人が1人しかいない作業はどれかを、管理者が一目で分かることを目指しています。
 
-- 開発ルール：[AGENTS.md](AGENTS.md)
-- 技術選定：[docs/tech-stack.md](docs/tech-stack.md)
-- テーブル設計：[docs/data-model.md](docs/data-model.md)
-- 画面モック：`mock/mock.html` をブラウザで開く（仕様は [mock/mock-spec.md](mock/mock-spec.md)）
+> 現在は**準備段階**です。開発環境は動きますが、モデルや画面はまだありません。
 
-## 必要なもの
+## はじめての方へ
 
-- Docker Desktop
-- Git
+開発に参加する方は、次の順番で進めてください。
 
-パソコンに Ruby・PostgreSQL・Node.js を入れる必要はありません。すべて Docker のコンテナの中で動きます。
+1. **[開発環境の構築](docs/dev/setup.md)** — Docker と Git の準備から、アプリの起動・テストの実行まで
+2. **[開発の進め方](docs/dev/first-contribution.md)** — Issue の選び方、ブランチ、コミット、Pull Request を出すまで
+3. **キックオフ資料（`docs/kickoff.md`、準備中）** — プロダクトの目的、チームの役割、開発ルール
 
-## アプリの名前
+困ったら Mattermost の「Aチーム NCT × RUNTEQハッカソン」チャンネルで質問してください。
 
-| 種類 | 名前 | 書いてある場所 |
-|---|---|---|
-| 画面に出す名前 | マニュあっぷ | `config/locales/ja.yml` の `app_name`。ビューからは `t("app_name")` で使う |
-| コードの中の名前 | `Manuup`（DB は `manuup_development` など） | `config/application.rb`・`config/database.yml` |
+## タスク管理
 
-## はじめての準備
+| リンク | 内容 |
+|---|---|
+| [カンバン（GitHub Projects）](https://github.com/users/amiami/projects/3) | Issue の状況（Backlog / Ready / In Progress / Review / Done）。着手する Issue はここの Ready 列から選ぶ |
+| [マイルストーン](https://github.com/amiami/NCT_RUNTEQ_hackathon_app/milestones) | M0〜M4 と期限 |
+| [エピック一覧](https://github.com/amiami/NCT_RUNTEQ_hackathon_app/issues?q=is%3Aissue+label%3Aepic) | MVP までの大きな要件（エピック）と進み具合 |
 
-```sh
+## クイックスタート
+
+Docker Desktop と Git が入っていれば、次のコマンドで起動できます（詳しくは [開発環境の構築](docs/dev/setup.md)）。
+
+```bash
 git clone https://github.com/amiami/NCT_RUNTEQ_hackathon_app.git
 cd NCT_RUNTEQ_hackathon_app
-
-docker compose build                               # イメージを作る（初回は数分かかる）
-docker compose run --rm web bin/rails db:prepare   # DB を作る
-docker compose up -d                               # 起動する
+docker compose build
+docker compose run --rm web bin/rails db:prepare
+docker compose up -d
 ```
 
-http://localhost:3000 を開き、「マニュあっぷ」のページに緑色の「保存する」ボタンが表示されれば準備完了です。
-
-止めるときは `docker compose stop` です。
-
-## コンテナの構成（compose.yaml）
-
-Compose のプロジェクト名は `manuup` に固定しています（コンテナ名は `manuup-web-1` など）。
-
-| サービス | 役割 |
-|---|---|
-| `web` | Rails のサーバー（http://localhost:3000） |
-| `css` | Tailwind CSS の監視ビルド。ビューを保存すると CSS が作り直される |
-| `db` | PostgreSQL 17。データは名前付きボリューム `postgres` に保存される |
-
-- Gem は名前付きボリューム `bundle` に保存されます。Gemfile を変えたら `docker compose run --rm web bundle install` を実行します
-- ポート 3000 が使われているときは `PORT=3001 docker compose up -d` で変えられます
+http://localhost:3000 を開きます。停止は `docker compose stop` です。
 
 ## よく使うコマンド
 
-[AGENTS.md](AGENTS.md) の「コマンド」の表を見てください。
+Rails のコマンドは、パソコンで直接ではなく `docker compose run --rm web` を付けてコンテナの中で実行します。
 
-## うまく動かないとき
-
-| 症状 | 対処 |
+| 用途 | コマンド |
 |---|---|
-| 画面に色が付かない | `docker compose logs css` でエラーを確認する。`docker compose run --rm css bin/rails tailwindcss:build` で作り直す |
-| `A server is already running` | `docker compose restart web` |
-| Gem が見つからない | `docker compose run --rm web bundle install` |
-| DB を作り直したい | `docker compose run --rm web bin/rails db:reset`（データは消える） |
+| テスト | `docker compose run --rm web bundle exec rspec` |
+| コードの書き方チェック | `docker compose run --rm web bin/rubocop` |
+| セキュリティ診断 | `docker compose run --rm web bin/brakeman` |
+| DB の作成・更新 | `docker compose run --rm web bin/rails db:prepare` |
+| ログを見る | `docker compose logs -f web` |
+| CSS を作り直す | `docker compose run --rm css bin/rails tailwindcss:build` |
+
+ほかのコマンドとトラブル対処は [開発環境の構築](docs/dev/setup.md#5-よく使うコマンド) にまとめています。
+
+## ドキュメント
+
+### 仕様
+
+| ドキュメント | 内容 |
+|---|---|
+| キックオフ資料（`docs/kickoff.md`、準備中） | 目的とゴール、チームの役割、スケジュール、開発フロー、テスト方針、タスク管理、コミュニケーション |
+| 要件定義（`docs/requirements.md`、準備中） | ペルソナ、ユースケース、ユーザーストーリー、受入条件 |
+| 画面設計（`docs/screens.md`、準備中） | 画面一覧、画面遷移図、各画面の要素 |
+| [仕様書](docs/spec.md) | スキルレベルのルール、各画面の操作、主な流れ、サンプルデータ |
+| [データ設計](docs/data-model.md) | ER 図、テーブル定義、レベルが変わるルール |
+| 画面モック（`mock/mock.html`） | ブラウザで開くと操作できる画面。`mock/old/` は当初のモックで、参考にしない |
+
+### 開発者向け
+
+| ドキュメント | 内容 |
+|---|---|
+| [開発環境の構築](docs/dev/setup.md) | 必要なもの、起動、毎日の始め方、よく使うコマンド、トラブル対処 |
+| [開発の進め方](docs/dev/first-contribution.md) | Issue → ブランチ → 実装 → コミット → Pull Request の手順、AI を使うときの約束 |
+| [技術選定](docs/tech-stack.md) | 技術スタックと選んだ理由 |
+| [AGENTS.md](AGENTS.md)・[CLAUDE.md](CLAUDE.md) | AI（Codex・Claude Code）で開発するときの前提（自動で読み込まれます） |
+
+## 技術スタック
+
+Ruby 3.4 / Rails 8.1 / PostgreSQL 17 / Hotwire（Turbo・Stimulus）/ Tailwind CSS v4 / importmap / RSpec / Docker Compose
+
+## ディレクトリ構成（主なもの）
+
+```
+app/
+  models/                  データとルール（1つのモデルで済む処理）
+  services/                スキルレベルの変更・改定など、複数のモデルにまたがる処理
+  controllers/             画面ごとの処理
+  views/                   画面の HTML（ERB）
+  javascript/controllers/  画面の動き（Stimulus）
+  assets/tailwind/         色・文字などのデザイン設定と部品のクラス
+config/routes.rb           URL と処理の対応
+db/seeds.rb                サンプルデータ（管理者1名・スタッフ5名・13作業）
+spec/                      テスト（RSpec）
+docs/                      仕様書
+docs/dev/                  開発者向けガイド
+mock/                      画面モック（HTML）
+.agents/knowledge/         開発中に分かったことの記録
+```

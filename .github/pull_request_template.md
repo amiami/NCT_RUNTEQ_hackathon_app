@@ -17,7 +17,7 @@ Closes #
 ## 向き先
 <!-- どちらか一方にチェック -->
 - [ ] エピックのブランチ（エピックの子 Issue）— CI がすべて緑ならマージできる。マージは **Squash and merge**
-- [ ] `main`（まとめの PR・エピックに入らない小さな修正）— CI がすべて緑 ＋ レビュー承認 1 名でマージできる。まとめの PR は **Create a merge commit**、小さな修正は **Squash and merge**
+- [ ] `main`（まとめの PR・エピックに入らない小さな修正）— CI がすべて緑 ＋ レビュー承認 1 名でマージできる（設計に関わる変更はテックリードの承認が必須）。まとめの PR は **Create a merge commit**、小さな修正は **Squash and merge**
 
 ## 変更内容
 -
