@@ -4,8 +4,8 @@
 
 - 開発ルール：[AGENTS.md](AGENTS.md)
 - 技術選定：[docs/tech-stack.md](docs/tech-stack.md)
-- テーブル設計：[docs/table_design.md](docs/table_design.md)
-- 画面モック：`mock/` の HTML をブラウザで開く
+- テーブル設計：[docs/data-model.md](docs/data-model.md)
+- 画面モック：`mock/mock.html` をブラウザで開く（仕様は [mock/mock-spec.md](mock/mock-spec.md)）
 
 ## 必要なもの
 

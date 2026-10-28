@@ -70,8 +70,3 @@
 | AI 開発ツールのルール | **`AGENTS.md` に共通ルールをまとめる**。Claude Code 用の `CLAUDE.md` は `AGENTS.md` を読み込むだけにする | メンバーが使うのは Claude Code と Codex。Codex は `AGENTS.md` を、Claude Code は `CLAUDE.md` を自動で読むので、ルールを1か所に書けば両方が同じルールで開発できる |
 | タスク管理 | GitHub Issues ＋ Projects ＋ Milestones | PjM がすでに使い始めている |
 | 依存ライブラリの自動更新（Dependabot） | **使わない** | 期間中に更新の PR が届くと対応に時間を取られるため |
-
-## 3. 雛形の作成時に確認すること（テックリード）
-
-- [ ] daisyUI を Node.js なしで動かせるか
-- [ ] Render / Neon の無料プランの現在の条件
