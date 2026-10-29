@@ -26,7 +26,7 @@
 | 区分 | 提案 | 理由 | 検討した他の候補 |
 |---|---|---|---|
 | Ruby / Rails のバージョン | **Ruby 3.4 / Rails 8.1** | 現時点の最新の安定版で、参考リポジトリと同じ。スクールのカリキュラムは Rails 7 系と 8 系を選べるが、これから学ぶなら最新のほうが長く役立つ。Docker で動かすので、パソコンの Ruby のバージョンは関係ない | Rails 7 系：カリキュラムで選べるが、参考リポジトリの設定をそのまま使えなくなり、Rails 8 標準の機能（認証の生成、Solid Queue など）も使えない |
-| 画面の動き | **Hotwire（Turbo・Stimulus）** | Rails の標準。モックにある動き（マニュアルの確認、レベルの自己申告・承認、研修の「教え終わった」）は、サーバーで HTML を作り直して差し替えるだけで実現できる。研修画面の下書き（「変更を保存」まで DB に入れない）は Stimulus で持つ | React / Vue：API と画面を別々に作る必要があり、2週間では重い |
+| 画面の動き | **Hotwire（Turbo・Stimulus）** | Rails の標準。モックにある動き（マニュアルの確認、レベルの自己申告、管理者の見立ての変更、研修の「教え終わった」）は、サーバーで HTML を作り直して差し替えるだけで実現できる。研修画面の下書き（「変更を保存」まで DB に入れない）は Stimulus で持つ | React / Vue：API と画面を別々に作る必要があり、2週間では重い |
 | JavaScript の読み込み | **importmap** | Rails の標準。Node.js（npm）が不要になり、Docker のイメージも軽くなる | jsbundling / Vite：npm のライブラリをたくさん使うときに必要。今回は不要 |
 | CSS | **Tailwind CSS v4（tailwindcss-rails）** | Node.js なしで Tailwind をビルドできる Rails 公式の gem | — |
 | UI 部品 | **ライブラリは使わない**（Tailwind CSS ＋ `@layer components`） | モックは UI 部品ライブラリを使わず、独自の CSS で書かれている。モックの見た目をそのまま再現するため、モックで直接書かれた style は Tailwind のクラスに、繰り返し使う部品（ボタン・バッジ・カードなど）は `application.css` の `@layer components` に、色は `@theme` のデザイントークンに移す | daisyUI v5：当初のモック（`mock/old/`）で使っていたが、いまのモックは使っていない。入れると、モックにない daisyUI の既定の見た目を打ち消す手間が増える |
