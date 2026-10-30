@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: カンバン（GitHub Projects）
+    url: https://github.com/users/amiami/projects/3
+    about: 着手する Issue は Ready 列から選びます
+  - name: GitHub Issue の使い方ガイド（チーム共有）
+    url: https://app.notion.com/p/GitHub-Issue-4064e4c771ec807a9fbaf49c9459e2da
+    about: 子 Issue の作り方、ブランチと PR の流れ、困ったときの聞き方

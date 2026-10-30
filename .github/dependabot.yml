@@ -1,0 +1,13 @@
+# 依存ライブラリの自動更新（運用ルールは docs/kickoff.md (6) を参照）
+version: 2
+updates:
+- package-ecosystem: bundler
+  directory: "/"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 5
+- package-ecosystem: github-actions
+  directory: "/"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 5
