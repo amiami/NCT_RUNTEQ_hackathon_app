@@ -55,6 +55,16 @@ flowchart TD
 - 管理者の見立てはスタッフ画面に出さない（HTML の中も含む）
 - 対象は PC 幅のみ
 
+### 共通レイアウトの接続
+
+- URL：管理者は `/admin/operations`・`/admin/skill_map`・`/admin/trainings`・`/admin/manual_revisions`。スタッフは `/staff/operations`・`/staff/skills`・`/staff/manual_revisions`。
+- ルート `/` はスタッフの作業マニュアルを表示する。`/staff/operations` と同じ内容・選択タブを使う。各画面の本文は見出しのみ。
+- `shared/header` にタイトル・立場別画面へのリンク・タブ・常時表示のレベル凡例と開閉式の「レベルの説明」・フラッシュ通知枠をまとめる。共通レイアウトから一度だけ呼び出す。
+- フラッシュは `flash` / `flash.now` のnotice・alert等を表示する。通知がなければ余白を出さず、`flash-messages` の差し替え先だけを残す。研修依頼の通知の帯は別機能。
+- 現段階の立場別リンクは画面間の移動のみ。セッションの操作ユーザー切り替え・スタッフ選択・管理者画面へのアクセス制御は、操作ユーザー機能との接続時に追加する。URLの名前空間は認可の代わりにならない。
+- 件数バッジは、当面は仮表示で用意する。`shared/header` または `shared/tabs` へ `skill_map_count`（管理者のスキルマップ）・`training_count`（スタッフのわたしのスキル）・`unread_count`（スタッフの改訂のお知らせ）を渡す。各値が省略またはnilなら99、数値を渡せば0も含めてそのまま表示する。管理者の作業ツリー・研修・改訂履歴とスタッフの作業マニュアルには件数を出さない。
+- 例：`render "shared/header", skill_map_count: 4, training_count: 3, unread_count: 0`。実データの集計は未接続で、モデル・current_userの実装後に呼び出し元から件数を渡す。仮表示99を実際の未完了・未確認件数としては扱わない。
+
 ## 各画面の要素
 
 ### S-1 作業ツリー（管理者）
