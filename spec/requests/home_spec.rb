@@ -7,7 +7,7 @@ RSpec.describe "トップページ" do
     expect(response).to have_http_status(:ok)
     document = Capybara.string(response.body)
     expect(document).to have_css("header", text: I18n.t("app_name"))
-    expect(document).to have_css("main h1", text: "作業マニュアル")
+    expect(document).to have_css("main h1", exact_text: "スタッフ：作業マニュアル")
     expect(document).to have_css('nav[aria-label="画面切り替え"] a[aria-current="page"]', count: 1, text: "作業マニュアル")
     expect(response.body).not_to include("管理者の見立て", "▲", "▼", "▽", "◇")
   end

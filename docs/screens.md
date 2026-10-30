@@ -58,7 +58,7 @@ flowchart TD
 ### 共通レイアウトの接続
 
 - URL：管理者は `/admin/operations`・`/admin/skill_map`・`/admin/trainings`・`/admin/manual_revisions`。スタッフは `/staff/operations`・`/staff/skills`・`/staff/manual_revisions`。
-- ルート `/` はスタッフの作業マニュアルを表示する。`/staff/operations` と同じ内容・選択タブを使う。各画面の本文は見出しのみ。
+- ルート `/` はスタッフの作業マニュアルを表示する。`/staff/operations` と同じ内容・選択タブを使う。各画面の本文は専用の `app/views/admin/…`・`app/views/staff/…` に置き、h1に立場（管理者／スタッフ）と画面名を表示する。
 - `shared/header` にタイトル・立場別画面へのリンク・タブ・常時表示のレベル凡例と開閉式の「レベルの説明」・フラッシュ通知枠をまとめる。共通レイアウトから一度だけ呼び出す。
 - フラッシュは `flash` / `flash.now` のnotice・alert等を表示する。通知がなければ余白を出さず、`flash-messages` の差し替え先だけを残す。研修依頼の通知の帯は別機能。
 - 現段階の立場別リンクは画面間の移動のみ。セッションの操作ユーザー切り替え・スタッフ選択・管理者画面へのアクセス制御は、操作ユーザー機能との接続時に追加する。URLの名前空間は認可の代わりにならない。

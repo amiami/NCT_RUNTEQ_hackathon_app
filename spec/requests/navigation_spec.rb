@@ -18,7 +18,7 @@ RSpec.describe "共通レイアウト" do
         document = Capybara.string(response.body)
 
         expect(document).to have_css("header", text: I18n.t("app_name"))
-        expect(document).to have_css("main h1", text: title)
+        expect(document).to have_css("main h1", exact_text: "#{audience == :admin ? '管理者' : 'スタッフ'}：#{title}")
         expect(document).to have_css("details summary", text: "レベルの説明")
         expect(document).to have_css("#flash-messages", visible: :all)
         if audience == :staff
