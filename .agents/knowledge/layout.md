@@ -6,3 +6,4 @@
 - モックの文字組みは `Noto Sans JP, system-ui, sans-serif` と `line-height: normal`。Tailwindのtext-sm/text-xsは既定の行間を持つため、共通部品ではnormalを明示する。フォントの読込はlayouts/headにまとめる。（2026-10-30）
 - 各画面はadmin/staff配下の専用ERBをRails標準の暗黙renderで表示する。h1には立場と画面名を記載し、共通ヘッダーはapplicationレイアウトから呼ぶ。（2026-10-31）
 - 通知件数は `NavigationHelper#navigation_counts` の返すハッシュを共通レイアウトからheaderへ渡す。現在は空ハッシュ。実集計の接続はこのメソッドで行う。全画面の見出しは `.page-title` で共通化する。（2026-10-31）
+- 立場別リンクは `navigation.roles`、見出しとブラウザタイトルの立場付き表記は `page_titles` をja.ymlで管理する。`page` に既存のタブ名の翻訳を渡す。（2026-10-31）

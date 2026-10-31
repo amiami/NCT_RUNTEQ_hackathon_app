@@ -57,6 +57,8 @@ flowchart TD
 
 ### 共通レイアウトの接続
 
+- 共通の立場名・タブ名・ページ見出し（ブラウザのタイトルを含む）は `config/locales/ja.yml` に定義し、ビューでは `t` で参照する。立場別リンクは `navigation.roles`、タブ名は `navigation.admin` / `navigation.staff`、見出しは `page_titles.admin` / `page_titles.staff` に画面名を渡す。
+
 - URL：管理者は `/admin/operations`・`/admin/skill_map`・`/admin/trainings`・`/admin/manual_revisions`。スタッフは `/staff/operations`・`/staff/skills`・`/staff/manual_revisions`。
 - ルート `/` はスタッフの作業マニュアルを表示する。`/staff/operations` と同じ内容・選択タブを使う。各画面の本文は専用の `app/views/admin/…`・`app/views/staff/…` に置き、h1に立場（管理者／スタッフ）と画面名を表示する。
 - `shared/header` にタイトル・立場別画面へのリンク・タブ・常時表示のレベル凡例と開閉式の「レベルの説明」・フラッシュ通知枠をまとめる。共通レイアウトから一度だけ呼び出す。

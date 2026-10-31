@@ -12,8 +12,8 @@
       </span>
     <% end %>
     <nav aria-label="立場別の画面" class="role-navigation">
-      <%= link_to "管理者（部長）", admin_operations_path, class: admin_page? ? "role-link role-link-active" : "role-link" %>
-      <%= link_to "スタッフ", staff_operations_path, class: admin_page? ? "role-link" : "role-link role-link-active" %>
+      <%= link_to t("navigation.roles.admin"), admin_operations_path, class: admin_page? ? "role-link role-link-active" : "role-link" %>
+      <%= link_to t("navigation.roles.staff"), staff_operations_path, class: admin_page? ? "role-link" : "role-link role-link-active" %>
     </nav>
   </div>
   <%= render "shared/tabs", skill_map_count: local_assigns[:skill_map_count],

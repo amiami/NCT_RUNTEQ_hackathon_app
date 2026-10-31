@@ -5,7 +5,14 @@ ja:
   # アプリ固有の翻訳（モデル名・属性名など）はここに書く。
   # エラーメッセージや日付などの Rails 標準の翻訳は rails-i18n gem に入っている
 
+  page_titles:
+    admin: "管理者：%{page}"
+    staff: "スタッフ：%{page}"
+
   navigation:
+    roles:
+      admin: 管理者（部長）
+      staff: スタッフ
     admin:
       operations: 作業ツリー（マニュアル）
       skill_map: スキルマップ
