@@ -204,4 +204,21 @@ RSpec.describe Training do
       expect(training.update(status: :done, done_on: Date.new(2026, 11, 3))).to be true
     end
   end
+
+  describe "作成時の status" do
+    it "教える人がスタッフなら requested で作る" do
+      expect(create(:training)).to be_requested
+    end
+
+    it "教える人が管理者なら acknowledged で作る" do
+      expect(create(:training, trainer: create(:user, :admin))).to be_acknowledged
+    end
+
+    it "教える人が管理者でも、作成後に status を変えられる" do
+      training = create(:training, trainer: create(:user, :admin))
+      training.update!(status: :done, done_on: Date.new(2026, 11, 3))
+
+      expect(training.reload).to be_done
+    end
+  end
 end
