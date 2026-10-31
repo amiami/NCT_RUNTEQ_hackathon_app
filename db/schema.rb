@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_31_000002) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_31_000003) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -22,6 +22,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_31_000002) do
     t.index ["name"], name: "index_categories_on_name", unique: true
   end
 
+  create_table "operations", force: :cascade do |t|
+    t.bigint "category_id", null: false
+    t.string "name", null: false
+    t.integer "sort_order", null: false
+    t.string "season_note"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["category_id", "name"], name: "index_operations_on_category_id_and_name", unique: true
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "name", null: false
     t.boolean "admin", default: false, null: false
@@ -29,4 +39,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_31_000002) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
+
+  add_foreign_key "operations", "categories"
 end
