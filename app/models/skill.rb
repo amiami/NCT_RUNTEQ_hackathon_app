@@ -17,6 +17,15 @@ class Skill < ApplicationRecord
   validates :operation_id, uniqueness: { scope: :user_id }
   validate :user_must_be_skill_holder
 
+  # できる人。スキルを持つ人のうちレベル4（◇・▼の人も含む）
+  scope :capable, -> { where(level: 4).joins(:user).merge(User.skill_holders) }
+
+  # 作業ごとのできる人の数を1回のクエリで返す（{ operation_id => 人数 }）。
+  # できる人がいない作業は含まないので、使う側で fetch(id, 0) にする
+  def self.capable_counts
+    capable.group(:operation_id).count
+  end
+
   # 前に確認した版より、マニュアルの版が上がっている（一度も確認していなければ false）
   def unread?
     manual = operation.manual
