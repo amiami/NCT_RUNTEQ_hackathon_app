@@ -221,4 +221,28 @@ RSpec.describe Training do
       expect(training.reload).to be_done
     end
   end
+
+  describe "削除" do
+    it "完了前の予定は削除できる" do
+      training = create(:training)
+
+      expect(training.destroy).to be_truthy
+      expect(described_class).not_to exist(training.id)
+    end
+
+    it "確認済みの予定も削除できる" do
+      training = create(:training, status: :acknowledged)
+
+      expect(training.destroy).to be_truthy
+    end
+
+    it "完了した予定は削除できない" do
+      training = create(:training)
+      training.update!(status: :done, done_on: Date.new(2026, 11, 3))
+
+      expect(training.destroy).to be false
+      expect(training.errors).to be_added(:base, :cannot_destroy_done)
+      expect(described_class).to exist(training.id)
+    end
+  end
 end
