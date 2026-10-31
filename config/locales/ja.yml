@@ -27,6 +27,8 @@ ja:
               not_trainee_candidate: はこの作業で教わる人の条件を満たしていません
             trainer:
               not_trainer_candidate: はこの作業で教える人の条件を満たしていません
+            base:
+              cannot_destroy_done: 完了した研修予定は削除できません
             trainee_id:
               taken: にはこの作業で完了していない研修予定がすでにあります
 

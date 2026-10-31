@@ -15,11 +15,20 @@ class Training < ApplicationRecord
 
   # 管理者自身が頼んだ予定なので、教える人の確認（通知の帯）はいらない
   before_create :acknowledge, if: -> { requested? && trainer.admin? }
+  # 完了した予定は研修済み（誰から・いつ）の記録なので消さない
+  before_destroy :prevent_destroying_done
 
   private
 
   def acknowledge
     self.status = :acknowledged
+  end
+
+  def prevent_destroying_done
+    return unless done?
+
+    errors.add(:base, :cannot_destroy_done)
+    throw :abort
   end
 
   def trainee_must_differ_from_trainer
