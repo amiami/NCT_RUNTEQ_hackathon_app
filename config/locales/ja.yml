@@ -5,6 +5,17 @@ ja:
   # アプリ固有の翻訳（モデル名・属性名など）はここに書く。
   # エラーメッセージや日付などの Rails 標準の翻訳は rails-i18n gem に入っている
 
+  activerecord:
+    attributes:
+      skill:
+        user: 人
+    errors:
+      models:
+        skill:
+          attributes:
+            user:
+              not_skill_holder: はスキルを持つ人（管理者以外）にしてください
+
   page_titles:
     admin: "管理者：%{page}"
     staff: "スタッフ：%{page}"
