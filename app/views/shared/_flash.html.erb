@@ -1,0 +1,14 @@
+<div id="flash-messages">
+  <% flash.each do |type, messages| %>
+    <% appearance = case type.to_s
+       when "notice", "success", "info" then [ "status", "flash-notice" ]
+       when "alert", "error" then [ "alert", "flash-alert" ]
+       when "warning" then [ "alert", "flash-warning" ]
+       end %>
+    <% next unless appearance %>
+    <% Array(messages).each do |message| %>
+      <% next if message.blank? %>
+      <div role="<%= appearance.first %>" class="flash-message <%= appearance.last %>"><%= message %></div>
+    <% end %>
+  <% end %>
+</div>

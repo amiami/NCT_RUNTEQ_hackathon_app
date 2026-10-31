@@ -1,0 +1,26 @@
+<header>
+  <div class="header-bar">
+    <%= link_to root_path, class: "app-brand" do %>
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M4 4h10l6 6v10H4z" />
+        <path d="M14 4v6h6" />
+        <path d="M8 15l2 2 4-4" />
+      </svg>
+      <span>
+        <span class="app-brand-title"><%= t("app_name") %></span>
+        <span class="app-brand-department"><%= t("app_department") %></span>
+      </span>
+    <% end %>
+    <nav aria-label="立場別の画面" class="role-navigation">
+      <%= link_to t("navigation.roles.admin"), admin_operations_path, class: admin_page? ? "role-link role-link-active" : "role-link" %>
+      <%= link_to t("navigation.roles.staff"), staff_operations_path, class: admin_page? ? "role-link" : "role-link role-link-active" %>
+    </nav>
+  </div>
+  <%= render "shared/tabs", skill_map_count: local_assigns[:skill_map_count],
+                            training_count: local_assigns[:training_count],
+                            unread_count: local_assigns[:unread_count] %>
+  <div class="app-container pt-6">
+    <%= render "shared/skill_legend", admin: admin_page? %>
+    <%= render "shared/flash" %>
+  </div>
+</header>

@@ -4,3 +4,44 @@ ja:
 
   # アプリ固有の翻訳（モデル名・属性名など）はここに書く。
   # エラーメッセージや日付などの Rails 標準の翻訳は rails-i18n gem に入っている
+
+  page_titles:
+    admin: "管理者：%{page}"
+    staff: "スタッフ：%{page}"
+
+  navigation:
+    roles:
+      admin: 管理者（部長）
+      staff: スタッフ
+    admin:
+      operations: 作業ツリー（マニュアル）
+      skill_map: スキルマップ
+      trainings: 研修
+      manual_revisions: 改訂履歴
+    staff:
+      operations: 作業マニュアル
+      skills: わたしのスキル
+      manual_revisions: 改訂のお知らせ
+
+  skill_levels:
+    "0": 未着手
+    "1": マニュアル確認済み
+    "2": 研修済み（教わった）
+    "3": 先輩のもとでできる
+    "4": 作業を最後まで1人でできる
+
+  app_department: 株式会社〇〇 人事部
+
+  skill_level_short_labels:
+    "0": 未着手
+    "1": 確認済み
+    "2": 研修済み
+    "3": 先輩のもと
+    "4": 1人でできる
+
+  skill_level_descriptions:
+    "0": まだ何もしていない
+    "1": マニュアルを読んで「確認した」を押した
+    "2": 教えた人が「教え終わった」を押した
+    "3": 本人が自己申告
+    "4": 本人が自己申告

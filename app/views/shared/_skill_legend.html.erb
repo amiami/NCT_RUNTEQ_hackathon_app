@@ -1,0 +1,36 @@
+<details class="skill-legend group">
+  <summary class="legend-summary" aria-label="レベルの説明">
+    <span class="font-bold">スキルレベル</span>
+    <% t("skill_level_short_labels").each do |level, label| %>
+      <span class="legend-item">
+        <span class="skill-level skill-level-<%= level %>"><%= level %></span>
+        <span><%= label %></span>
+      </span>
+    <% end %>
+    <span class="legend-toggle">
+      <span class="group-open:hidden">レベルの説明</span>
+      <span class="hidden group-open:inline">閉じる</span>
+    </span>
+  </summary>
+  <div class="legend-description">
+    <ul class="flex flex-col gap-2">
+      <% t("skill_levels").each do |level, label| %>
+        <li class="flex items-center gap-2">
+          <span class="skill-level skill-level-<%= level %>"><%= level %></span>
+          <span><%= label %>：<%= t("skill_level_descriptions.#{level}") %></span>
+        </li>
+      <% end %>
+    </ul>
+    <% if admin %>
+      <div class="mt-3 border-t border-line pt-3">
+        <p class="font-bold">管理者の見立て</p>
+        <ul class="mt-2 flex flex-wrap gap-x-6 gap-y-2">
+          <li>▲ 研修権限</li>
+          <li>▼ 要研修</li>
+          <li>▽ 研修済み（▼から研修を受け終えた）</li>
+          <li>◇ 教えるのは後回し</li>
+        </ul>
+      </div>
+    <% end %>
+  </div>
+</details>
