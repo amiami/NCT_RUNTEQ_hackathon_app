@@ -94,7 +94,8 @@ jobs:
         run: bin/rails tailwindcss:build
 
       - name: Prepare database
-        run: bin/rails db:prepare
+        # テストは空のDBから開始する。db:prepare は新規DBにデモ用seedsも投入するため使わない。
+        run: bin/rails db:create db:schema:load
 
       # system spec（:js）は cuprite で Chrome を動かす。ubuntu-latest に入っている Chrome を使う
       - name: Locate Chrome for system specs
