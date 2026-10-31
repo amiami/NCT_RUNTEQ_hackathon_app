@@ -67,6 +67,10 @@
 }
 
 @layer components {
+  .page-title {
+    @apply text-[26px] font-bold;
+  }
+
   .app-container {
     @apply mx-auto w-full max-w-[1440px] px-6;
   }

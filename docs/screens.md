@@ -63,7 +63,7 @@ flowchart TD
 - フラッシュは `flash` / `flash.now` のnotice・alert等を表示する。通知がなければ余白を出さず、`flash-messages` の差し替え先だけを残す。研修依頼の通知の帯は別機能。
 - 現段階の立場別リンクは画面間の移動のみ。セッションの操作ユーザー切り替え・スタッフ選択・管理者画面へのアクセス制御は、操作ユーザー機能との接続時に追加する。URLの名前空間は認可の代わりにならない。
 - 件数バッジは、当面は仮表示で用意する。`shared/header` または `shared/tabs` へ `skill_map_count`（管理者のスキルマップ）・`training_count`（スタッフのわたしのスキル）・`unread_count`（スタッフの改訂のお知らせ）を渡す。各値が省略またはnilなら99、数値を渡せば0も含めてそのまま表示する。管理者の作業ツリー・研修・改訂履歴とスタッフの作業マニュアルには件数を出さない。
-- 例：`render "shared/header", skill_map_count: 4, training_count: 3, unread_count: 0`。実データの集計は未接続で、モデル・current_userの実装後に呼び出し元から件数を渡す。仮表示99を実際の未完了・未確認件数としては扱わない。
+- 共通レイアウトから `render "shared/header", **navigation_counts` で件数を渡す。`NavigationHelper#navigation_counts` は現在 `{}` を返す。モデル・current_userの実装後、このメソッドで対象ユーザーの件数を集計し、`{ skill_map_count: 4, training_count: 3, unread_count: 0 }` のようなハッシュを返す。各画面のビューからヘッダーを再描画する必要はない。仮表示99を実際の未完了・未確認件数としては扱わない。
 
 ## 各画面の要素
 

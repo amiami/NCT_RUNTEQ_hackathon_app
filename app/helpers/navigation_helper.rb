@@ -11,6 +11,11 @@ module NavigationHelper
     current_page?(path) || (path == staff_operations_path && current_page?(root_path))
   end
 
+  def navigation_counts
+    # 操作ユーザー機能との接続時に、current_userから集計した件数を返す。
+    {}
+  end
+
   def navigation_items
     if admin_page?
       [
