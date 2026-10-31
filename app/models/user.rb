@@ -1,4 +1,6 @@
 class User < ApplicationRecord
+  has_many :skills
+
   validates :name, presence: true
   validates :sort_order, presence: true
 

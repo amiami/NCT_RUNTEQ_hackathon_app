@@ -43,4 +43,25 @@ RSpec.describe Operation do
 
     expect { duplicate.save!(validate: false) }.to raise_error(ActiveRecord::RecordNotUnique)
   end
+
+  describe "#capable_count" do
+    it "その作業でレベル4の人数を返す（◇・▼の人も数える）" do
+      operation = create(:operation)
+      create(:skill, operation:, level: 4)
+      create(:skill, operation:, level: 4, admin_assessment: :backup_trainer)
+      create(:skill, operation:, level: 4, admin_assessment: :needs_training)
+      create(:skill, operation:, level: 3, admin_assessment: :can_train)
+      create(:skill, operation:, level: 0)
+      create(:skill, level: 4)
+
+      expect(operation.capable_count).to eq 3
+    end
+
+    it "レベル4の人がいなければ 0" do
+      operation = create(:operation)
+      create(:skill, operation:, level: 3)
+
+      expect(operation.capable_count).to eq 0
+    end
+  end
 end
