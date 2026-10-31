@@ -6,7 +6,8 @@ RSpec.describe "layouts/application" do
     [ "admin/operations/index", true, { skill_map_count: 4 }, { "スキルマップ" => "4" } ]
   ].each do |template, admin, counts, badges|
     it "#{admin ? '管理者' : 'スタッフ'}画面でnavigation_countsの件数を共通ヘッダー1つへ渡す" do
-      allow(view).to receive_messages(application_page?: true, admin_page?: admin, navigation_current?: false, navigation_counts: counts)
+      allow(view).to receive_messages(application_page?: true, admin_page?: admin, navigation_current?: false, navigation_counts: counts,
+                                      operator_switch: { staff: !admin, selected_id: nil, candidates: [] })
 
       render template: template, layout: "layouts/application"
 

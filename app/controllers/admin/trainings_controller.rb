@@ -1,5 +1,5 @@
 module Admin
-  class TrainingsController < ApplicationController
+  class TrainingsController < Admin::BaseController
     def index
     end
   end

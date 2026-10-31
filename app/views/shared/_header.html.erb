@@ -11,10 +11,27 @@
         <span class="app-brand-department"><%= t("app_department") %></span>
       </span>
     <% end %>
-    <nav aria-label="立場別の画面" class="role-navigation">
-      <%= link_to t("navigation.roles.admin"), admin_operations_path, class: admin_page? ? "role-link role-link-active" : "role-link" %>
-      <%= link_to t("navigation.roles.staff"), staff_operations_path, class: admin_page? ? "role-link" : "role-link role-link-active" %>
-    </nav>
+    <% operator = operator_switch %>
+    <div role="group" aria-label="<%= t("operators.switch_label") %>" class="role-navigation">
+      <% if operator[:staff] %>
+        <%= form_with url: operator_path, method: :patch, class: "role-form" do %>
+          <%= hidden_field_tag :user_id, "", id: nil %>
+          <%= button_tag t("navigation.roles.admin"), type: "submit", class: "role-link" %>
+        <% end %>
+        <span class="role-link role-link-active"><%= t("navigation.roles.staff") %></span>
+        <%= form_with url: operator_path, method: :patch, class: "role-form" do %>
+          <%= label_tag :user_id, t("operators.label"), class: "sr-only" %>
+          <%= select_tag :user_id, options_from_collection_for_select(operator[:candidates], :id, :name, operator[:selected_id]), class: "operator-select" %>
+          <%= button_tag t("operators.submit"), type: "submit", class: "role-link" %>
+        <% end %>
+      <% else %>
+        <span class="role-link role-link-active"><%= t("navigation.roles.admin") %></span>
+        <%= form_with url: operator_path, method: :patch, class: "role-form" do %>
+          <%= hidden_field_tag :user_id, operator[:candidates].first&.id, id: nil %>
+          <%= button_tag t("navigation.roles.staff"), type: "submit", class: "role-link", disabled: operator[:candidates].empty? %>
+        <% end %>
+      <% end %>
+    </div>
   </div>
   <%= render "shared/tabs", skill_map_count: local_assigns[:skill_map_count],
                             training_count: local_assigns[:training_count],

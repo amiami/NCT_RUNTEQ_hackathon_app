@@ -1,5 +1,5 @@
 module Admin
-  class OperationsController < ApplicationController
+  class OperationsController < Admin::BaseController
     def index
     end
   end

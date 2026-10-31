@@ -96,12 +96,20 @@
   }
 
   .role-link {
-    @apply block min-h-11 rounded-lg px-4 py-2.5 text-center text-sm leading-[normal] font-medium text-muted;
+    @apply block min-h-11 cursor-pointer rounded-lg px-4 py-2.5 text-center text-sm leading-[normal] font-medium text-muted disabled:cursor-not-allowed disabled:opacity-50;
   }
 
   .role-link-active {
-    @apply bg-base-100 text-base-content;
+    @apply cursor-default bg-base-100 text-base-content;
     box-shadow: var(--shadow-role-selected);
+  }
+
+  .role-form {
+    @apply flex items-center gap-1;
+  }
+
+  .operator-select {
+    @apply min-h-11 rounded-lg border border-control-line bg-base-100 px-3 text-sm leading-[normal] text-base-content;
   }
 
   .page-navigation {
