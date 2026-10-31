@@ -58,15 +58,15 @@ flowchart TD
 
 ### 共通レイアウトの接続
 
-- 共通の立場名・タブ名・ページ見出し（ブラウザのタイトルを含む）は `config/locales/ja.yml` に定義し、ビューでは `t` で参照する。立場別リンクは `navigation.roles`、タブ名は `navigation.admin` / `navigation.staff`、見出しは `page_titles.admin` / `page_titles.staff` に画面名を渡す。
+- 共通の立場名・タブ名・ページ見出し（ブラウザのタイトルを含む）は `config/locales/ja.yml` に定義し、ビューでは `t` で参照する。立場の切り替えの文言は `navigation.roles`・`operators`、タブ名は `navigation.admin` / `navigation.staff`、見出しは `page_titles.admin` / `page_titles.staff` に画面名を渡す。
 
 - URL：管理者は `/admin/operations`・`/admin/skill_map`・`/admin/trainings`・`/admin/manual_revisions`。スタッフは `/staff/operations`・`/staff/skills`・`/staff/manual_revisions`。
 - ルート `/` はスタッフの作業マニュアルを表示する。`/staff/operations` と同じ内容・選択タブを使う。各画面の本文は専用の `app/views/admin/…`・`app/views/staff/…` に置き、h1に立場（管理者／スタッフ）と画面名を表示する。
-- `shared/header` にタイトル・立場別画面へのリンク・タブ・常時表示のレベル凡例と開閉式の「レベルの説明」・フラッシュ通知枠をまとめる。共通レイアウトから一度だけ呼び出す。
+- `shared/header` にタイトル・操作する人の切り替えスイッチ・タブ・常時表示のレベル凡例と開閉式の「レベルの説明」・フラッシュ通知枠をまとめる。共通レイアウトから一度だけ呼び出す。
 - フラッシュは `flash` / `flash.now` のnotice・alert等を表示する。通知がなければ余白を出さず、`flash-messages` の差し替え先だけを残す。研修依頼の通知の帯は別機能。
-- 現段階の立場別リンクは画面間の移動のみ。セッションの操作ユーザー切り替え・スタッフ選択・管理者画面へのアクセス制御は、操作ユーザー機能との接続時に追加する。URLの名前空間は認可の代わりにならない。
+- 操作する人は `PATCH /operator` で切り替え、`session[:user_id]` に保存する。`current_user` は、選んだスタッフ（`User.skill_holders` の1人）。何も選んでいない、または選んだ人がいなくなったときは部長（管理者）になる。管理者の画面は `Admin::BaseController` で守り、スタッフとして操作しているときに開くとスタッフの画面に戻して理由を表示する。URLの名前空間は認可の代わりにならない。
 - 件数バッジは、当面は仮表示で用意する。`shared/header` または `shared/tabs` へ `skill_map_count`（管理者のスキルマップ）・`training_count`（スタッフのわたしのスキル）・`unread_count`（スタッフの改訂のお知らせ）を渡す。未指定時などの表示は、上記「タブの件数」のルールに従う。管理者の作業ツリー・研修・改訂履歴とスタッフの作業マニュアルには件数を出さない。
-- 共通レイアウトから `render "shared/header", **navigation_counts` で件数を渡す。`NavigationHelper#navigation_counts` は現在 `{}` を返す。モデル・current_userの実装後、このメソッドで対象ユーザーの件数を集計し、`{ skill_map_count: 4, training_count: 3, unread_count: 0 }` のようなハッシュを返す。各画面のビューからヘッダーを再描画する必要はない。仮表示99を実際の未完了・未確認件数としては扱わない。
+- 共通レイアウトから `render "shared/header", **navigation_counts` で件数を渡す。`NavigationHelper#navigation_counts` は現在 `{}` を返す。`current_user` は実装済みで、このメソッドで対象ユーザーの件数を集計し、`{ skill_map_count: 4, training_count: 3, unread_count: 0 }` のようなハッシュを返す。各画面のビューからヘッダーを再描画する必要はない。仮表示99を実際の未完了・未確認件数としては扱わない。
 
 ## 各画面の要素
 
