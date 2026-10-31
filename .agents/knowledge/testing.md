@@ -1,0 +1,5 @@
+# テスト
+
+- `build(:training)` は作成時の条件を満たすスキル（教える人はレベル4、教わる人はレベル0）をその作業に自動で作る → `operation: nil` や別の作業を渡すときは、`trainer:`・`trainee:` やスキルを自分で用意する。（2026-10-31）
+- `validates :trainee_id, uniqueness:` のエラーは `trainee` ではなく `trainee_id` に付く → `ja.yml` の翻訳キー（`errors.models.training.attributes.trainee_id.taken`）と属性名も `trainee_id` で書く。（2026-10-31）
+- `bin/rails runner` で動きを確かめるときに `create!` すると開発用 DB にデータが残る → `ActiveRecord::Base.transaction do … raise ActiveRecord::Rollback end` の中で実行する（`raise` をトランザクションの外に書かない）。（2026-10-31）

@@ -7,6 +7,7 @@ AI ツールも人も、作業を始める前にここを読みます。
 |---|---|
 | [layout.md](layout.md) | 共通レイアウトと操作ユーザー・件数の接続箇所 |
 | [models.md](models.md) | モデルの使い方（一覧で N+1 にしない集計・先読み） |
+| [testing.md](testing.md) | テストと動作確認の書き方（factory の前提・翻訳キー・runner での確かめ方） |
 
 ## 書き方
 
