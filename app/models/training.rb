@@ -13,7 +13,14 @@ class Training < ApplicationRecord
   validate :trainer_must_be_candidate, on: :create
   validate :trainee_must_be_candidate, on: :create
 
+  # 管理者自身が頼んだ予定なので、教える人の確認（通知の帯）はいらない
+  before_create :acknowledge, if: -> { requested? && trainer.admin? }
+
   private
+
+  def acknowledge
+    self.status = :acknowledged
+  end
 
   def trainee_must_differ_from_trainer
     errors.add(:trainee, :same_as_trainer) if trainee_id.present? && trainee_id == trainer_id
