@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_31_000006) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_31_000007) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -20,6 +20,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_31_000006) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["name"], name: "index_categories_on_name", unique: true
+  end
+
+  create_table "manual_revisions", force: :cascade do |t|
+    t.bigint "manual_id", null: false
+    t.bigint "user_id", null: false
+    t.integer "version", null: false
+    t.text "memo"
+    t.text "body_before"
+    t.text "body_after"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["manual_id", "version"], name: "index_manual_revisions_on_manual_id_and_version", unique: true
+    t.index ["user_id"], name: "index_manual_revisions_on_user_id"
   end
 
   create_table "manuals", force: :cascade do |t|
@@ -78,6 +91,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_31_000006) do
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "manual_revisions", "manuals"
+  add_foreign_key "manual_revisions", "users"
   add_foreign_key "manuals", "operations"
   add_foreign_key "operations", "categories"
   add_foreign_key "skill_level_changes", "skills"
