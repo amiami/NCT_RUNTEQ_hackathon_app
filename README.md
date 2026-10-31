@@ -71,6 +71,7 @@ Rails のコマンドは、パソコンで直接ではなく `docker compose run
 |---|---|
 | [開発環境の構築](docs/dev/setup.md) | 必要なもの、起動、毎日の始め方、よく使うコマンド、トラブル対処 |
 | [開発の進め方](docs/dev/first-contribution.md) | Issue → ブランチ → 実装 → コミット → Pull Request の手順、AI を使うときの約束 |
+| [本番環境（デプロイ）](docs/dev/deploy.md) | 本番の URL、Render・Neon の設定、デプロイの流れ、困ったときの見方、無料プランの制限 |
 | [技術選定](docs/tech-stack.md) | 技術スタックと選んだ理由 |
 | [AGENTS.md](AGENTS.md)・[CLAUDE.md](CLAUDE.md) | AI（Codex・Claude Code）で開発するときの前提（自動で読み込まれます） |
 
