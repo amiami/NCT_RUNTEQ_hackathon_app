@@ -2,7 +2,8 @@ require "rails_helper"
 
 RSpec.describe "shared/_tabs" do
   before do
-    allow(view).to receive_messages(admin_page?: false, navigation_current?: false)
+    allow(view).to receive_messages(admin_page?: false, navigation_current?: false,
+                                    operator_switch: { staff: true, selected_id: nil, candidates: [] })
   end
 
   def badge_for(label)

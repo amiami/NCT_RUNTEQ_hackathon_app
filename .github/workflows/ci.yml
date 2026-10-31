@@ -108,10 +108,7 @@ jobs:
           "$chrome_path" --version
 
       - name: Run RSpec
-        run: |
-          bundle exec rspec --format progress --format json --out tmp/rspec.json || rc=$?
-          ruby -rjson -e 'j=JSON.parse(File.read("tmp/rspec.json")); j["examples"].select{|e|e["status"]=="failed"}.each{|e| m=e["exception"]["message"].to_s.gsub(/[\r\n]+/," | ")[0,900]; puts "::error title=#{e["full_description"][0,80]}::#{m}"}'
-          exit ${rc:-0}
+        run: bundle exec rspec
 
       - name: Upload system spec screenshots
         if: failure()
