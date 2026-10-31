@@ -24,6 +24,9 @@ ja:
           attributes:
             trainee:
               same_as_trainer: は教える人と別の人にしてください
+              not_trainee_candidate: はこの作業で教わる人の条件を満たしていません
+            trainer:
+              not_trainer_candidate: はこの作業で教える人の条件を満たしていません
             trainee_id:
               taken: にはこの作業で完了していない研修予定がすでにあります
 
