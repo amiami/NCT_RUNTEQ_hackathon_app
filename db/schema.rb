@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_31_000005) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_31_000006) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -43,6 +43,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_31_000005) do
     t.index ["category_id", "name"], name: "index_operations_on_category_id_and_name", unique: true
   end
 
+  create_table "skill_level_changes", force: :cascade do |t|
+    t.bigint "skill_id", null: false
+    t.bigint "changed_by_id", null: false
+    t.integer "from_level", null: false
+    t.integer "to_level", null: false
+    t.integer "reason", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["changed_by_id"], name: "index_skill_level_changes_on_changed_by_id"
+    t.index ["skill_id"], name: "index_skill_level_changes_on_skill_id"
+  end
+
   create_table "skills", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "operation_id", null: false
@@ -68,6 +80,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_31_000005) do
 
   add_foreign_key "manuals", "operations"
   add_foreign_key "operations", "categories"
+  add_foreign_key "skill_level_changes", "skills"
+  add_foreign_key "skill_level_changes", "users", column: "changed_by_id"
   add_foreign_key "skills", "operations"
   add_foreign_key "skills", "users"
   add_foreign_key "skills", "users", column: "admin_assessed_by_id"

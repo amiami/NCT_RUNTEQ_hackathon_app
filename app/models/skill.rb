@@ -2,6 +2,7 @@ class Skill < ApplicationRecord
   belongs_to :user
   belongs_to :operation
   belongs_to :admin_assessed_by, class_name: "User", optional: true
+  has_many :skill_level_changes
 
   # 管理者の見立て。スタッフには見せない（HTML の属性・JSON・Turbo Stream にも出さない）。
   # 付けられるレベルは付けるときのサービスで確かめ、ここでは確かめない
