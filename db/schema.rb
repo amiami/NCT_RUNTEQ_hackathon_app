@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_31_000007) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_31_000008) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -83,6 +83,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_31_000007) do
     t.index ["user_id", "operation_id"], name: "index_skills_on_user_id_and_operation_id", unique: true
   end
 
+  create_table "trainings", force: :cascade do |t|
+    t.bigint "operation_id", null: false
+    t.bigint "trainer_id", null: false
+    t.bigint "trainee_id", null: false
+    t.date "due_on"
+    t.integer "status", default: 0, null: false
+    t.date "done_on"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["operation_id", "trainee_id"], name: "index_trainings_open_per_trainee", unique: true, where: "(status <> 2)"
+    t.index ["operation_id"], name: "index_trainings_on_operation_id"
+    t.index ["trainee_id"], name: "index_trainings_on_trainee_id"
+    t.index ["trainer_id"], name: "index_trainings_on_trainer_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "name", null: false
     t.boolean "admin", default: false, null: false
@@ -100,4 +115,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_31_000007) do
   add_foreign_key "skills", "operations"
   add_foreign_key "skills", "users"
   add_foreign_key "skills", "users", column: "admin_assessed_by_id"
+  add_foreign_key "trainings", "operations"
+  add_foreign_key "trainings", "users", column: "trainee_id"
+  add_foreign_key "trainings", "users", column: "trainer_id"
 end

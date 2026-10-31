@@ -9,12 +9,23 @@ ja:
     attributes:
       skill:
         user: 人
+      training:
+        operation: 作業
+        trainer: 教える人
+        trainee: 教わる人
+        trainee_id: 教わる人
     errors:
       models:
         skill:
           attributes:
             user:
               not_skill_holder: はスキルを持つ人（管理者以外）にしてください
+        training:
+          attributes:
+            trainee:
+              same_as_trainer: は教える人と別の人にしてください
+            trainee_id:
+              taken: にはこの作業で完了していない研修予定がすでにあります
 
   page_titles:
     admin: "管理者：%{page}"
