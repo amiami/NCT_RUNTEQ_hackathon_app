@@ -1,5 +1,5 @@
 module Admin
-  class SkillMapsController < ApplicationController
+  class SkillMapsController < Admin::BaseController
     def show
     end
   end

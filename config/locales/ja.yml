@@ -20,6 +20,13 @@ ja:
     admin: "管理者：%{page}"
     staff: "スタッフ：%{page}"
 
+  operators:
+    switch_label: 操作する人の切り替え
+    label: 操作する人
+    submit: 切り替え
+    not_selectable: 選べない人です。操作する人は変わっていません
+    admin_only: 管理者の画面は、管理者（部長）に切り替えると開けます
+
   navigation:
     roles:
       admin: 管理者（部長）

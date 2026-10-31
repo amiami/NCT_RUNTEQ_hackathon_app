@@ -1,6 +1,9 @@
 Rails.application.routes.draw do
   root "staff/operations#index"
 
+  # ヘッダーのスイッチ：操作する人（部長／スタッフ）を切り替える
+  resource :operator, only: :update
+
   namespace :admin do
     resources :operations, only: :index
     resource :skill_map, only: :show

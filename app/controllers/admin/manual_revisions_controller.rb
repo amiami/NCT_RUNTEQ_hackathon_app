@@ -1,5 +1,5 @@
 module Admin
-  class ManualRevisionsController < ApplicationController
+  class ManualRevisionsController < Admin::BaseController
     def index
     end
   end
