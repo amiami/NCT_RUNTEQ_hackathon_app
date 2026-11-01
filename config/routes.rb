@@ -11,6 +11,11 @@ Rails.application.routes.draw do
     resources :manual_revisions, only: :index
   end
 
+  # 管理者の見立て。スキルマップの「変更を保存」で、複数のマスをまとめて保存する（管理者だけ）
+  namespace :skills do
+    resource :assessment, only: :update
+  end
+
   namespace :staff do
     resources :operations, only: :index
     resources :skills, only: :index
