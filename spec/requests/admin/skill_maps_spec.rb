@@ -130,18 +130,66 @@ RSpec.describe "スキルマップ（管理者）" do
     end
   end
 
-  describe "管理者の見立て" do
-    it "この画面ではまだマスに出さない（印は #58 を取り込んでから出す）" do
-      create(:skill, user: yamamoto, operation: payroll, level: 3, admin_assessment: :can_train)
-      create(:skill, user: nakamura, operation: payroll, level: 4, admin_assessment: :backup_trainer)
+  describe "管理者の見立ての印" do
+    def skill_with(level, assessment)
+      create(:skill, user: yamamoto, operation: payroll, level:, admin_assessment: assessment)
+    end
+
+    describe "AC-3: 今のレベルで意味のある見立てだけ、マスに出る" do
+      {
+        [ 3, :can_train ] => "▲",
+        [ 3, :needs_training ] => "▼",
+        [ 3, :training_done ] => "▽",
+        [ 4, :needs_training ] => "▼",
+        [ 4, :backup_trainer ] => "◇"
+      }.each do |(level, assessment), symbol|
+        it "レベル#{level}・#{assessment} は #{symbol} が出る" do
+          skill = skill_with(level, assessment)
+
+          get admin_skill_map_path
+
+          expect(cell(skill)).to have_css(".assessment-mark", exact_text: symbol)
+        end
+      end
+
+      [ [ 4, :can_train ], [ 4, :training_done ], [ 3, :backup_trainer ], [ 4, nil ] ].each do |level, assessment|
+        it "レベル#{level}・#{assessment || 'なし'} は、印も値も HTML に出ない" do
+          skill = skill_with(level, assessment)
+
+          get admin_skill_map_path
+
+          expect(cell(skill)).to have_no_css(".assessment-mark")
+          html = cell(skill).native.to_html
+          [ "▲", "▼", "▽", "◇", *assessment&.to_s ].each { |value| expect(html).not_to include(value) }
+        end
+      end
+    end
+
+    describe "AC-4: マウスを乗せると説明が出る" do
+      {
+        [ 3, :can_train ] => "研修権限：レベル3だが、すでに教えられる",
+        [ 3, :needs_training ] => "要研修：研修が必要",
+        [ 3, :training_done ] => "研修済み：▼の人が研修を受け終えた",
+        [ 4, :backup_trainer ] => "教えるのは後回し：1人で作業はできるが、教えるのは少し不得意"
+      }.each do |(level, assessment), description|
+        it "#{assessment} の説明" do
+          skill = skill_with(level, assessment)
+
+          get admin_skill_map_path
+
+          expect(cell(skill).find(".assessment-mark")[:title]).to eq description
+        end
+      end
+    end
+
+    it "AC-8: 「未読」と見立ての印は、マスの中で別々の印として出る（見立ては右上に重ねて置く）" do
+      create(:manual, operation: payroll, version: 2)
+      skill = create(:skill, user: yamamoto, operation: payroll, level: 3, admin_assessment: :can_train, confirmed_version: 1)
 
       get admin_skill_map_path
 
-      table = document.find("table.skill-map")
-      [ "▲", "▼", "▽", "◇", "can_train", "backup_trainer" ].each do |value|
-        expect(table).to have_no_text(value)
-        expect(table.native.to_html).not_to include(value)
-      end
+      expect(cell(skill)).to have_css(".skill-map-cell > .assessment-mark", exact_text: "▲")
+      expect(cell(skill)).to have_css(".skill-map-cell > .skill-map-unread", exact_text: "未読")
     end
   end
 
