@@ -63,7 +63,7 @@ flowchart TD
 - URL：管理者は `/admin/operations`・`/admin/skill_map`・`/admin/trainings`・`/admin/manual_revisions`。スタッフは `/staff/operations`・`/staff/skills`・`/staff/manual_revisions`。
 - 作業ツリーの選択は `/admin/operations?operation_id=…`・`/staff/operations?operation_id=…` で指定する。未指定なら分類・作業の `sort_order` 順（同順なら ID 順）の先頭を表示し、存在しない作業を指定した場合は404にする。作業が0件なら登録待ちの案内、マニュアルがない作業なら未登録の案内を表示する。
 - スタッフ画面のツリーには、操作するスタッフ本人のレベルを表示する。スキル未作成の作業は0とし、閲覧ではレコードを作らない。管理者のままスタッフ画面を開いた場合はレベルを表示しない。外部サイトのリンクは別タブで開く。サンプルの仮URLなど、HTTP/HTTPSのURLとして使えない値は文字で表示し、「サイトを開く」は押せない。
-- ルート `/` はスタッフの作業マニュアルを表示する。`/staff/operations` と同じ内容・選択タブを使う。各画面の本文は専用の `app/views/admin/…`・`app/views/staff/…` に置き、h1に立場（管理者／スタッフ）と画面名を表示する。
+- ルート `/` は、操作している人の立場に合った最初の画面に移る。部長（何も選んでいないときも含む）は管理者の作業ツリー（`/admin/operations`）、スタッフはスタッフの作業マニュアル（`/staff/operations`）。移るときに注意は出さない。各画面の本文は専用の `app/views/admin/…`・`app/views/staff/…` に置き、h1に立場（管理者／スタッフ）と画面名を表示する。
 - `shared/header` にタイトル・操作する人の切り替えスイッチ・タブ・常時表示のレベル凡例と開閉式の「レベルの説明」・フラッシュ通知枠をまとめる。共通レイアウトから一度だけ呼び出す。
 - フラッシュは `flash` / `flash.now` のnotice・alert等を表示する。通知がなければ余白を出さず、`flash-messages` の差し替え先だけを残す。研修依頼の通知の帯は別機能。
 - 操作する人は `PATCH /operator` で切り替え、`session[:user_id]` に保存する。`current_user` は、選んだスタッフ（`User.skill_holders` の1人）。何も選んでいない、または選んだ人がいなくなったときは部長（管理者）になる。管理者の画面は `Admin::BaseController` で守り、スタッフとして操作しているときに開くとスタッフの画面に戻して理由を表示する。URLの名前空間は認可の代わりにならない。

@@ -161,7 +161,8 @@ RSpec.describe "作業ツリーとマニュアル" do
     end
   end
 
-  [ :admin_operations_path, :staff_operations_path, :root_path ].each do |path|
+  # / は立場別画面へのリダイレクト。振り分けと遷移後の表示は root_spec で検証する。
+  [ :admin_operations_path, :staff_operations_path ].each do |path|
     context "#{path} の表示" do
       let(:page_path) { path }
 
@@ -219,7 +220,7 @@ RSpec.describe "作業ツリーとマニュアル" do
     end
   end
 
-  [ :staff_operations_path, :root_path ].each do |path|
+  [ :staff_operations_path ].each do |path|
     describe "#{path} の本人のレベルと表示の制限" do
       let!(:operations) { create_list(:operation, 5) }
 

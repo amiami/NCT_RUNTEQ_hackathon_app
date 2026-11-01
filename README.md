@@ -35,7 +35,7 @@ docker compose run --rm web bin/rails db:prepare
 docker compose up -d
 ```
 
-http://localhost:3000 を開くと、スタッフの「作業マニュアル」が表示されます。停止は `docker compose stop` です。
+http://localhost:3000 を開くと、管理者の「作業ツリー（マニュアル）」が表示されます（右上のスイッチでスタッフに切り替えると、スタッフの「作業マニュアル」が開きます）。停止は `docker compose stop` です。
 
 ## よく使うコマンド
 
