@@ -21,7 +21,7 @@ docker compose run --rm web bin/rails db:prepare   # DB を作る
 docker compose up -d                               # 起動する
 ```
 
-http://localhost:3000 を開き、「マニュあっぷ」のヘッダーとスタッフの「作業マニュアル」が表示されることを確認します。
+http://localhost:3000 を開き、「マニュあっぷ」のヘッダーと管理者の「作業ツリー（マニュアル）」が表示されることを確認します（何も選んでいないときは部長として開きます）。
 
 テストも1回通しておきます。
 
