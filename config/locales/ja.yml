@@ -95,3 +95,13 @@ ja:
       errors:
         not_assignable: "%{user}さんの「%{operation}」：%{assessment}はレベル%{level}のときだけ付けられます"
         invalid: "%{user}さんの「%{operation}」：選べない見立てです"
+
+  admin:
+    skill_maps:
+      show:
+        operations_count: "%{count}作業"
+        capable_count: "できる人%{count}人"
+        few_capable_operations: "できる人1人以下 %{count}件"
+      cell:
+        unread: 未読
+        unread_description: 改定後のマニュアルをまだ確認していません

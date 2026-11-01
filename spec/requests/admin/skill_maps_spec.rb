@@ -1,7 +1,9 @@
 require "rails_helper"
 
 RSpec.describe "スキルマップ（管理者）" do
-  let!(:manager) { create(:user, :admin, name: "管理者") }
+  # 管理者は列に入らないことを確かめるために作る
+  before { create(:user, :admin, name: "管理者") }
+
   let!(:nakamura) { create(:user, name: "中村 健太", sort_order: 2) }
   let!(:yamamoto) { create(:user, name: "山本 直子", sort_order: 1) }
 
@@ -55,7 +57,8 @@ RSpec.describe "スキルマップ（管理者）" do
       get admin_skill_map_path
 
       skills.each do |skill|
-        expect(cell(skill)).to have_css(".skill-level-#{skill.level}", exact_text: skill.level.to_s)
+        # マスの中の改行・インデントを無視して比べる
+        expect(cell(skill)).to have_css(".skill-level-#{skill.level}", exact_text: skill.level.to_s, normalize_ws: true)
       end
     end
   end

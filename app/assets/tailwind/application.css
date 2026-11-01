@@ -38,6 +38,10 @@
   --color-skill-4: #6E9FE3;
   --color-skill-content: #1E3A5F;
   --color-skill-strong-content: #0B2545;
+  --color-capable-alert: #7C2D12; /* 「できる人○人」のバッジ */
+  --color-capable-alert-content: #fff;
+  --color-unread: #FFEDD5; /* スキルマップの「未読」の印 */
+  --color-unread-content: #9A3412;
 }
 
 @layer components {
@@ -198,5 +202,49 @@
 
   .flash-alert {
     @apply bg-error text-error-content;
+  }
+}
+
+/* スキルマップ（管理者） */
+@layer components {
+  .skill-map-scroll {
+    @apply mt-4 overflow-x-auto;
+  }
+
+  .skill-map {
+    @apply w-full border-separate border-spacing-1 text-sm leading-[normal];
+  }
+
+  .skill-map-staff {
+    @apply px-2 py-1 text-center text-xs font-bold whitespace-nowrap text-muted;
+  }
+
+  .skill-map-category th {
+    @apply pt-4 pb-1 text-left;
+  }
+
+  .skill-map-category-name {
+    @apply text-base font-bold;
+  }
+
+  .skill-map-operations-count {
+    @apply ml-2 text-xs font-normal text-muted;
+  }
+
+  .skill-map-operation {
+    @apply px-2 text-left font-medium whitespace-nowrap;
+  }
+
+  /* 管理者の見立ての印をあとで右上の角に重ねるので relative にしておく */
+  .skill-map-cell {
+    @apply relative flex min-h-12 min-w-14 flex-col items-center justify-center gap-0.5 rounded-lg p-1 text-[15px] font-bold;
+  }
+
+  .skill-map-unread {
+    @apply rounded bg-unread px-1 text-[10px] leading-[15px] font-bold text-unread-content;
+  }
+
+  .capable-alert {
+    @apply ml-2 inline-flex items-center rounded-md bg-capable-alert px-1.5 py-0.5 text-[11px] font-bold whitespace-nowrap text-capable-alert-content;
   }
 }
