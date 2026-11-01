@@ -4,6 +4,13 @@
 
   <div class="skill-map-scroll">
     <table class="skill-map">
+      <%# 作業名の列だけ幅を決め、残りはスタッフの列に同じ幅ずつ配る（.skill-map の table-fixed） %>
+      <colgroup>
+        <col class="skill-map-operation-column">
+        <% @staff.each do %>
+          <col>
+        <% end %>
+      </colgroup>
       <thead>
         <tr>
           <td></td>
