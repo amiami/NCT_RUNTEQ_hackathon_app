@@ -10,3 +10,4 @@
 - 立場別リンクは `navigation.roles`、見出しとブラウザタイトルの立場付き表記は `page_titles` をja.ymlで管理する。`page` に既存のタブ名の翻訳を渡す。（2026-10-31）
 - 管理者スキルマップの通知件数バッジは表示する。仮表示の規則をspec/screensに明記し、実集計の対象・条件は別途定義する。（2026-10-31）
 - 操作する人（部長／スタッフ）は `PATCH /operator`（`OperatorsController#update`）で切り替え、`session[:user_id]` に持つ。`current_user` は選んだスタッフ、未選択・いなくなったときは部長（管理者）、ユーザーが0人なら nil。管理者の画面は `Admin::BaseController` でスタッフのとき弾く。ヘッダーは `NavigationHelper#operator_switch` を呼ぶので、view spec では `operator_switch` をスタブする。（2026-11-01）
+- 管理者の見立ての印は `render "admin/shared/assessment_mark", skill:` で出す（研修画面の名前の横でも使う）→ `Skill#assessment_meaningful?` が false なら何も出さない。記号と説明（マウスを乗せたとき）は `ja.yml` の `admin_assessment_marks`。置き場所は使う側の CSS で決める（スキルマップは `.skill-map-cell > .assessment-mark` で右上）。（2026-11-01）
