@@ -36,6 +36,14 @@ ja:
     admin: "管理者：%{page}"
     staff: "スタッフ：%{page}"
 
+  training_plan:
+    saved: 研修予定を保存しました
+    not_saved: 研修予定を保存できませんでした。内容を確かめて、もう一度保存してください
+    errors:
+      not_found: 取り消す研修予定が見つかりません
+      duplicated: 同じ人の未完了の研修予定がすでにあります。画面を開き直してください
+      invalid_due_on: 期限の日付が正しくありません
+
   operators:
     switch_label: 操作する人の切り替え
     label: 操作する人
