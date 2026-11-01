@@ -1,4 +1,52 @@
 <% content_for :title, "#{t('page_titles.admin', page: t('navigation.admin.skill_map'))} | #{t('app_name')}" %>
 <section class="card">
   <h1 class="page-title"><%= t("page_titles.admin", page: t("navigation.admin.skill_map")) %></h1>
+
+  <div class="skill-map-scroll">
+    <table class="skill-map">
+      <%# 作業名の列だけ幅を決め、残りはスタッフの列に同じ幅ずつ配る（.skill-map の table-fixed） %>
+      <colgroup>
+        <col class="skill-map-operation-column">
+        <% @staff.each do %>
+          <col>
+        <% end %>
+      </colgroup>
+      <thead>
+        <tr>
+          <td></td>
+          <% @staff.each do |user| %>
+            <th scope="col" class="skill-map-staff"><%= user.name %></th>
+          <% end %>
+        </tr>
+      </thead>
+      <% @categories.each do |category| %>
+        <% few_capable_count = category.operations.to_a.count { |operation| @capable_counts.fetch(operation.id, 0) <= 1 } %>
+        <tbody>
+          <tr class="skill-map-category">
+            <th scope="rowgroup" colspan="<%= @staff.size + 1 %>">
+              <span class="skill-map-category-name"><%= category.name %></span>
+              <span class="skill-map-operations-count"><%= t(".operations_count", count: category.operations.size) %></span>
+              <% if few_capable_count.positive? %>
+                <span class="capable-alert"><%= t(".few_capable_operations", count: few_capable_count) %></span>
+              <% end %>
+            </th>
+          </tr>
+          <% category.operations.each do |operation| %>
+            <% capable_count = @capable_counts.fetch(operation.id, 0) %>
+            <tr>
+              <th scope="row" class="skill-map-operation">
+                <span><%= operation.name %></span>
+                <% if capable_count <= 1 %>
+                  <span class="capable-alert"><%= t(".capable_count", count: capable_count) %></span>
+                <% end %>
+              </th>
+              <% @staff.each do |user| %>
+                <%= render "cell", skill: @skills[[ user.id, operation.id ]] %>
+              <% end %>
+            </tr>
+          <% end %>
+        </tbody>
+      <% end %>
+    </table>
+  </div>
 </section>

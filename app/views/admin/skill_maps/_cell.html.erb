@@ -1,0 +1,13 @@
+<%# スキルマップのマス1つ分。スキルがない組み合わせ（人×作業）は空のマスにする %>
+<% if skill %>
+  <td id="<%= dom_id(skill) %>">
+    <div class="skill-map-cell skill-level-<%= skill.level %>">
+      <span><%= skill.level %></span>
+      <% if skill.unread? %>
+        <span class="skill-map-unread" title="<%= t(".unread_description") %>"><%= t(".unread") %></span>
+      <% end %>
+    </div>
+  </td>
+<% else %>
+  <td></td>
+<% end %>
