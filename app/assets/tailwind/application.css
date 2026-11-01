@@ -200,3 +200,145 @@
     @apply bg-error text-error-content;
   }
 }
+
+/* 作業ツリーとマニュアル。共通ヘッダーのスタイルから分けて管理する。 */
+@theme {
+  --color-operation-warning: #7C2D12;
+  --color-operation-revision: #FFEDD5;
+  --color-operation-revision-content: #9A3412;
+  --color-operation-outline: #9CA3AF;
+}
+
+@layer components {
+  .operation-browser {
+    @apply grid items-start gap-5;
+    grid-template-columns: minmax(280px, 380px) minmax(0, 1fr);
+  }
+
+  .operation-tree-panel {
+    @apply min-w-0 rounded-xl border border-line bg-base-100 p-3.5;
+  }
+
+  .operation-category + .operation-category {
+    @apply mt-3.5;
+  }
+
+  .operation-category-heading {
+    @apply flex flex-wrap items-center gap-2 px-1.5 py-1;
+  }
+
+  .operation-category-title {
+    @apply text-[13px] font-bold;
+  }
+
+  .operation-category-kind {
+    @apply rounded border border-control-line px-[5px] text-[11px] text-muted;
+  }
+
+  .operation-tree-list {
+    @apply flex flex-col gap-0.5;
+  }
+
+  .operation-tree-link {
+    @apply flex min-h-10 items-center gap-2 rounded-lg px-2.5 py-[9px] text-sm leading-[normal] text-base-content no-underline;
+  }
+
+  .operation-tree-link:hover {
+    @apply bg-base-200;
+  }
+
+  .operation-tree-link-selected,
+  .operation-tree-link-selected:hover {
+    @apply bg-secondary font-bold;
+  }
+
+  .operation-tree-link:focus-visible,
+  .operation-open-site:focus-visible,
+  .operation-external-url:focus-visible {
+    @apply outline-2 outline-offset-2 outline-link;
+  }
+
+  .operation-tree-name {
+    @apply min-w-0 flex-1 break-words;
+  }
+
+  .operation-tree-kind {
+    @apply text-[11px] text-muted;
+  }
+
+  .operation-badge {
+    @apply inline-flex shrink-0 items-center rounded-md px-1.5 py-0.5 text-[11px] leading-[normal] font-bold whitespace-nowrap;
+  }
+
+  .operation-badge-warning {
+    @apply bg-operation-warning text-primary-content;
+  }
+
+  .operation-badge-revision {
+    @apply bg-operation-revision text-operation-revision-content;
+  }
+
+  .operation-badge-neutral {
+    @apply bg-control-background text-muted;
+  }
+
+  .operation-manual-panel {
+    @apply min-w-0 rounded-xl border border-line bg-base-100 p-6;
+  }
+
+  .operation-path {
+    @apply text-[13px] text-muted;
+  }
+
+  .operation-manual-heading {
+    @apply mt-1 flex flex-wrap items-center gap-3;
+  }
+
+  .operation-manual-title {
+    @apply text-[26px] font-bold break-words;
+  }
+
+  .operation-revision-date {
+    @apply text-[13px] text-muted;
+  }
+
+  .operation-manual-steps {
+    @apply mt-5 flex list-decimal flex-col gap-2.5 pl-6 text-[15px] leading-[1.7];
+  }
+
+  .operation-manual-steps li {
+    @apply break-words;
+  }
+
+  .operation-external {
+    @apply mt-5 flex flex-wrap items-center gap-3 rounded-[10px] border border-dashed border-operation-outline p-4;
+  }
+
+  .operation-external-icon {
+    @apply shrink-0 text-link;
+  }
+
+  .operation-external-description {
+    @apply min-w-0 flex-1 basis-[200px];
+  }
+
+  .operation-external-hint {
+    @apply text-xs leading-[normal] text-muted;
+  }
+
+  .operation-external-url {
+    @apply text-[15px] font-bold break-all text-link;
+  }
+
+  .operation-external-url:hover {
+    @apply text-link-hover;
+  }
+
+  .operation-open-site {
+    @apply no-underline disabled:cursor-not-allowed disabled:opacity-45;
+  }
+
+  .operation-empty {
+    @apply py-3 text-sm leading-relaxed text-muted;
+  }
+}

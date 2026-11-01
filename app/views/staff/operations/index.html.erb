@@ -1,4 +1,6 @@
 <% content_for :title, "#{t('page_titles.staff', page: t('navigation.staff.operations'))} | #{t('app_name')}" %>
-<section class="card">
-  <h1 class="page-title"><%= t("page_titles.staff", page: t("navigation.staff.operations")) %></h1>
+<section aria-labelledby="operations-page-title">
+  <h1 id="operations-page-title" class="page-title mb-4"><%= t("page_titles.staff", page: t("navigation.staff.operations")) %></h1>
+  <%= render "operations/browser", categories: @categories, operations_by_category: @operations_by_category,
+             operation: @operation, capable_counts: @capable_counts, skill_levels: @skill_levels %>
 </section>

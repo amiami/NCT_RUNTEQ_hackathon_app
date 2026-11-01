@@ -2,6 +2,30 @@ ja:
   # 画面に出すアプリ名。変えるときはここだけ直す
   app_name: マニュあっぷ
 
+  time:
+    formats:
+      operation_date: "%m/%d"
+      operation_full_date: "%Y/%m/%d"
+
+  operations:
+    tree_label: 作業ツリー
+    level_prefix: レベル
+    external_marker: URL
+    kinds:
+      internal: アプリ内
+      external: 外部サイト
+    version: "第%{version}版"
+    capable_count: "できる人%{count}人"
+    revision_badge: "改定 %{date}"
+    last_revised: "最終改定：%{date}"
+    no_revision: 改定なし
+    season: "時期：%{note}"
+    external_hint: 手順は外部サイト・ソフトのガイドを見てください
+    open_site: サイトを開く
+    no_manual: この作業のマニュアルはまだ登録されていません
+    empty: 作業がまだ登録されていません
+    empty_manual: 作業が登録されると、ここにマニュアルを表示します
+
   # アプリ固有の翻訳（モデル名・属性名など）はここに書く。
   # エラーメッセージや日付などの Rails 標準の翻訳は rails-i18n gem に入っている
 
