@@ -75,6 +75,26 @@ RSpec.describe Skill do
     it "見立てに合わないレベルでも保存できる（レベルとの組み合わせは付けるときのサービスで確かめる）" do
       expect(build(:skill, level: 0, admin_assessment: :can_train)).to be_valid
     end
+
+    describe "#assessment_meaningful?（今のレベルで意味のある見立てか）" do
+      meaningful = {
+        3 => %w[can_train needs_training training_done], # ▲・▼・▽
+        4 => %w[needs_training backup_trainer]           # ▼・◇
+      }
+
+      # レベル0〜4 × 見立て（なし・4種類）の全組み合わせと、期待する結果
+      cases = (0..4).to_a.product([ nil, *described_class.admin_assessments.keys ]).map do |level, assessment|
+        [ level, assessment, meaningful.fetch(level, []).include?(assessment) ]
+      end
+
+      cases.each do |level, assessment, expected|
+        it "レベル#{level}・見立て #{assessment || 'なし'} は #{expected}" do
+          skill = build(:skill, level:, admin_assessment: assessment)
+
+          expect(skill.assessment_meaningful?).to be expected
+        end
+      end
+    end
   end
 
   describe "#unread?" do
@@ -144,6 +164,75 @@ RSpec.describe Skill do
         end
 
         expect(queries.size).to eq 1
+      end
+    end
+  end
+
+  describe "研修の候補" do
+    let(:operation) { create(:operation) }
+
+    # 名前で結果を見やすくするため、レベルと見立てから名前を付ける
+    def skill_with(level, assessment = nil, name:, sort_order:)
+      create(:skill, operation:, level:, admin_assessment: assessment,
+                     user: create(:user, name:, sort_order:))
+    end
+
+    def names(skills)
+      skills.map { |skill| skill.user.name }
+    end
+
+    describe ".trainer_candidates" do
+      before do
+        skill_with(4, :backup_trainer, name: "4◇", sort_order: 1)
+        skill_with(3, :can_train, name: "3▲", sort_order: 2)
+        skill_with(4, :training_done, name: "4▽", sort_order: 3)
+        skill_with(4, :can_train, name: "4▲", sort_order: 4)
+        skill_with(4, nil, name: "4", sort_order: 5)
+        skill_with(4, :needs_training, name: "4▼", sort_order: 6)
+        skill_with(3, nil, name: "3", sort_order: 7)
+        skill_with(3, :training_done, name: "3▽", sort_order: 8)
+        skill_with(3, :needs_training, name: "3▼", sort_order: 9)
+        skill_with(2, :can_train, name: "2▲", sort_order: 10)
+        skill_with(1, nil, name: "1", sort_order: 11)
+        skill_with(0, nil, name: "0", sort_order: 12)
+      end
+
+      it "レベル4（◇・▼以外）→ 3▲ → 4◇ の順に並び、同じグループの中はスタッフの並び順" do
+        expect(names(described_class.trainer_candidates)).to eq [ "4▽", "4▲", "4", "3▲", "4◇" ]
+      end
+
+      it "4▼・▲のないレベル3・3▽・レベル0〜2は入らない" do
+        expect(names(described_class.trainer_candidates)).not_to include("4▼", "3", "3▽", "3▼", "2▲", "1", "0")
+      end
+
+      it "管理者の Skill が入っていても候補にしない" do
+        build(:skill, operation:, level: 4, user: create(:user, :admin, sort_order: 0)).save!(validate: false)
+
+        expect(described_class.trainer_candidates.map(&:user)).to all(satisfy { |user| !user.admin? })
+      end
+    end
+
+    describe ".training_targets" do
+      before do
+        skill_with(0, nil, name: "0", sort_order: 1)
+        skill_with(1, nil, name: "1", sort_order: 2)
+        skill_with(2, nil, name: "2", sort_order: 3)
+        skill_with(3, nil, name: "3", sort_order: 4)
+        skill_with(3, :can_train, name: "3▲", sort_order: 5)
+        skill_with(3, :training_done, name: "3▽", sort_order: 6)
+        skill_with(3, :needs_training, name: "3▼", sort_order: 7)
+        skill_with(4, nil, name: "4", sort_order: 8)
+        skill_with(4, :needs_training, name: "4▼", sort_order: 9)
+      end
+
+      it "レベル0・1の人と▼の人（4▼も含む）が、スタッフの並び順で入る" do
+        expect(names(described_class.training_targets)).to eq [ "0", "1", "3▼", "4▼" ]
+      end
+
+      it "管理者の Skill が入っていても対象にしない" do
+        build(:skill, operation:, level: 0, user: create(:user, :admin, sort_order: 0)).save!(validate: false)
+
+        expect(described_class.training_targets.map(&:user)).to all(satisfy { |user| !user.admin? })
       end
     end
   end
