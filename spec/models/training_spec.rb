@@ -245,4 +245,69 @@ RSpec.describe Training do
       expect(described_class).to exist(training.id)
     end
   end
+
+  describe ".unfinished" do
+    it "完了していない予定（requested・acknowledged）だけを返す" do
+      requested = create(:training)
+      acknowledged = create(:training, status: :acknowledged)
+      create(:training, status: :done, done_on: Date.new(2026, 10, 1))
+
+      expect(described_class.unfinished).to contain_exactly(requested, acknowledged)
+    end
+  end
+
+  describe ".latest_done（研修済み：誰から・いつ）" do
+    let(:operation) { create(:operation) }
+    let(:trainee) { create(:skill, operation:, level: 0).user }
+
+    def done_training(done_on, operation: self.operation, trainee: self.trainee)
+      create(:training, operation:, trainee:, status: :done, done_on:)
+    end
+
+    it "その作業・その教わる人の done の予定のうち、done_on が最新のものを返す" do
+      done_training(Date.new(2026, 6, 1))
+      latest = done_training(Date.new(2026, 10, 5))
+      done_training(Date.new(2026, 8, 1))
+
+      found = described_class.latest_done.find_by(operation:, trainee:)
+      expect(found).to eq latest
+      expect([ found.trainer, found.done_on ]).to eq [ latest.trainer, Date.new(2026, 10, 5) ]
+    end
+
+    it "未完了の予定は研修済みに数えない" do
+      done = done_training(Date.new(2026, 6, 1))
+      create(:training, operation:, trainee:)
+
+      expect(described_class.latest_done.find_by(operation:, trainee:)).to eq done
+    end
+
+    it "done の予定がなければ nil（なし）" do
+      create(:training, operation:, trainee:)
+
+      expect(described_class.latest_done.find_by(operation:, trainee:)).to be_nil
+    end
+
+    it "作業×教わる人ごとに1件ずつ返す（一覧で使っても、組み合わせごとにクエリを出さずに済む）" do
+      other_operation = create(:operation)
+      create(:skill, operation: other_operation, user: trainee, level: 0)
+      other_trainee = create(:skill, operation:, level: 0).user
+
+      done_training(Date.new(2026, 6, 1))
+      latest = done_training(Date.new(2026, 7, 1))
+      in_other_operation = done_training(Date.new(2026, 5, 1), operation: other_operation)
+      for_other_trainee = done_training(Date.new(2026, 4, 1), trainee: other_trainee)
+
+      expect(described_class.latest_done).to contain_exactly(latest, in_other_operation, for_other_trainee)
+    end
+
+    it "ほかのスコープと同じように、件数を数えたり並べ替え直したりできる" do
+      done_training(Date.new(2026, 6, 1))
+      latest = done_training(Date.new(2026, 7, 1))
+      other_trainee = create(:skill, operation:, level: 0).user
+      for_other_trainee = done_training(Date.new(2026, 4, 1), trainee: other_trainee)
+
+      expect(described_class.latest_done.count).to eq 2
+      expect(described_class.latest_done.reorder(:done_on)).to eq [ for_other_trainee, latest ]
+    end
+  end
 end
