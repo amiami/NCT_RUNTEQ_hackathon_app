@@ -3,6 +3,7 @@
   <td id="<%= dom_id(skill) %>">
     <div class="skill-map-cell skill-level-<%= skill.level %>">
       <span><%= skill.level %></span>
+      <%= render "admin/shared/assessment_mark", skill: %>
       <% if skill.unread? %>
         <span class="skill-map-unread" title="<%= t(".unread_description") %>"><%= t(".unread") %></span>
       <% end %>
