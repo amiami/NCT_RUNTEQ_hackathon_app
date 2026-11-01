@@ -64,4 +64,38 @@ RSpec.describe Operation do
       expect(operation.capable_count).to eq 0
     end
   end
+
+  describe ".few_capable_count（スキルマップのタブの件数）" do
+    def operation_with_capable(count)
+      create(:operation).tap do |operation|
+        create_list(:skill, count, operation:, level: 4)
+        create(:skill, operation:, level: 3)
+      end
+    end
+
+    it "できる人が1人以下の作業の数を返す（0人の作業も数える）" do
+      operation_with_capable(0)
+      operation_with_capable(1)
+      operation_with_capable(2)
+      operation_with_capable(3)
+      create(:operation) # スキルが1つもない作業も、できる人0人として数える
+
+      expect(described_class.few_capable_count).to eq 3
+    end
+
+    it "◇・▼のレベル4もできる人に数え、管理者は数えない" do
+      operation = create(:operation)
+      create(:skill, operation:, level: 4, admin_assessment: :backup_trainer)
+      create(:skill, operation:, level: 4, admin_assessment: :needs_training)
+      admin_only = create(:operation)
+      create(:skill, operation: admin_only, level: 4)
+      build(:skill, operation: admin_only, level: 4, user: create(:user, :admin)).save!(validate: false)
+
+      expect(described_class.few_capable_count).to eq 1
+    end
+
+    it "作業がなければ 0" do
+      expect(described_class.few_capable_count).to eq 0
+    end
+  end
 end

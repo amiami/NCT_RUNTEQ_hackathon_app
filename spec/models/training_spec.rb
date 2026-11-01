@@ -256,6 +256,19 @@ RSpec.describe Training do
     end
   end
 
+  describe ".involving（その人が教える人か教わる人の予定）" do
+    it "教える予定と教わる予定の両方を返し、ほかの人の予定は返さない" do
+      teaching = create(:training)
+      user = teaching.trainer
+      other_operation = create(:operation)
+      create(:skill, operation: other_operation, user:, level: 0)
+      learning = create(:training, operation: other_operation, trainee: user)
+      create(:training)
+
+      expect(described_class.involving(user)).to contain_exactly(teaching, learning)
+    end
+  end
+
   describe ".latest_done（研修済み：誰から・いつ）" do
     let(:operation) { create(:operation) }
     let(:trainee) { create(:skill, operation:, level: 0).user }

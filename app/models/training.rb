@@ -8,6 +8,9 @@ class Training < ApplicationRecord
 
   # 完了していない予定（教える人の未確認・確認済み）
   scope :unfinished, -> { where.not(status: :done) }
+  # その人が教える人か教わる人の予定（わたしのスキルの「教える予定」「教わる予定」）。
+  # 教える人と教わる人は別の人（バリデーション）なので、同じ予定を二重に数えることはない
+  scope :involving, ->(user) { where(trainer: user).or(where(trainee: user)) }
   # 研修済み（誰から・いつ）。作業×教わる人ごとに、done の予定のうち done_on が最新の1件。
   # 1組なら find_by(operation:, trainee:)、一覧なら includes(:trainer) を付けて index_by で引く。
   # 最新の id を選ぶ部分（PostgreSQL の DISTINCT ON）は中に閉じ込め、外側では count や並べ替えも使えるようにする
