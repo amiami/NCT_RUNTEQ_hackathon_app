@@ -8,7 +8,7 @@ module NavigationHelper
   end
 
   def navigation_current?(path)
-    current_page?(path) || (path == staff_operations_path && current_page?(root_path))
+    current_page?(path)
   end
 
   def navigation_counts

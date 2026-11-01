@@ -72,7 +72,7 @@
 
 @layer components {
   .page-title {
-    @apply text-[26px] font-bold;
+    @apply sr-only;
   }
 
   .app-container {
@@ -240,13 +240,23 @@
     @apply px-2 text-left font-medium;
   }
 
-  /* 管理者の見立ての印をあとで右上の角に重ねるので relative にしておく */
+  /* 管理者の見立ての印を右上の角に重ねるので relative にしておく */
   .skill-map-cell {
     @apply relative flex min-h-12 min-w-14 flex-col items-center justify-center gap-0.5 rounded-lg p-1 text-[15px] font-bold;
   }
 
+  /* 見立ての印は右上の角に置く。レベルと「未読」は中央に縦に並ぶので重ならない */
+  .skill-map-cell > .assessment-mark {
+    @apply absolute top-0.5 right-1;
+  }
+
   .skill-map-unread {
     @apply rounded bg-unread px-1 text-[10px] leading-[15px] font-bold text-unread-content;
+  }
+
+  /* 管理者の見立ての印（▲・▼・▽・◇）。置き場所は使う側で決める（スキルマップはマスの右上） */
+  .assessment-mark {
+    @apply cursor-help text-xs leading-none font-bold text-skill-strong-content;
   }
 
   .capable-alert {

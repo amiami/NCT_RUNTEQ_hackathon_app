@@ -87,6 +87,21 @@ ja:
     training_done: ▽ 研修済み
     backup_trainer: ◇ 教えるのは後回し
 
+  # マスや名前の横に出す印と、マウスを乗せたときの説明（admin/shared/_assessment_mark）
+  admin_assessment_marks:
+    can_train:
+      symbol: ▲
+      description: 研修権限：レベル3だが、すでに教えられる
+    needs_training:
+      symbol: ▼
+      description: 要研修：研修が必要
+    training_done:
+      symbol: ▽
+      description: 研修済み：▼の人が研修を受け終えた
+    backup_trainer:
+      symbol: ◇
+      description: 教えるのは後回し：1人で作業はできるが、教えるのは少し不得意
+
   skills:
     assessments:
       update:
