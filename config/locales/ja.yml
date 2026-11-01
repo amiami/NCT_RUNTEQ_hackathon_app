@@ -79,3 +79,19 @@ ja:
     "2": 教えた人が「教え終わった」を押した
     "3": 本人が自己申告
     "4": 本人が自己申告
+
+  # 管理者の見立て。管理者画面だけで使い、スタッフ画面には出さない
+  admin_assessments:
+    can_train: ▲ 研修権限
+    needs_training: ▼ 要研修
+    training_done: ▽ 研修済み
+    backup_trainer: ◇ 教えるのは後回し
+
+  skills:
+    assessments:
+      update:
+        saved: 管理者の見立てを保存しました
+        failed: 管理者の見立てを保存できませんでした
+      errors:
+        not_assignable: "%{user}さんの「%{operation}」：%{assessment}はレベル%{level}のときだけ付けられます"
+        invalid: "%{user}さんの「%{operation}」：選べない見立てです"

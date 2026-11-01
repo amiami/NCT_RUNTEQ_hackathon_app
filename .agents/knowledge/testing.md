@@ -6,3 +6,4 @@
 - seeds の過去の完了済み研修は、現在のレベルでは依頼時の候補条件（作成時バリデーション）を満たさない → 固定の完了履歴だけ検証を省いて投入し、相手・状態・日付は `spec/seeds/seeds_spec.rb` で検証する。通常の研修作成には使わない。（2026-11-01）
 - `db:seed` は不足分だけ追加して既存のスキル・操作記録を保持する。デモ前に完全な初期状態へ戻すときだけ `db:seed:replant`（全件削除）を使う。（2026-11-01）
 - 新規DBへの `db:prepare` は seeds も投入するため、空のDBを前提にするRSpecがCIだけで失敗する → CIは `RAILS_ENV=test` で `db:create db:schema:load` を使い、seedsのspecだけ明示的に読み込む。修正確認は既存のテストDBだけでなく新規の専用DBでも行う。（2026-11-01）
+- main を取り込んだあと rspec が `Bundler::GemNotFound` で動かない → Gemfile.lock が変わっているので、`docker compose run --rm web bundle install` を先に実行する。（2026-11-01）
