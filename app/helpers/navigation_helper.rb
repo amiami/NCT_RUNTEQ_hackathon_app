@@ -11,9 +11,20 @@ module NavigationHelper
     current_page?(path)
   end
 
+  # タブの件数。共通レイアウトから shared/header に渡す。どの件数も問い合わせの回数が一定（N+1 にしない）。
+  # - スタッフ：わたしのスキル（完了していない教える予定・教わる予定）と、改訂のお知らせ（未確認）
+  # - 部長：スキルマップ（できる人が1人以下の作業）。部長がスタッフの画面を開いても、スタッフ用の件数は数えない
   def navigation_counts
-    # 操作ユーザー機能との接続時に、current_userから集計した件数を返す。
-    {}
+    return {} if current_user.nil?
+
+    if staff_operator?
+      {
+        training_count: Training.unfinished.involving(current_user).count,
+        unread_count: current_user.skills.unread.count
+      }
+    else
+      { skill_map_count: Operation.few_capable_count }
+    end
   end
 
   # ヘッダーのスイッチに渡す、操作する人の状態。選べるのはスキルを持つ人（管理者以外）だけ

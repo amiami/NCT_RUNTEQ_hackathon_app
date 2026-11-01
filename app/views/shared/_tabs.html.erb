@@ -1,4 +1,4 @@
-<%# skill_map_count: 管理者スキルマップ、training_count: 未完了の教える・教わる予定、unread_count: 改訂後未確認。省略・nilは仮表示99。 %>
+<%# skill_map_count: スキルマップ（できる人が1人以下の作業）、training_count: 未完了の教える・教わる予定、unread_count: 改訂後未確認。0件・省略・nil のときはバッジを出さない %>
 <% counts = {
      admin_skill_map_path => local_assigns[:skill_map_count],
      staff_skills_path => local_assigns[:training_count],
@@ -10,9 +10,9 @@
                 class: navigation_current?(path) ? "page-tab page-tab-active" : "page-tab",
                 aria: { current: navigation_current?(path) ? "page" : nil } do %>
       <span><%= label %></span>
-      <% if counts.key?(path) %>
-        <% count = counts.fetch(path) %>
-        <span class="notification-count"><%= count.nil? ? 99 : count %></span>
+      <% count = counts[path] %>
+      <% if count.to_i.positive? %>
+        <span class="notification-count"><%= count %></span>
       <% end %>
     <% end %>
   <% end %>
