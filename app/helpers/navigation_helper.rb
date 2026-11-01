@@ -16,6 +16,15 @@ module NavigationHelper
     {}
   end
 
+  # ヘッダーのスイッチに渡す、操作する人の状態。選べるのはスキルを持つ人（管理者以外）だけ
+  def operator_switch
+    {
+      staff: staff_operator?,
+      selected_id: current_user&.id,
+      candidates: User.skill_holders.order(:sort_order, :id).to_a
+    }
+  end
+
   def navigation_items
     if admin_page?
       [
