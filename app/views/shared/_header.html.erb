@@ -1,0 +1,43 @@
+<header>
+  <div class="header-bar">
+    <%= link_to root_path, class: "app-brand" do %>
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M4 4h10l6 6v10H4z" />
+        <path d="M14 4v6h6" />
+        <path d="M8 15l2 2 4-4" />
+      </svg>
+      <span>
+        <span class="app-brand-title"><%= t("app_name") %></span>
+        <span class="app-brand-department"><%= t("app_department") %></span>
+      </span>
+    <% end %>
+    <% operator = operator_switch %>
+    <div role="group" aria-label="<%= t("operators.switch_label") %>" class="role-navigation">
+      <% if operator[:staff] %>
+        <%= form_with url: operator_path, method: :patch, class: "role-form" do %>
+          <%= hidden_field_tag :user_id, "", id: nil %>
+          <%= button_tag t("navigation.roles.admin"), type: "submit", class: "role-link" %>
+        <% end %>
+        <span class="role-link role-link-active"><%= t("navigation.roles.staff") %></span>
+        <%= form_with url: operator_path, method: :patch, class: "role-form" do %>
+          <%= label_tag :user_id, t("operators.label"), class: "sr-only" %>
+          <%= select_tag :user_id, options_from_collection_for_select(operator[:candidates], :id, :name, operator[:selected_id]), class: "operator-select" %>
+          <%= button_tag t("operators.submit"), type: "submit", class: "role-link" %>
+        <% end %>
+      <% else %>
+        <span class="role-link role-link-active"><%= t("navigation.roles.admin") %></span>
+        <%= form_with url: operator_path, method: :patch, class: "role-form" do %>
+          <%= hidden_field_tag :user_id, operator[:candidates].first&.id, id: nil %>
+          <%= button_tag t("navigation.roles.staff"), type: "submit", class: "role-link", disabled: operator[:candidates].empty? %>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+  <%= render "shared/tabs", skill_map_count: local_assigns[:skill_map_count],
+                            training_count: local_assigns[:training_count],
+                            unread_count: local_assigns[:unread_count] %>
+  <div class="app-container pt-6">
+    <%= render "shared/skill_legend", admin: admin_page? %>
+    <%= render "shared/flash" %>
+  </div>
+</header>

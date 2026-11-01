@@ -4,3 +4,78 @@ ja:
 
   # アプリ固有の翻訳（モデル名・属性名など）はここに書く。
   # エラーメッセージや日付などの Rails 標準の翻訳は rails-i18n gem に入っている
+
+  activerecord:
+    attributes:
+      skill:
+        user: 人
+      training:
+        operation: 作業
+        trainer: 教える人
+        trainee: 教わる人
+        trainee_id: 教わる人
+    errors:
+      models:
+        skill:
+          attributes:
+            user:
+              not_skill_holder: はスキルを持つ人（管理者以外）にしてください
+        training:
+          attributes:
+            trainee:
+              same_as_trainer: は教える人と別の人にしてください
+              not_trainee_candidate: はこの作業で教わる人の条件を満たしていません
+            trainer:
+              not_trainer_candidate: はこの作業で教える人の条件を満たしていません
+            base:
+              cannot_destroy_done: 完了した研修予定は削除できません
+            trainee_id:
+              taken: にはこの作業で完了していない研修予定がすでにあります
+
+  page_titles:
+    admin: "管理者：%{page}"
+    staff: "スタッフ：%{page}"
+
+  operators:
+    switch_label: 操作する人の切り替え
+    label: 操作する人
+    submit: 切り替え
+    not_selectable: 選べない人です。操作する人は変わっていません
+    admin_only: 管理者の画面は、管理者（部長）に切り替えると開けます
+
+  navigation:
+    roles:
+      admin: 管理者（部長）
+      staff: スタッフ
+    admin:
+      operations: 作業ツリー（マニュアル）
+      skill_map: スキルマップ
+      trainings: 研修
+      manual_revisions: 改訂履歴
+    staff:
+      operations: 作業マニュアル
+      skills: わたしのスキル
+      manual_revisions: 改訂のお知らせ
+
+  skill_levels:
+    "0": 未着手
+    "1": マニュアル確認済み
+    "2": 研修済み（教わった）
+    "3": 先輩のもとでできる
+    "4": 作業を最後まで1人でできる
+
+  app_department: 株式会社〇〇 人事部
+
+  skill_level_short_labels:
+    "0": 未着手
+    "1": 確認済み
+    "2": 研修済み
+    "3": 先輩のもと
+    "4": 1人でできる
+
+  skill_level_descriptions:
+    "0": まだ何もしていない
+    "1": マニュアルを読んで「確認した」を押した
+    "2": 教えた人が「教え終わった」を押した
+    "3": 本人が自己申告
+    "4": 本人が自己申告

@@ -4,25 +4,40 @@
  * UI 部品ライブラリは使わず、Tailwind CSS だけで書く。
  * - 色・文字は @theme のデザイントークンにする。ビューでは 16 進数を直接書かず、トークン名のクラス（bg-primary など）を使う
  * - ボタン・バッジ・カードなど繰り返し使う部品の見た目は、@layer components のクラスにまとめる
- * 色はいまは仮の値。画面を作るときに、モック（mock/mock.html）の色に置き換える。
+ * 共通レイアウトの色・寸法はモックに合わせ、レベルは仕様書の0〜4を使う。
  */
 @theme {
-  --font-sans: "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic", sans-serif;
+  --font-sans: "Noto Sans JP", system-ui, sans-serif;
 
   --color-base-100: #fff; /* カードなどの背景 */
-  --color-base-200: #f4f6f4; /* ページの背景 */
-  --color-base-content: #1d2421; /* 本文の文字 */
-  --color-line: #d5dbd6; /* 枠線・区切り線 */
-  --color-muted: #55605a; /* 補足の文字 */
+  --color-base-200: #F3F4F6; /* ページの背景 */
+  --color-base-content: #1F2933; /* 本文の文字 */
+  --color-line: #E5E7EB; /* 枠線・区切り線 */
+  --color-muted: #4B5563; /* 補足の文字 */
 
-  --color-primary: #0f6b5c;
+  --color-primary: #1F2933;
   --color-primary-content: #fff;
-  --color-secondary: #cde7e0;
-  --color-secondary-content: #073c33;
+  --color-secondary: #E8EEF8;
+  --color-secondary-content: #1E3A5F;
   --color-warning: #fff2d8;
   --color-warning-content: #5c471c;
   --color-error: #b42318;
   --color-error-content: #fff;
+  --color-notification: #C2410C;
+  --color-notification-content: #fff;
+  --color-control-line: #D1D5DB;
+  --color-control-background: #EEF0F3;
+  --color-legend-content: #374151;
+  --shadow-role-selected: 0 1px 2px rgb(0 0 0 / 0.12);
+  --color-link: #1F5FBF;
+  --color-link-hover: #163F7E;
+  --color-skill-0: #EEF0F3;
+  --color-skill-1: #E3EDFB;
+  --color-skill-2: #C7DAF6;
+  --color-skill-3: #9FC0EE;
+  --color-skill-4: #6E9FE3;
+  --color-skill-content: #1E3A5F;
+  --color-skill-strong-content: #0B2545;
 }
 
 @layer components {
@@ -31,7 +46,7 @@
   }
 
   .btn {
-    @apply inline-flex cursor-pointer items-center justify-center gap-1 rounded-lg border border-line bg-base-100 px-4 py-2 text-sm font-bold text-base-content;
+    @apply inline-flex min-h-11 cursor-pointer items-center justify-center gap-1 rounded-lg border border-control-line bg-base-100 px-4 py-2.5 text-sm leading-[normal] font-medium text-base-content;
   }
 
   .btn-primary {
@@ -48,5 +63,140 @@
 
   .badge-warning {
     @apply bg-warning text-warning-content;
+  }
+}
+
+@layer components {
+  .page-title {
+    @apply text-[26px] font-bold;
+  }
+
+  .app-container {
+    @apply mx-auto w-full max-w-[1440px] px-6;
+  }
+
+  .header-bar {
+    @apply flex flex-wrap items-center gap-4 border-b border-line bg-base-100 px-6 py-3;
+  }
+
+  .app-brand {
+    @apply mr-auto flex items-center gap-2.5 text-base-content;
+  }
+
+  .app-brand-title {
+    @apply block text-[17px] font-bold;
+  }
+
+  .app-brand-department {
+    @apply block text-xs leading-[normal] text-muted;
+  }
+
+  .role-navigation {
+    @apply flex items-center gap-1 rounded-[10px] bg-control-background p-1;
+  }
+
+  .role-link {
+    @apply block min-h-11 cursor-pointer rounded-lg px-4 py-2.5 text-center text-sm leading-[normal] font-medium text-muted disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .role-link-active {
+    @apply cursor-default bg-base-100 text-base-content;
+    box-shadow: var(--shadow-role-selected);
+  }
+
+  .role-form {
+    @apply flex items-center gap-1;
+  }
+
+  .operator-select {
+    @apply min-h-11 rounded-lg border border-control-line bg-base-100 px-3 text-sm leading-[normal] text-base-content;
+  }
+
+  .page-navigation {
+    @apply flex flex-wrap gap-6 border-b border-line bg-base-100 px-6;
+  }
+
+  .page-tab {
+    @apply flex min-h-11 items-center gap-2 border-b-[3px] border-transparent px-1 py-3 text-[15px] font-medium text-muted;
+  }
+
+  .notification-count {
+    @apply rounded-full bg-notification px-2 py-px text-xs leading-[normal] font-bold text-notification-content;
+  }
+
+  .page-tab-active {
+    @apply border-base-content text-base-content;
+  }
+
+  .skill-legend {
+    @apply text-[13px] text-legend-content;
+  }
+
+  .skill-legend[open] {
+    @apply mb-1;
+  }
+
+  .legend-summary {
+    @apply flex cursor-pointer list-none flex-wrap items-center gap-3;
+  }
+
+  .legend-summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .legend-item {
+    @apply inline-flex items-center gap-1;
+  }
+
+  .legend-toggle {
+    @apply inline-flex min-h-9 items-center px-1 py-2 text-[13px] font-bold text-link underline;
+  }
+
+  .legend-toggle:hover {
+    @apply text-link-hover;
+  }
+
+  .legend-description {
+    @apply mt-2 rounded-xl border border-line bg-base-100 px-4 py-3.5;
+  }
+
+  .skill-level {
+    @apply inline-flex h-[22px] min-w-[26px] shrink-0 items-center justify-center rounded-md text-xs leading-[normal] font-bold;
+  }
+
+  .skill-level-0 {
+    @apply bg-skill-0 text-muted;
+  }
+
+  .skill-level-1 {
+    @apply bg-skill-1 text-skill-content;
+  }
+
+  .skill-level-2 {
+    @apply bg-skill-2 text-skill-content;
+  }
+
+  .skill-level-3 {
+    @apply bg-skill-3 text-skill-strong-content;
+  }
+
+  .skill-level-4 {
+    @apply bg-skill-4 text-skill-strong-content;
+  }
+
+  .flash-message {
+    @apply mt-2 rounded-lg px-4 py-3 text-sm leading-[normal];
+  }
+
+  .flash-notice {
+    @apply bg-secondary text-secondary-content;
+  }
+
+  .flash-warning {
+    @apply bg-warning text-warning-content;
+  }
+
+  .flash-alert {
+    @apply bg-error text-error-content;
   }
 }

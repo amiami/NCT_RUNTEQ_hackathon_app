@@ -21,7 +21,7 @@ docker compose run --rm web bin/rails db:prepare   # DB を作る
 docker compose up -d                               # 起動する
 ```
 
-http://localhost:3000 を開き、「マニュあっぷ」のページに緑色の「保存する」ボタンが表示されれば準備完了です。
+http://localhost:3000 を開き、「マニュあっぷ」のヘッダーとスタッフの「作業マニュアル」が表示されることを確認します。
 
 テストも1回通しておきます。
 
@@ -63,7 +63,8 @@ Rails のコマンドは、パソコンで直接ではなく `docker compose run
 | 起動 | `docker compose up -d` |
 | 停止 | `docker compose stop` |
 | DB の作成・更新 | `docker compose run --rm web bin/rails db:prepare` |
-| サンプルデータを入れ直す | `docker compose run --rm web bin/rails db:seed:replant` |
+| サンプルデータを追加する（既存データは保持） | `docker compose run --rm web bin/rails db:seed` |
+| サンプルデータを入れ直す（既存データを全件削除） | `docker compose run --rm web bin/rails db:seed:replant` |
 | テスト（全部） | `docker compose run --rm web bundle exec rspec` |
 | テスト（1ファイル） | `docker compose run --rm web bundle exec rspec spec/path/to_spec.rb` |
 | 書き方チェック | `docker compose run --rm web bin/rubocop`（自動修正は `-a`） |
