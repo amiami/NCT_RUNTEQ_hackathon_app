@@ -1,0 +1,54 @@
+<div class="operation-browser">
+  <aside class="operation-tree-panel">
+    <nav aria-label="<%= t('operations.tree_label') %>">
+      <% categories.each do |category| %>
+        <section class="operation-category" aria-labelledby="operation-category-<%= category.id %>">
+          <div class="operation-category-heading">
+            <h2 id="operation-category-<%= category.id %>" class="operation-category-title"><%= category.name %></h2>
+            <% kind_label = operation_category_kind_label(operations_by_category.fetch(category.id)) %>
+            <% if kind_label.present? %>
+              <span class="operation-category-kind"><%= kind_label %></span>
+            <% end %>
+          </div>
+          <ul class="operation-tree-list">
+            <% operations_by_category.fetch(category.id).each do |item| %>
+              <li>
+                <%= link_to operation_selection_path(item),
+                            class: ["operation-tree-link", ("operation-tree-link-selected" if item == operation)],
+                            aria: { current: ("page" if item == operation) } do %>
+                  <% unless skill_levels.nil? %>
+                    <% level = skill_levels.fetch(item.id, 0) %>
+                    <span class="skill-level skill-level-<%= level %>" title="<%= t('skill_levels')[level.to_s] %>"><span class="sr-only"><%= t('operations.level_prefix') %></span><%= level %></span>
+                  <% end %>
+                  <span class="operation-tree-name"><%= item.name %></span>
+                  <% if item.manual&.external? %>
+                    <span class="operation-tree-kind"><%= t("operations.external_marker") %></span>
+                  <% end %>
+                  <% if admin_page? %>
+                    <% count = capable_counts.fetch(item.id, 0) %>
+                    <% if count <= 1 %>
+                      <span class="operation-badge operation-badge-warning"><%= t("operations.capable_count", count: count) %></span>
+                    <% elsif (date = operation_revision_date(item.manual)) %>
+                      <span class="operation-badge operation-badge-revision"><%= t("operations.revision_badge", date: l(date, format: :operation_date)) %></span>
+                    <% end %>
+                  <% end %>
+                <% end %>
+              </li>
+            <% end %>
+          </ul>
+        </section>
+      <% end %>
+      <% if operation.nil? %>
+        <p class="operation-empty"><%= t("operations.empty") %></p>
+      <% end %>
+    </nav>
+  </aside>
+
+  <% if operation %>
+    <%= render "operations/manual", operation: operation, capable_count: capable_counts.fetch(operation.id, 0) %>
+  <% else %>
+    <div class="operation-manual-panel">
+      <p class="operation-empty"><%= t("operations.empty_manual") %></p>
+    </div>
+  <% end %>
+</div>

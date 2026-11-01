@@ -1,0 +1,53 @@
+<% manual = operation.manual %>
+<article class="operation-manual-panel" aria-labelledby="operation-title">
+  <p class="operation-path"><%= operation.category.name %> / <%= operation.name %></p>
+  <div class="operation-manual-heading">
+    <h2 id="operation-title" class="operation-manual-title"><%= operation.name %></h2>
+    <% if manual %>
+      <span class="operation-badge operation-badge-neutral"><%= t("operations.kinds.#{manual.kind}") %></span>
+      <span class="operation-badge operation-badge-neutral"><%= t("operations.version", version: manual.version) %></span>
+      <% if (date = operation_revision_date(manual)) %>
+        <span class="operation-revision-date"><%= t("operations.last_revised", date: l(date, format: :operation_full_date)) %></span>
+      <% else %>
+        <span class="operation-revision-date"><%= t("operations.no_revision") %></span>
+      <% end %>
+    <% end %>
+    <% if operation.season_note.present? %>
+      <span class="operation-badge operation-badge-neutral"><%= t("operations.season", note: operation.season_note) %></span>
+    <% end %>
+    <% if capable_count <= 1 %>
+      <span class="operation-badge operation-badge-warning"><%= t("operations.capable_count", count: capable_count) %></span>
+    <% end %>
+  </div>
+
+  <% if manual.nil? %>
+    <p class="operation-empty"><%= t("operations.no_manual") %></p>
+  <% elsif manual.internal? %>
+    <ol class="operation-manual-steps">
+      <% manual.steps.each do |step| %>
+        <li><%= step %></li>
+      <% end %>
+    </ol>
+  <% else %>
+    <% site_url = manual_site_url(manual) %>
+    <div class="operation-external">
+      <svg class="operation-external-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"></path>
+        <path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"></path>
+      </svg>
+      <div class="operation-external-description">
+        <p class="operation-external-hint"><%= t("operations.external_hint") %></p>
+        <% if site_url %>
+          <%= link_to manual.url, site_url, class: "operation-external-url", target: "_blank", rel: "noopener noreferrer" %>
+        <% else %>
+          <p class="operation-external-url"><%= manual.url %></p>
+        <% end %>
+      </div>
+      <% if site_url %>
+        <%= link_to t("operations.open_site"), site_url, class: "btn operation-open-site", target: "_blank", rel: "noopener noreferrer" %>
+      <% else %>
+        <button type="button" class="btn operation-open-site" disabled><%= t("operations.open_site") %></button>
+      <% end %>
+    </div>
+  <% end %>
+</article>
