@@ -1,9 +1,12 @@
+<%# 見立ての下書きのある画面を Turbo が覚えていて「戻る」で出さないよう、キャッシュから外す（共通部品 unsaved-changes の決まり） %>
+<% turbo_exempts_page_from_cache %>
 <% content_for :title, "#{t('page_titles.admin', page: t('navigation.admin.skill_map'))} | #{t('app_name')}" %>
 <h1 class="page-title"><%= t("page_titles.admin", page: t("navigation.admin.skill_map")) %></h1>
 
-<%# 表は入れ替わらないので、どのマスの詳細を見ているかの印と絞り込みは skill-map コントローラ（Stimulus）で行う。
-    警告のボタンも表も操作するので、警告・詳細・表をまとめて囲む %>
-<div data-controller="skill-map">
+<%# 表は入れ替わらないので、どのマスの詳細を見ているかの印・絞り込み・見立ての下書きは skill-map コントローラ（Stimulus）で行う。
+    警告のボタン・詳細・表・「変更を保存」をすべて操作するのでまとめて囲み、共通部品（unsaved-changes）も同じところに付ける %>
+<div data-controller="unsaved-changes skill-map"
+     data-unsaved-changes-confirm-message-value="<%= t("unsaved_changes.confirm_leaving") %>">
 <%# 全体の件数は、タブの件数と同じ数え方を使う（分類ごとの件数はコントローラで数える） %>
 <% few_capable_total = Operation.few_capable_count %>
 <% if few_capable_total.positive? %>
@@ -79,4 +82,14 @@
     </table>
   </div>
 </section>
+
+<%# 「変更を保存」の枠。見立ての下書きがあるときだけ共通部品が出す。送る直前（prepare）に下書きを hidden の入力欄にする。
+    研修画面と違い、フォームそのものを枠（.save-bar）にしている（枠の中に並べるための CSS を足さずに済むため） %>
+<%= form_with url: skills_assessment_path, method: :patch, class: "save-bar", html: { hidden: true },
+              data: { unsaved_changes_target: "bar", unsaved_changes_skip: true,
+                      action: "submit->skill-map#prepare" } do |form| %>
+  <div data-skill-map-target="fields"></div>
+  <%= form.button t(".save"), type: "submit", class: "btn btn-primary" %>
+  <span class="save-bar-note"><%= t(".unsaved_note") %></span>
+<% end %>
 </div>

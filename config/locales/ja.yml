@@ -182,6 +182,8 @@ ja:
         few_capable_warning: "できる人（1人でできる＝レベル4）が1人以下の作業が%{count}件あります"
         few_capable_warning_description: 担当者が休んだり辞めたりすると止まる恐れがあります。研修画面で優先して教える人を決めましょう。
         few_capable_filter: できる人が1人以下の作業だけ表示
+        save: 変更を保存
+        unsaved_note: （まだ保存されていません!）
       cell:
         unread: 未読
         unread_description: 改定後のマニュアルをまだ確認していません
