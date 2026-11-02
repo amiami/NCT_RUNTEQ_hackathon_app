@@ -103,25 +103,26 @@ RSpec.describe "スキルマップのマスの詳細（管理者）" do
     end
   end
 
+  # 見立ては、ラジオボタンで今の値が選ばれた状態で出る（選び直すと下書きになる）
   describe "AC-4: 管理者の見立て" do
     def assessment
       detail.find(".skill-detail-assessment")
     end
 
-    it "見立てがなければ「なし」が出る" do
+    it "見立てがなければ「なし」が選ばれている" do
       skill = create(:skill, operation: payroll, level: 3)
 
       get admin_skill_path(skill)
 
-      expect(assessment).to have_text("なし", exact: true, normalize_ws: true)
+      expect(assessment).to have_checked_field("なし")
     end
 
-    it "今のレベルで意味のある見立ては、実際の値だけが出る（説明は添えない）" do
+    it "今のレベルで意味のある見立ては、その値が選ばれている（説明は添えない）" do
       skill = create(:skill, operation: payroll, level: 3, admin_assessment: :can_train)
 
       get admin_skill_path(skill)
 
-      expect(assessment).to have_text("▲ 研修権限")
+      expect(assessment).to have_checked_field("▲ 研修権限")
       expect(assessment).to have_no_css(".skill-detail-assessment-note")
     end
 
@@ -130,14 +131,76 @@ RSpec.describe "スキルマップのマスの詳細（管理者）" do
       [ 3, :backup_trainer ] => [ "◇ 教えるのは後回し", "レベル4になると、教える人の候補の後ろに並びます" ],
       [ 4, :training_done ] => [ "▽ 研修済み", "▼から研修を受け終えました（いまは普通のレベル4として扱います）" ]
     }.each do |(level, admin_assessment), (value, note)|
-      it "#{level}#{value[0]} は、実際の値と説明が出る" do
+      it "#{level}#{value[0]} は、実際の値が選ばれていて、説明が出る" do
         skill = create(:skill, operation: payroll, level:, admin_assessment:)
 
         get admin_skill_path(skill)
 
-        expect(assessment).to have_text(value)
+        expect(assessment).to have_checked_field(value)
         expect(assessment).to have_css(".skill-detail-assessment-note", exact_text: note)
       end
+    end
+  end
+
+  describe "見立ての選択肢（下書き）" do
+    def assessment
+      detail.find(".skill-detail-assessment")
+    end
+
+    def enabled_choices
+      assessment.all("input[type='radio']:not([disabled])").map { |radio| radio.find(:xpath, "..").text.squish }
+    end
+
+    def disabled_choices
+      assessment.all("input[type='radio'][disabled]").map { |radio| radio.find(:xpath, "..").text.squish }
+    end
+
+    it "レベル3なら、なし・▲・▼を選べて、◇は押せない。▽は出ない" do
+      get admin_skill_path(create(:skill, operation: payroll, level: 3))
+
+      expect(enabled_choices).to eq [ "なし", "▲ 研修権限", "▼ 要研修" ]
+      expect(disabled_choices).to eq [ "◇ 教えるのは後回し" ]
+      expect(assessment).to have_no_field("▽ 研修済み")
+    end
+
+    it "レベル4なら、なし・◇を選べて、▲・▼は押せない" do
+      get admin_skill_path(create(:skill, operation: payroll, level: 4))
+
+      expect(enabled_choices).to eq [ "なし", "◇ 教えるのは後回し" ]
+      expect(disabled_choices).to eq [ "▲ 研修権限", "▼ 要研修" ]
+    end
+
+    it "レベル0〜2なら、なしだけを選べる" do
+      get admin_skill_path(create(:skill, operation: payroll, level: 2))
+
+      expect(enabled_choices).to eq [ "なし" ]
+      expect(disabled_choices).to eq [ "▲ 研修権限", "▼ 要研修", "◇ 教えるのは後回し" ]
+    end
+
+    it "今の値は、今のレベルで付けられなくても押せる（選び直すと下書きの取り消しになるため）" do
+      get admin_skill_path(create(:skill, operation: payroll, level: 4, admin_assessment: :can_train))
+
+      expect(enabled_choices).to eq [ "なし", "▲ 研修権限", "◇ 教えるのは後回し" ]
+      expect(disabled_choices).to eq [ "▼ 要研修" ]
+    end
+
+    it "▽は、今の値が▽のときだけ出る（「教え終わった」でしか付かないため）" do
+      get admin_skill_path(create(:skill, operation: payroll, level: 3, admin_assessment: :training_done))
+
+      expect(enabled_choices).to eq [ "なし", "▲ 研修権限", "▼ 要研修", "▽ 研修済み" ]
+      expect(assessment).to have_checked_field("▽ 研修済み")
+    end
+
+    it "選ぶと skill-map コントローラの下書きに入る（スキルの ID と元の見立てを渡す）" do
+      skill = create(:skill, operation: payroll, level: 3, admin_assessment: :needs_training)
+
+      get admin_skill_path(skill)
+
+      choices = assessment.find("fieldset[data-skill-map-target='assessment']")
+      expect(choices["data-skill-id"]).to eq skill.id.to_s
+      expect(choices["data-original-assessment"]).to eq "needs_training"
+      expect(choices.all("input[type='radio']").map { |radio| radio["data-action"] }.uniq).to eq [ "skill-map#chooseAssessment" ]
+      expect(choices.all("input[type='radio']").map(&:value)).to eq [ "", "can_train", "needs_training", "backup_trainer" ]
     end
   end
 
