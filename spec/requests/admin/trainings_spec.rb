@@ -145,6 +145,16 @@ RSpec.describe "研修画面（S-3）" do
       expect(trainers).to eq [ "4 山本", "4 佐藤", "4 田中", "3 小林 ▲", "4 中村 ◇", "管理者" ]
     end
 
+    # 凡例（ページの上）は main 側で直すので、ここではカードの中だけを確かめる
+    it "▲・◇ の説明（title）が「指導できる」「指導に不安あり」になっていて、古い名前は出ない" do
+      open_screen
+
+      card = card("勤怠の締め")
+      expect(card.find(".trainer-chip", text: "小林").find(".assessment-mark")[:title]).to eq "指導できる"
+      expect(card.find(".trainer-chip", text: "中村").find(".assessment-mark")[:title]).to eq "指導に不安あり"
+      expect(card.native.to_html).not_to include("研修権限", "教えるのは後回し")
+    end
+
     it "未研修に、レベル0・1と▼の人が並び、▼が名前の横に出る" do
       open_screen
 
