@@ -26,6 +26,7 @@
   --color-notification: #C2410C;
   --color-notification-content: #fff;
   --color-control-line: #D1D5DB;
+  --color-caution: #7C2D12; /* できる人が1人以下の作業のカードの枠（茶色） */
   --color-control-background: #EEF0F3;
   --color-legend-content: #374151;
   --shadow-role-selected: 0 1px 2px rgb(0 0 0 / 0.12);
@@ -198,6 +199,141 @@
 
   .flash-alert {
     @apply bg-error text-error-content;
+  }
+}
+
+/* 研修画面（S-3） */
+@layer components {
+  .training-layout {
+    @apply grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_320px];
+  }
+
+  .training-main {
+    @apply flex flex-col gap-4;
+  }
+
+  .training-hint {
+    @apply text-sm leading-[normal] text-muted;
+  }
+
+  .training-filters {
+    @apply flex flex-wrap gap-2;
+  }
+
+  .filter-chip {
+    @apply inline-flex min-h-9 cursor-pointer items-center gap-2 rounded-full border border-control-line bg-base-100 px-4 text-sm leading-[normal] font-medium text-base-content;
+  }
+
+  .filter-chip-active {
+    @apply border-primary bg-primary text-primary-content;
+  }
+
+  .filter-count {
+    @apply rounded-full bg-control-background px-2 text-xs font-bold text-base-content;
+  }
+
+  /* カード：見出し（作業名）と4列の間に横線、列の間に縦線を入れる */
+  .training-card {
+    @apply overflow-hidden p-0;
+  }
+
+  /* できる人が1人以下の作業は、枠の色を変えて目立たせる */
+  .training-card-caution {
+    @apply border-caution;
+  }
+
+  .training-card-title {
+    @apply flex flex-wrap items-center gap-2.5 px-3.5 py-2.5 text-[17px] font-bold;
+  }
+
+  /* 日付の列だけ狭くする。狭い画面では2列ずつに折り返す */
+  .training-card-grid {
+    @apply grid grid-cols-2 border-t border-line md:grid-cols-[minmax(150px,0.62fr)_repeat(3,minmax(0,1fr))];
+  }
+
+  .training-column {
+    @apply flex min-w-0 flex-col gap-2 border-r border-line px-3.5 py-3 last:border-r-0 max-md:nth-2:border-r-0 max-md:nth-[-n+2]:border-b;
+  }
+
+  .training-column-label {
+    @apply text-xs font-bold text-muted;
+  }
+
+  .date-field {
+    @apply min-h-9 rounded-lg border border-control-line bg-base-100 px-2 text-sm text-base-content;
+  }
+
+  .due-soon {
+    @apply font-bold text-notification;
+  }
+
+  .date-field.due-soon {
+    @apply border-notification;
+  }
+
+  .season-note {
+    @apply text-xs leading-[normal] text-muted;
+  }
+
+  .chip-list {
+    @apply flex flex-wrap gap-2;
+  }
+
+  .trainer-chip,
+  .trainee-chip {
+    @apply inline-flex min-h-9 cursor-pointer items-center gap-1.5 rounded-full border border-control-line bg-base-100 px-3 text-sm leading-[normal] text-base-content;
+  }
+
+  .plan-chip {
+    @apply inline-flex cursor-pointer flex-col items-start gap-0.5 rounded-lg bg-secondary px-3 py-2 text-left text-sm leading-[normal] text-secondary-content;
+  }
+
+  .plan-chip-due {
+    @apply text-xs;
+  }
+
+  .chip-empty {
+    @apply text-sm leading-[normal] text-muted;
+  }
+
+  .assessment-mark {
+    @apply text-xs font-bold text-secondary-content;
+  }
+
+  .training-empty {
+    @apply text-sm text-muted;
+  }
+
+  .assigned-trainings {
+    @apply flex flex-col gap-3 p-5 lg:sticky lg:top-4;
+  }
+
+  .assigned-trainings-title {
+    @apply text-base font-bold;
+  }
+
+  .assigned-training-list {
+    @apply flex flex-col gap-3;
+  }
+
+  .assigned-training {
+    @apply flex flex-col gap-1.5 rounded-lg border border-line p-3 text-sm leading-[normal];
+  }
+
+  .assigned-training-operation {
+    @apply font-bold;
+  }
+
+  .assigned-training-meta {
+    @apply flex flex-wrap items-center gap-2;
+  }
+
+  .declared-note {
+    @apply text-xs text-muted;
+  }
+
+  .assigned-trainings-empty {
+    @apply text-sm leading-[normal] text-muted;
   }
 }
 
@@ -457,5 +593,84 @@
   /* 「（まだ保存されていません!）」などの小さな文言 */
   .save-bar-note {
     @apply text-xs font-bold text-notification;
+  }
+}
+
+/* 研修画面の下書き（#61） */
+@layer components {
+  /* 選んだ未研修の人 */
+  .trainee-chip-selected {
+    @apply border-primary bg-primary text-primary-content;
+  }
+
+  /* 下書きで追加した予定（まだ保存していない）。点線の枠で保存済みと見分ける */
+  .plan-chip-draft {
+    @apply border border-dashed border-secondary-content;
+  }
+
+  /* 取り消す下書きにした保存済みの予定 */
+  .plan-chip-cancelled,
+  .assigned-training-cancelled {
+    @apply line-through opacity-60;
+  }
+
+  .assigned-training-actions {
+    @apply flex flex-wrap items-center gap-2;
+  }
+
+  .save-bar-form {
+    @apply flex items-center gap-3;
+  }
+}
+
+/* わたしのスキル（S-6）。左：わたしのスキルの一覧（#80）、右：教える予定・教わる予定（#63） */
+@layer components {
+  .my-skills-layout {
+    @apply grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_320px];
+  }
+
+  .my-skill-list {
+    @apply flex min-w-0 flex-col gap-4;
+  }
+
+  .my-trainings {
+    @apply flex flex-col gap-5 p-5 lg:sticky lg:top-4;
+  }
+
+  .my-training-section {
+    @apply flex flex-col gap-3;
+  }
+
+  .my-training-title {
+    @apply text-base font-bold;
+  }
+
+  .my-training-list {
+    @apply flex flex-col gap-3;
+  }
+
+  .my-training {
+    @apply flex flex-col gap-1.5 rounded-lg border border-line p-3 text-sm leading-[normal];
+  }
+
+  /* 完了した教わる予定（研修済みになりました）は、背景を少し沈めて未完了と見分ける */
+  .my-training-done-item {
+    @apply bg-base-200;
+  }
+
+  .my-training-operation {
+    @apply font-bold;
+  }
+
+  .my-training-actions {
+    @apply flex flex-wrap items-center gap-3;
+  }
+
+  .my-training-link {
+    @apply text-sm font-bold text-link underline hover:text-link-hover;
+  }
+
+  .my-training-empty {
+    @apply text-sm leading-[normal] text-muted;
   }
 }
