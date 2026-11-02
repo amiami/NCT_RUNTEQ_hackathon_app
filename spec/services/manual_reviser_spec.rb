@@ -66,8 +66,9 @@ RSpec.describe ManualReviser do
     let(:manual) { create(:manual, :external) }
 
     it "URLと本文を変えずに版を上げ、本文の差分なしで履歴を残す" do
+      original_url = manual.url
       expect { revise }.to change(ManualRevision, :count).by(1)
-      expect(manual.reload).to have_attributes(version: 2, url: "https://example.com/manual", body: nil)
+      expect(manual.reload).to have_attributes(version: 2, url: original_url, body: nil)
       expect(manual.manual_revisions.sole).to have_attributes(user: manager, version: 2,
         memo: "手順を更新", body_before: nil, body_after: nil)
     end
