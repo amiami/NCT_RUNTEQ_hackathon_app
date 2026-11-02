@@ -245,10 +245,10 @@ RSpec.describe "スキルマップ（管理者）" do
 
     describe "AC-4: マウスを乗せると説明が出る" do
       {
-        [ 3, :can_train ] => "研修権限：レベル3だが、すでに教えられる",
+        [ 3, :can_train ] => "指導できる：レベル3だが、すでに教えられる",
         [ 3, :needs_training ] => "要研修：研修が必要",
         [ 3, :training_done ] => "研修済み：▼の人が研修を受け終えた",
-        [ 4, :backup_trainer ] => "教えるのは後回し：1人で作業はできるが、教えるのは少し不得意"
+        [ 4, :backup_trainer ] => "指導に不安あり：1人で作業はできるが、教えるのは少し不得意"
       }.each do |(level, assessment), description|
         it "#{assessment} の説明" do
           skill = skill_with(level, assessment)
