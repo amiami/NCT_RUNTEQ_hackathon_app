@@ -16,3 +16,5 @@
 - 「改定後に未確認」をまとめて数えるときは `Skill.unread`（`unread?` と同じ条件の SQL）を使う → `skills.count(&:unread?)` は1件ずつ `operation.manual` を読んで N+1 になる。（2026-11-01）
 - できる人が1人以下の作業の数は `Operation.few_capable_count` → `Skill.capable_counts` は0人の作業を含まないので、そのまま `count { <= 1 }` すると0人の作業を数え落とす。（2026-11-01）
 - その人の教える予定・教わる予定は `Training.involving(user)`（未完了だけなら `.unfinished` と組み合わせる）。（2026-11-01）
+- 研修画面の右の一覧は `TrainingBoard.assigned_trainings`（未完了の予定すべて＋教わる人のスキル）→ カード（`TrainingBoard.cards`）は対象の人がいる作業だけなので、カードの予定から作らない（申告で対象から外れた作業の予定が消えてしまう）。（2026-11-02）
+- 見立ての記号は `TrainingsHelper#assessment_mark(skill)` で出す → `assessment_meaningful?` が false なら何も出さない。管理者の画面だけで使い、スタッフの画面では呼ばない。（2026-11-02）

@@ -7,3 +7,4 @@
 - `db:seed` は不足分だけ追加して既存のスキル・操作記録を保持する。デモ前に完全な初期状態へ戻すときだけ `db:seed:replant`（全件削除）を使う。（2026-11-01）
 - 新規DBへの `db:prepare` は seeds も投入するため、空のDBを前提にするRSpecがCIだけで失敗する → CIは `RAILS_ENV=test` で `db:create db:schema:load` を使い、seedsのspecだけ明示的に読み込む。修正確認は既存のテストDBだけでなく新規の専用DBでも行う。（2026-11-01）
 - `travel_to` は `around` ではなく `before` で呼ぶ（RuboCop の `RSpecRails/TravelAround`）→ テストが終わると自動で元の時刻に戻る。（2026-11-02）
+- `includes` は先読みする相手が0件だと問い合わせ自体を省く → 「件数が増えても問い合わせの回数が変わらない」テストは、比べる前の状態にも1件以上入れておく（0件と1件で差が出て落ちる）。（2026-11-02）
