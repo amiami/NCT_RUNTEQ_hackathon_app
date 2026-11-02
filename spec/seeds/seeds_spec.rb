@@ -129,6 +129,14 @@ RSpec.describe "サンプルデータ" do # rubocop:disable RSpec/DescribeClass 
     )
   end
 
+  it "研修画面の候補：勤怠の締めの教える人は 山本 → 小林▲ → 中村◇ → 管理者、年末調整の中村▼は未研修に入る" do
+    seed
+    cards = TrainingBoard.cards.index_by { |card| card.operation.name }
+
+    expect(cards.fetch("勤怠の締め").trainers.map(&:name)).to eq [ "山本 直子", "小林 由美", "中村 健太", "管理者" ]
+    expect(cards.fetch("年末調整").trainee_skills.map { |skill| skill.user.name }).to include("中村 健太")
+  end
+
   it "再実行しても重複せず、デモ中の変更と記録を保持する" do
     seed
     skill = Skill.find_by!(user: User.find_by!(name: "吉田 あかり"), operation: Operation.find_by!(name: "給与計算"))

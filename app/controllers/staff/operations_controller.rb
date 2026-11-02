@@ -4,7 +4,11 @@ module Staff
 
     def index
       load_operation_browser
-      @skill_levels = current_user.skills.pluck(:operation_id, :level).to_h if staff_operator?
+      if staff_operator?
+        skills = current_user.skills.select(:operation_id, :level, :confirmed_version).index_by(&:operation_id)
+        @skill_levels = skills.transform_values(&:level)
+        @confirmation_skill = skills[@operation&.id]
+      end
     end
   end
 end

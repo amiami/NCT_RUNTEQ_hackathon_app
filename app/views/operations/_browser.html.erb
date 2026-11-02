@@ -45,7 +45,8 @@
   </aside>
 
   <% if operation %>
-    <%= render "operations/manual", operation: operation, capable_count: capable_counts.fetch(operation.id, 0) %>
+    <%= render "operations/manual", operation: operation, capable_count: capable_counts.fetch(operation.id, 0),
+               confirmation_skill: confirmation_skill %>
   <% else %>
     <div class="operation-manual-panel">
       <p class="operation-empty"><%= t("operations.empty_manual") %></p>
