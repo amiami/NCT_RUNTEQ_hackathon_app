@@ -20,6 +20,14 @@ RSpec.describe "アプリ内マニュアルの改定" do
     expect(Capybara.string(response.body)).to have_field("改定メモ")
   end
 
+  it "改定編集画面でも作業ツリーだけを現在のタブとして強調する" do
+    get edit_admin_operation_manual_path(operation)
+    document = Capybara.string(response.body)
+    expect(document).to have_css('nav[aria-label="画面切り替え"] a.page-tab-active[aria-current="page"]', count: 1,
+      text: "作業ツリー（マニュアル）")
+    expect(document.find_link("作業ツリー（マニュアル）")[:href]).to eq(admin_operations_path)
+  end
+
   it "保存後は選択した作業に戻り、版・改定日・手順が反映される" do
     travel_to Time.zone.local(2026, 11, 2, 10) do
       expect { revise }.to change(ManualRevision, :count).by(1)

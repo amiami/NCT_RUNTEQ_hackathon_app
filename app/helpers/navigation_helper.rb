@@ -8,6 +8,8 @@ module NavigationHelper
   end
 
   def navigation_current?(path)
+    return true if path == admin_operations_path && controller_path == "admin/operations/manuals"
+
     current_page?(path)
   end
 

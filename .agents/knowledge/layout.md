@@ -9,3 +9,5 @@
 - 立場別リンクは `navigation.roles`、見出しとブラウザタイトルの立場付き表記は `page_titles` をja.ymlで管理する。`page` に既存のタブ名の翻訳を渡す。（2026-10-31）
 - タブの件数は `NavigationHelper#navigation_counts` が `current_user` から数え、共通レイアウトから header → tabs へ渡す。スタッフは `training_count`・`unread_count`、部長は `skill_map_count` だけ。0件・nil はバッジを出さない（仮表示の99は廃止）。件数を足すときは、問い合わせの回数が一定になるスコープで数える（`spec/helpers/navigation_helper_spec.rb` で回数を確かめている）。（2026-11-01）
 - 操作する人（部長／スタッフ）は `PATCH /operator`（`OperatorsController#update`）で切り替え、`session[:user_id]` に持つ。`current_user` は選んだスタッフ、未選択・いなくなったときは部長（管理者）、ユーザーが0人なら nil。管理者の画面は `Admin::BaseController` でスタッフのとき弾く。ヘッダーは `NavigationHelper#operator_switch` を呼ぶので、view spec では `operator_switch` をスタブする。（2026-11-01）
+
+- マニュアル改定編集のURLは作業ツリーと異なるため、`NavigationHelper#navigation_current?` で `admin/operations/manuals` を管理者の作業ツリータブに対応させる。保存失敗時の再表示でも同じタブを強調する。（2026-11-02）
