@@ -13,5 +13,6 @@
 - 「改定後に未確認」をまとめて数えるときは `Skill.unread`（`unread?` と同じ条件の SQL）を使う → `skills.count(&:unread?)` は1件ずつ `operation.manual` を読んで N+1 になる。（2026-11-01）
 - できる人が1人以下の作業の数は `Operation.few_capable_count` → `Skill.capable_counts` は0人の作業を含まないので、そのまま `count { <= 1 }` すると0人の作業を数え落とす。（2026-11-01）
 - その人の教える予定・教わる予定は `Training.involving(user)`（未完了だけなら `.unfinished` と組み合わせる）。（2026-11-01）
-
 - 作業ツリーのスタッフ状況は `OperationStaffStatus.rows(operation)` を使う。スキルを持つ人全員と必要なスキル項目、`Training.latest_done.includes(:trainer)` をまとめて取得し、見立てをカードに渡さない（スキル未作成はレベル0）。（2026-11-02）
+- マニュアルの改定は `ManualReviser` がマニュアルをロックして本文・版・改訂記録をまとめて保存する。編集画面の版を渡し、古い版からの保存は409で拒否する（確認版・スキルは更新しない）。（2026-11-02）
+- 外部サイトの改定も `ManualReviser` を使い、本文を渡さずメモと表示中の版を渡す。URL・本文・スキルを変えず、履歴の本文差分はNULLにする。外部用フォームの二重送信は最新表示へ戻して案内する。（2026-11-02）

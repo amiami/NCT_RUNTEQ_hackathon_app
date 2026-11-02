@@ -53,9 +53,20 @@ RSpec.describe "作業ごとのスタッフ状況" do
     create(:training, operation: operation, trainee: trainee, trainer: manager, status: :done, done_on: Date.new(2026, 10, 2))
     create(:training, operation: operation, trainee: trainee, trainer: old_trainer)
     show_status
-    expect(row("教わった人")).to have_text("研修：済み（管理者さんから・2026/10/02）")
+    expect(row("教わった人")).to have_text("研修：済み（管理者から・2026/10/02）")
     expect(row("教わった人")).to have_no_text("以前の先生")
     expect(row("教わった人")).to have_no_text("研修：まだ")
+  end
+
+  it "スタッフが教えた研修にはさんを付ける" do
+    trainer = create(:user, name: "教えた人")
+    trainee = create(:user, name: "教わった人")
+    create(:skill, user: trainer, operation: operation, level: 4)
+    create(:skill, user: trainee, operation: operation, level: 0)
+    create(:training, operation: operation, trainee: trainee, trainer: trainer,
+      status: :done, done_on: Date.new(2026, 10, 2))
+    show_status
+    expect(row("教わった人")).to have_text("研修：済み（教えた人さんから・2026/10/02）")
   end
 
   it "別の作業のスキルや研修を混ぜず、選択した作業で切り替わる" do

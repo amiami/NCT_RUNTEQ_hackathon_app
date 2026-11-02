@@ -31,7 +31,9 @@ module OperationsHelper
 
   def operation_staff_training(row)
     if row.training
-      t("operations.staff_status.trained", trainer: row.training.trainer.name,
+      trainer = row.training.trainer
+      name = trainer.admin? ? trainer.name : t("operations.staff_status.trainer_name", name: trainer.name)
+      t("operations.staff_status.trained", trainer: name,
         date: l(row.training.done_on, format: :operation_full_date))
     elsif row.level >= 3
       t("operations.staff_status.self_learned")
