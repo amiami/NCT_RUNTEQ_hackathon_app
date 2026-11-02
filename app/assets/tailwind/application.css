@@ -68,7 +68,7 @@
 
 @layer components {
   .page-title {
-    @apply text-[26px] font-bold;
+    @apply sr-only;
   }
 
   .app-container {

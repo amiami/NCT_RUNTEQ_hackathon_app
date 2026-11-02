@@ -42,7 +42,7 @@ RSpec.describe "操作する人の切り替え" do
     end
 
     it "ほかの画面に移っても、選んだ人のまま" do
-      [ staff_operations_path, staff_skills_path, staff_manual_revisions_path, root_path ].each do |path|
+      [ staff_operations_path, staff_skills_path, staff_manual_revisions_path ].each do |path|
         get path
 
         expect(response).to have_http_status(:ok)

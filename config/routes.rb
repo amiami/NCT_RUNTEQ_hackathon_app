@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
-  root "staff/operations#index"
+  # トップページ：立場に合った最初の画面に移る（部長 → 管理者の作業ツリー、スタッフ → 作業マニュアル）
+  root "homes#show"
 
   # ヘッダーのスイッチ：操作する人（部長／スタッフ）を切り替える
   resource :operator, only: :update
