@@ -20,6 +20,10 @@
     <% end %>
   </div>
 
+  <%# 「再確認」バッジと同じ条件（unread?）。一度も確認していない人には出さない %>
+  <% if manual && !admin_page? && staff_operator? && confirmation_skill&.unread? %>
+    <p class="operation-revised-alert"><%= t("operations.revised_alert") %></p>
+  <% end %>
   <% if manual.nil? %>
     <p class="operation-empty"><%= t("operations.no_manual") %></p>
   <% elsif manual.internal? %>

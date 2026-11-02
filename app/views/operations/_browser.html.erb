@@ -24,6 +24,9 @@
                   <% if item.manual&.external? %>
                     <span class="operation-tree-kind"><%= t("operations.external_marker") %></span>
                   <% end %>
+                  <% if local_assigns[:relearn_operation_ids]&.include?(item.id) %>
+                    <span class="operation-badge operation-badge-revision"><%= t("operations.relearn_badge") %></span>
+                  <% end %>
                   <% if admin_page? %>
                     <% count = capable_counts.fetch(item.id, 0) %>
                     <% if count <= 1 %>
