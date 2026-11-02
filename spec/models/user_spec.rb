@@ -28,4 +28,13 @@ RSpec.describe User do
       expect(described_class.skill_holders).not_to include(admin)
     end
   end
+
+  describe ".admins" do
+    it "管理者だけが入る" do
+      admin = create(:user, :admin)
+      create(:user)
+
+      expect(described_class.admins).to contain_exactly(admin)
+    end
+  end
 end

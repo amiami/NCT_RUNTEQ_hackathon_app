@@ -45,7 +45,11 @@ RSpec.describe "共通レイアウト" do
         end
       else
         it "管理者向けの見立ての説明を含める" do
-          expect(response.body).to include("▲ 研修権限", "▼ 要研修", "▽ 研修済み", "◇ 教えるのは後回し")
+          expect(response.body).to include("▲ 指導できる", "▼ 要研修", "▽ 研修済み", "◇ 指導に不安あり")
+        end
+
+        it "見立ての古い名前は出さない" do
+          expect(response.body).not_to include("研修権限", "教えるのは後回し")
         end
       end
     end

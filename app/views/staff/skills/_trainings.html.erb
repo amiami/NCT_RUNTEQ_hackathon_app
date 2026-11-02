@@ -1,0 +1,52 @@
+<%# わたしのスキル（S-6）の右側：教える予定・教わる予定。
+    スタッフの画面なので、管理者の見立て（▲・▼・▽・◇）は HTML の属性も含めて出さない %>
+<section id="teaching-trainings" class="my-training-section" aria-labelledby="teaching-trainings-title">
+  <h2 id="teaching-trainings-title" class="my-training-title"><%= t(".teaching_title") %></h2>
+  <% if teaching_trainings.any? %>
+    <ul class="my-training-list">
+      <% teaching_trainings.each do |assigned| %>
+        <% training = assigned.training %>
+        <li class="my-training">
+          <p class="my-training-operation"><%= training.operation.name %></p>
+          <p>
+            <%= t(".trainee", name: training.trainee.name) %>
+            <% if assigned.declared_level3_or_above? %>
+              <span class="declared-note"><%= t(".declared") %></span>
+            <% end %>
+          </p>
+          <p class="<%= "due-soon" if due_soon?(training.due_on) %>"><%= training_due_label(training.due_on) %></p>
+          <div class="my-training-actions">
+            <%= link_to t(".manual"), staff_operations_path(operation_id: training.operation_id), class: "my-training-link" %>
+            <%= button_to t(".done"), training_completion_path(training), class: "btn btn-primary", form_class: "my-training-done" %>
+          </div>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p class="my-training-empty"><%= t(".empty") %></p>
+  <% end %>
+</section>
+
+<section id="learning-trainings" class="my-training-section" aria-labelledby="learning-trainings-title">
+  <h2 id="learning-trainings-title" class="my-training-title"><%= t(".learning_title") %></h2>
+  <% if learning_trainings.any? %>
+    <ul class="my-training-list">
+      <% learning_trainings.each do |training| %>
+        <li class="my-training <%= "my-training-done-item" if training.done? %>">
+          <p class="my-training-operation"><%= training.operation.name %></p>
+          <% if training.done? %>
+            <p><%= t(".trained", name: training.trainer.name, date: l(training.done_on)) %></p>
+          <% else %>
+            <p><%= t(".trainer", name: training.trainer.name) %></p>
+            <p class="<%= "due-soon" if due_soon?(training.due_on) %>"><%= training_due_label(training.due_on) %></p>
+          <% end %>
+          <div class="my-training-actions">
+            <%= link_to t(".manual"), staff_operations_path(operation_id: training.operation_id), class: "my-training-link" %>
+          </div>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p class="my-training-empty"><%= t(".empty") %></p>
+  <% end %>
+</section>

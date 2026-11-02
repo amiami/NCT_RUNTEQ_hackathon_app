@@ -13,12 +13,19 @@ Rails.application.routes.draw do
     # スキルマップのマスの詳細。マスを押すと、表の上の Turbo Frame に入る
     resources :skills, only: :show
     resources :trainings, only: :index
+    # 研修画面の「変更を保存」：下書きの予定の追加・取り消し・期限の変更をまとめて反映する
+    resource :training_plan, only: :update
     resources :manual_revisions, only: :index
   end
 
   # 管理者の見立て。スキルマップの「変更を保存」で、複数のマスをまとめて保存する（管理者だけ）
   namespace :skills do
     resource :assessment, only: :update
+  end
+
+  # 研修予定の「教え終わった」。押せるのはその予定の教える人だけなので、管理者・スタッフで共通に使う
+  resources :trainings, only: [] do
+    resource :completion, only: :create, module: :trainings
   end
 
   namespace :staff do

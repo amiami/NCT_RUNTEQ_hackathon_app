@@ -187,7 +187,7 @@ RSpec.describe "スキルマップのマスの詳細（管理者）" do
     it "▽は、今の値が▽のときだけ出る（「教え終わった」でしか付かないため）" do
       get admin_skill_path(create(:skill, operation: payroll, level: 3, admin_assessment: :training_done))
 
-      expect(enabled_choices).to eq [ "なし", "▲ 指導できる", "▼ 要研修", "▽ 研修済み" ]
+      expect(enabled_choices).to eq [ "なし", "▲ 指導できる", "▼ 要研修", "▽ 研修済み（▼から研修を受け終えた）" ]
       expect(assessment).to have_checked_field("▽ 研修済み")
     end
 

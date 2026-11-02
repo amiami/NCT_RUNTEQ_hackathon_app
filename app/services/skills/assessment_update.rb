@@ -43,7 +43,7 @@ module Skills
         errors << I18n.t("skills.assessments.errors.invalid", **names(skill))
       elsif skill.level != level
         errors << I18n.t("skills.assessments.errors.not_assignable",
-                         **names(skill), assessment: I18n.t("admin_assessments.#{assessment}"), level:)
+                         **names(skill), assessment: assessment_name(assessment), level:)
       end
     end
 
@@ -54,6 +54,11 @@ module Skills
       else
         skill.update!(admin_assessment: assessment, admin_assessed_at: now, admin_assessed_by: @admin)
       end
+    end
+
+    # 「▲ 指導できる」のような、記号つきの見立ての名前
+    def assessment_name(assessment)
+      "#{I18n.t("admin_assessments.#{assessment}.mark")} #{I18n.t("admin_assessments.#{assessment}.label")}"
     end
 
     def names(skill)

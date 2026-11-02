@@ -98,6 +98,129 @@ ja:
     admin: "管理者：%{page}"
     staff: "スタッフ：%{page}"
 
+  training_plan:
+    saved: 研修予定を保存しました
+    not_saved: 研修予定を保存できませんでした。内容を確かめて、もう一度保存してください
+    errors:
+      not_found: 取り消す研修予定が見つかりません
+      duplicated: 同じ人の未完了の研修予定がすでにあります。画面を開き直してください
+      invalid_due_on: 期限の日付が正しくありません
+
+  # 研修予定の期限の表示（研修画面・わたしのスキルで共通）
+  training_due_on:
+    date: 期限：%{date}
+    none: 期限：未設定
+
+  # 管理者の見立ての記号と説明（管理者の画面だけで使う。スタッフの画面には出さない）
+  admin_assessments:
+    can_train:
+      mark: ▲
+      label: 指導できる
+    needs_training:
+      mark: ▼
+      label: 要研修
+    training_done:
+      mark: ▽
+      label: 研修済み（▼から研修を受け終えた）
+    backup_trainer:
+      mark: ◇
+      label: 指導に不安あり
+
+  admin:
+    trainings:
+      index:
+        hint: 未研修の人を選んで「教える人」を押すと、研修予定の下書きができます（誰も選ばなければ、残っている未研修の人全員）。右下の「変更を保存」を押すと「指示済みの研修」に入ります。
+        filter_label: 作業の絞り込み
+        filters:
+          all: すべて
+          needs_instruction: 指示が必要
+          assigned: 指示済み
+        cards_label: 研修が必要な作業
+        empty: 該当する作業はありません
+        assigned_title: 指示済みの研修（%{count}件）
+        assigned_empty: まだありません。作業の「教える人」を押して下書きを作り、「変更を保存」を押すと、ここに出ます。
+        save: 変更を保存
+        unsaved_note: （まだ保存されていません!）
+      card:
+        capable_count: できる人%{count}人
+        due_label: "%{name}の研修期限"
+        columns:
+          due_on: 日付
+          trainers: 教える人
+          trainees: 未研修
+          trainings: 研修予定
+        no_trainees: 対象者なし
+        no_trainings: 予定なし
+        plan_label: "%{trainer} から %{trainee} への研修予定"
+      assigned_training:
+        statuses:
+          by_admin: 管理者が担当
+          acknowledged: 教える人が確認済み
+          requested: 教える人が未確認
+        declared: （本人がレベル3以上に申告済み）
+        done: 教え終わった
+        cancel: 取り消す
+        undo_cancel: 取り消しをやめる
+    skill_maps:
+      show:
+        operations_count: "%{count}作業"
+        capable_count: "できる人%{count}人"
+        few_capable_operations: "できる人1人以下 %{count}件"
+        few_capable_warning: "できる人（1人でできる＝レベル4）が1人以下の作業が%{count}件あります"
+        few_capable_warning_description: 担当者が休んだり辞めたりすると止まる恐れがあります。研修画面で優先して教える人を決めましょう。
+        few_capable_filter: できる人が1人以下の作業だけ表示
+        save: 変更を保存
+        unsaved_note: （まだ保存されていません!）
+      cell:
+        unread: 未読
+        unread_description: 改定後のマニュアルをまだ確認していません
+    skills:
+      show:
+        title: "%{user} × %{operation}"
+        manual_status: マニュアル確認状況
+        manual_statuses:
+          unconfirmed: 未確認
+          unread: 改定後 未確認
+          confirmed: 確認済み
+        training: 研修
+        trainings:
+          done: "済み（%{trainer}から・%{date}）"
+          self_taught: なし（自分で習得）
+          not_yet: まだ
+        # 教えた人がスタッフのときの呼び方（管理者は名前だけ）
+        staff_name: "%{name}さん"
+        admin_assessment: 管理者の見立て
+        no_assessment: なし
+        # 今のレベルで意味のない見立て（マスには出さない）に添える説明。レベル・見立ての組み合わせで引く
+        hidden_assessment_notes:
+          level_4:
+            can_train: レベル3になっても、教える人の候補に残ります
+            training_done: ▼から研修を受け終えました（いまは普通のレベル4として扱います）
+          level_3:
+            backup_trainer: レベル4になると、教える人の候補の後ろに並びます
+
+  staff:
+    skills:
+      index:
+        skill_list_label: わたしのスキルの一覧
+      trainings:
+        teaching_title: 教える予定
+        learning_title: 教わる予定
+        trainee: 教える相手：%{name}
+        trainer: 教えてくれる人：%{name}
+        declared: （本人がレベル3以上に申告済み）
+        trained: 研修済みになりました（%{name}から・%{date}）
+        manual: マニュアルを見る
+        done: 教え終わった
+        empty: いまはありません
+
+  training_completion:
+    done: 「教え終わった」にしました。教わった人は研修済みになります
+    errors:
+      already_done: この研修予定はすでに完了しています
+      not_trainer: この研修予定の教える人だけが「教え終わった」にできます
+      not_saved: 「教え終わった」にできませんでした。画面を開き直して、もう一度押してください
+
   operators:
     switch_label: 操作する人の切り替え
     label: 操作する人
@@ -142,13 +265,6 @@ ja:
     "3": 本人が自己申告
     "4": 本人が自己申告
 
-  # 管理者の見立て。管理者画面だけで使い、スタッフ画面には出さない
-  admin_assessments:
-    can_train: ▲ 指導できる
-    needs_training: ▼ 要研修
-    training_done: ▽ 研修済み
-    backup_trainer: ◇ 指導に不安あり
-
   # マスや名前の横に出す印と、マウスを乗せたときの説明（admin/shared/_assessment_mark）
   admin_assessment_marks:
     can_train:
@@ -172,45 +288,6 @@ ja:
       errors:
         not_assignable: "%{user}さんの「%{operation}」：%{assessment}はレベル%{level}のときだけ付けられます"
         invalid: "%{user}さんの「%{operation}」：選べない見立てです"
-
-  admin:
-    skill_maps:
-      show:
-        operations_count: "%{count}作業"
-        capable_count: "できる人%{count}人"
-        few_capable_operations: "できる人1人以下 %{count}件"
-        few_capable_warning: "できる人（1人でできる＝レベル4）が1人以下の作業が%{count}件あります"
-        few_capable_warning_description: 担当者が休んだり辞めたりすると止まる恐れがあります。研修画面で優先して教える人を決めましょう。
-        few_capable_filter: できる人が1人以下の作業だけ表示
-        save: 変更を保存
-        unsaved_note: （まだ保存されていません!）
-      cell:
-        unread: 未読
-        unread_description: 改定後のマニュアルをまだ確認していません
-    skills:
-      show:
-        title: "%{user} × %{operation}"
-        manual_status: マニュアル確認状況
-        manual_statuses:
-          unconfirmed: 未確認
-          unread: 改定後 未確認
-          confirmed: 確認済み
-        training: 研修
-        trainings:
-          done: "済み（%{trainer}から・%{date}）"
-          self_taught: なし（自分で習得）
-          not_yet: まだ
-        # 教えた人がスタッフのときの呼び方（管理者は名前だけ）
-        staff_name: "%{name}さん"
-        admin_assessment: 管理者の見立て
-        no_assessment: なし
-        # 今のレベルで意味のない見立て（マスには出さない）に添える説明。レベル・見立ての組み合わせで引く
-        hidden_assessment_notes:
-          level_4:
-            can_train: レベル3になっても、教える人の候補に残ります
-            training_done: ▼から研修を受け終えました（いまは普通のレベル4として扱います）
-          level_3:
-            backup_trainer: レベル4になると、教える人の候補の後ろに並びます
 
   # 下書きの「変更を保存」と、保存しないまま移るときの確認（unsaved-changes コントローラ）
   unsaved_changes:
