@@ -23,3 +23,4 @@
 - 作業ツリーのスタッフ状況は `OperationStaffStatus.rows(operation)` を使う。スキルを持つ人全員と必要なスキル項目、`Training.latest_done.includes(:trainer)` をまとめて取得し、見立てをカードに渡さない（スキル未作成はレベル0）。（2026-11-02）
 - マニュアルの改定は `ManualReviser` がマニュアルをロックして本文・版・改訂記録をまとめて保存する。編集画面の版を渡し、古い版からの保存は409で拒否する（確認版・スキルは更新しない）。（2026-11-02）
 - 外部サイトの改定も `ManualReviser` を使い、本文を渡さずメモと表示中の版を渡す。URL・本文・スキルを変えず、履歴の本文差分はNULLにする。外部用フォームの二重送信は最新表示へ戻して案内する。（2026-11-02）
+- 教える予定（申告済みの判定つき）は `TrainingBoard.assigned_trainings(Training.where(trainer: user))`、教わる予定は `Training.learning_for(user)`（未完了 → 完了した予定は作業ごとに最新の1件）。条件を書き直さない。（2026-11-02）

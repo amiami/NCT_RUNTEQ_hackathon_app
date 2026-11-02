@@ -260,6 +260,20 @@ RSpec.describe TrainingBoard do
       expect(described_class.assigned_trainings.map(&:training)).to eq [ open ]
     end
 
+    it "対象の予定を渡すと、その中の未完了の予定だけが入る（わたしのスキルの教える予定で使う）" do
+      operation = create(:operation)
+      yamamoto = skill_in(operation, 4, name: "山本").user
+      skill_in(operation, 0, name: "吉田")
+      skill_in(operation, 1, name: "加藤")
+      skill_in(operation, 0, name: "小林")
+      mine = create(:training, operation:, trainer: yamamoto, trainee: User.find_by!(name: "吉田"))
+      create(:training, operation:, trainer: yamamoto, trainee: User.find_by!(name: "加藤"))
+        .update!(status: :done, done_on: Date.new(2026, 10, 1))
+      unfinished_training(operation, "小林")
+
+      expect(described_class.assigned_trainings(Training.where(trainer: yamamoto)).map(&:training)).to eq [ mine ]
+    end
+
     it "カードに出ない作業（対象の人がいなくなった作業）の予定も入る" do
       operation = create(:operation)
       skill_in(operation, 1, name: "吉田")

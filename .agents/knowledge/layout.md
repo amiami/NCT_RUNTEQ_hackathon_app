@@ -14,3 +14,4 @@
 - 上の部品を使う画面は、ビューで `<% turbo_exempts_page_from_cache %>` を呼ぶ → 呼ばないと Turbo が下書きの入った画面を覚えていて、「戻る」でそのまま出てしまう。（2026-11-02）
 - 研修画面の下書きは `training-draft` コントローラ（追加・取り消し・期限）→ 「変更を保存」を押した直前（`prepare`）に hidden の入力欄を作って `PATCH /admin/training_plan` に送る。研修予定がある人の未研修のチップも `hidden` で置いておき、取り消しの下書きにしたら出す。並び順と絞り込みの区分（`data-needs-instruction`）は下書きで変えない。（2026-11-02）
 - マニュアル改定編集のURLは作業ツリーと異なるため、`NavigationHelper#navigation_current?` で `admin/operations/manuals` を管理者の作業ツリータブに対応させる。保存失敗時の再表示でも同じタブを強調する。（2026-11-02）
+- わたしのスキル（S-6）は左右2列の1画面 → 左（わたしのスキルの一覧）は `staff/skills/_skill_list.html.erb`、右（教える予定・教わる予定）は `staff/skills/_trainings.html.erb`。それぞれの部品の中だけを書き換えれば、もう片方とぶつからない。（2026-11-02）

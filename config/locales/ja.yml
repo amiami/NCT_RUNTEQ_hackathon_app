@@ -162,6 +162,21 @@ ja:
         cancel: 取り消す
         undo_cancel: 取り消しをやめる
 
+  staff:
+    skills:
+      index:
+        skill_list_label: わたしのスキルの一覧
+      trainings:
+        teaching_title: 教える予定
+        learning_title: 教わる予定
+        trainee: 教える相手：%{name}
+        trainer: 教えてくれる人：%{name}
+        declared: （本人がレベル3以上に申告済み）
+        trained: 研修済みになりました（%{name}から・%{date}）
+        manual: マニュアルを見る
+        done: 教え終わった
+        empty: いまはありません
+
   training_completion:
     done: 「教え終わった」にしました。教わった人は研修済みになります
     errors:

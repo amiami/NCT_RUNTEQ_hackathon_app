@@ -20,6 +20,16 @@ class Training < ApplicationRecord
     where(id: latest_ids)
   }
 
+  # わたしのスキルの「教わる予定」：未完了の予定（期限が近い順）のあとに、完了した予定（作業ごとに最新の1件、新しい順）。
+  # 同じ作業で未完了の予定がある（もう一度教わる）ときは、未完了の方だけを出す
+  def self.learning_for(user)
+    unfinished = self.unfinished.where(trainee: user).includes(:operation, :trainer)
+                     .order(arel_table[:due_on].asc.nulls_last, :id).to_a
+    done = latest_done.where(trainee: user).where.not(operation_id: unfinished.map(&:operation_id))
+                      .includes(:operation, :trainer).order(done_on: :desc, id: :desc).to_a
+    unfinished + done
+  end
+
   validates :trainee_id, uniqueness: { scope: :operation_id, conditions: -> { where.not(status: :done) } },
                          unless: :done?
   validate :trainee_must_differ_from_trainer

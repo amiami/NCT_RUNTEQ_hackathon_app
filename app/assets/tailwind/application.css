@@ -622,3 +622,55 @@
     @apply flex items-center gap-3;
   }
 }
+
+/* わたしのスキル（S-6）。左：わたしのスキルの一覧（#80）、右：教える予定・教わる予定（#63） */
+@layer components {
+  .my-skills-layout {
+    @apply grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_320px];
+  }
+
+  .my-skill-list {
+    @apply flex min-w-0 flex-col gap-4;
+  }
+
+  .my-trainings {
+    @apply flex flex-col gap-5 p-5 lg:sticky lg:top-4;
+  }
+
+  .my-training-section {
+    @apply flex flex-col gap-3;
+  }
+
+  .my-training-title {
+    @apply text-base font-bold;
+  }
+
+  .my-training-list {
+    @apply flex flex-col gap-3;
+  }
+
+  .my-training {
+    @apply flex flex-col gap-1.5 rounded-lg border border-line p-3 text-sm leading-[normal];
+  }
+
+  /* 完了した教わる予定（研修済みになりました）は、背景を少し沈めて未完了と見分ける */
+  .my-training-done-item {
+    @apply bg-base-200;
+  }
+
+  .my-training-operation {
+    @apply font-bold;
+  }
+
+  .my-training-actions {
+    @apply flex flex-wrap items-center gap-3;
+  }
+
+  .my-training-link {
+    @apply text-sm font-bold text-link underline hover:text-link-hover;
+  }
+
+  .my-training-empty {
+    @apply text-sm leading-[normal] text-muted;
+  }
+}
