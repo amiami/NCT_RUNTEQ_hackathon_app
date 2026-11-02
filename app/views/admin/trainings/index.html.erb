@@ -1,4 +1,36 @@
 <% content_for :title, "#{t('page_titles.admin', page: t('navigation.admin.trainings'))} | #{t('app_name')}" %>
-<section class="card">
-  <h1 class="page-title"><%= t("page_titles.admin", page: t("navigation.admin.trainings")) %></h1>
-</section>
+<h1 class="page-title"><%= t("page_titles.admin", page: t("navigation.admin.trainings")) %></h1>
+
+<div class="training-layout" data-controller="training-filter">
+  <section class="training-main" aria-label="<%= t(".cards_label") %>">
+    <p class="training-hint"><%= t(".hint") %></p>
+
+    <%# 絞り込みは画面の中で切り替える（開き直すと #61 の下書きが消えるため） %>
+    <div class="training-filters" role="group" aria-label="<%= t(".filter_label") %>">
+      <% { all: @cards.size,
+           needs_instruction: @cards.count(&:needs_instruction?),
+           assigned: @cards.count { |card| !card.needs_instruction? } }.each do |filter, count| %>
+        <button type="button" class="filter-chip <%= "filter-chip-active" if filter == :all %>"
+                aria-pressed="<%= filter == :all %>" data-filter="<%= filter %>"
+                data-training-filter-target="button" data-action="training-filter#select">
+          <span><%= t(".filters.#{filter}") %></span>
+          <span class="filter-count"><%= count %></span>
+        </button>
+      <% end %>
+    </div>
+
+    <%= render partial: "card", collection: @cards %>
+    <p class="card training-empty" data-training-filter-target="empty" <%= "hidden" if @cards.any? %>><%= t(".empty") %></p>
+  </section>
+
+  <aside id="assigned-trainings" class="card assigned-trainings" aria-labelledby="assigned-trainings-title">
+    <h2 id="assigned-trainings-title" class="assigned-trainings-title"><%= t(".assigned_title", count: @assigned_trainings.size) %></h2>
+    <% if @assigned_trainings.any? %>
+      <ul class="assigned-training-list">
+        <%= render partial: "assigned_training", collection: @assigned_trainings %>
+      </ul>
+    <% else %>
+      <p class="assigned-trainings-empty"><%= t(".assigned_empty") %></p>
+    <% end %>
+  </aside>
+</div>

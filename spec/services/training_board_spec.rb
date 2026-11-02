@@ -205,9 +205,12 @@ RSpec.describe TrainingBoard do
       queries.size
     end
 
+    # 研修予定が0件だと、教える人・教わる人の先読み（includes）の問い合わせ自体が省かれる。
+    # 件数による差だけを比べるため、最初から予定を1件入れておく
     operation = create(:operation)
     skill_in(operation, 0, name: "山本")
     skill_in(operation, 4, name: "中村")
+    unfinished_training(operation, "山本")
     one_operation = count_queries.call
 
     2.times do |i|
@@ -218,5 +221,114 @@ RSpec.describe TrainingBoard do
     end
 
     expect(count_queries.call).to eq one_operation
+  end
+
+  describe "カードの研修予定と日付" do
+    it "card.trainings は、その作業の未完了の予定だけ（完了・ほかの作業の予定は入らない）" do
+      operation = create(:operation)
+      skill_in(operation, 0, name: "吉田")
+      skill_in(operation, 1, name: "加藤")
+      open = unfinished_training(operation, "吉田")
+      unfinished_training(operation, "加藤").update!(status: :done, done_on: Date.new(2026, 10, 1))
+      other = create(:operation)
+      skill_in(other, 0, name: "吉田")
+      unfinished_training(other, "吉田")
+
+      expect(card_for(operation).trainings).to eq [ open ]
+    end
+
+    it "card.due_on は、その作業の未完了の予定の期限。予定がなければ nil" do
+      with_plan = create(:operation)
+      skill_in(with_plan, 0, name: "吉田")
+      unfinished_training(with_plan, "吉田").update!(due_on: Date.new(2026, 11, 30))
+      without_plan = create(:operation)
+      skill_in(without_plan, 0, name: "加藤")
+
+      expect(card_for(with_plan).due_on).to eq Date.new(2026, 11, 30)
+      expect(card_for(without_plan).due_on).to be_nil
+    end
+  end
+
+  describe ".assigned_trainings（指示済みの研修）" do
+    it "未完了の予定がすべて入り、完了した予定は入らない" do
+      operation = create(:operation)
+      skill_in(operation, 0, name: "吉田")
+      skill_in(operation, 1, name: "加藤")
+      open = unfinished_training(operation, "吉田")
+      unfinished_training(operation, "加藤").update!(status: :done, done_on: Date.new(2026, 10, 1))
+
+      expect(described_class.assigned_trainings.map(&:training)).to eq [ open ]
+    end
+
+    it "カードに出ない作業（対象の人がいなくなった作業）の予定も入る" do
+      operation = create(:operation)
+      skill_in(operation, 1, name: "吉田")
+      training = unfinished_training(operation, "吉田")
+      Skill.find_by!(operation:, user: User.find_by!(name: "吉田")).update!(level: 3)
+
+      expect(card_for(operation)).to be_nil
+      expect(described_class.assigned_trainings.map(&:training)).to eq [ training ]
+    end
+
+    it "期限が近い順に並び、期限なしは最後" do
+      operation = create(:operation)
+      trainings = %w[吉田 加藤 小林].map do |name|
+        skill_in(operation, 0, name:)
+        unfinished_training(operation, name)
+      end
+      trainings[0].update!(due_on: nil)
+      trainings[1].update!(due_on: Date.new(2026, 12, 1))
+      trainings[2].update!(due_on: Date.new(2026, 11, 20))
+
+      expect(described_class.assigned_trainings.map(&:training)).to eq [ trainings[2], trainings[1], trainings[0] ]
+    end
+
+    describe "本人がレベル3以上に申告済みか（declared_level3_or_above?）" do
+      def assigned_for(level, assessment = nil)
+        operation = create(:operation)
+        skill_in(operation, 1, assessment == :needs_training ? :needs_training : nil, name: "吉田")
+        unfinished_training(operation, "吉田")
+        Skill.find_by!(operation:, user: User.find_by!(name: "吉田")).update!(level:, admin_assessment: assessment)
+        described_class.assigned_trainings.find { |assigned| assigned.training.operation == operation }
+      end
+
+      it "教わる人がレベル3・4で▼がなければ true" do
+        expect([ assigned_for(3), assigned_for(4), assigned_for(3, :training_done) ].map(&:declared_level3_or_above?))
+          .to all(be true)
+      end
+
+      it "▼の人（3▼・4▼）とレベル0〜2の人は false" do
+        results = [ assigned_for(3, :needs_training), assigned_for(4, :needs_training), assigned_for(0), assigned_for(2) ]
+
+        expect(results.map(&:declared_level3_or_above?)).to all(be false)
+      end
+    end
+
+    it "予定の数が増えても、DB への問い合わせの回数は変わらない" do
+      count_queries = lambda do
+        queries = []
+        callback = ->(*, payload) { queries << payload[:sql] unless payload[:name] == "SCHEMA" }
+        ActiveSupport::Notifications.subscribed(callback, "sql.active_record") do
+          described_class.assigned_trainings.each do |assigned|
+            [ assigned.training.operation.name, assigned.training.trainer.name, assigned.training.trainee.name,
+              assigned.declared_level3_or_above? ]
+          end
+        end
+        queries.size
+      end
+
+      operation = create(:operation)
+      skill_in(operation, 0, name: "吉田")
+      unfinished_training(operation, "吉田")
+      one = count_queries.call
+
+      3.times do |i|
+        other = create(:operation)
+        skill_in(other, 0, name: "未研修#{i}")
+        unfinished_training(other, "未研修#{i}")
+      end
+
+      expect(count_queries.call).to eq one
+    end
   end
 end

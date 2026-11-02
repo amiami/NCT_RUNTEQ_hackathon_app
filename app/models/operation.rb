@@ -12,4 +12,10 @@ class Operation < ApplicationRecord
   def capable_count
     skills.capable.count
   end
+
+  # できる人が1人以下の作業の数（スキルマップのタブの件数）。0人の作業も数える。
+  # Skill.capable_counts はできる人がいない作業を含まないので、「作業の総数 − できる人が2人以上の作業の数」で求める
+  def self.few_capable_count
+    count - Skill.capable_counts.count { |_operation_id, capable| capable >= 2 }
+  end
 end

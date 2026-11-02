@@ -4,6 +4,13 @@ class Skill < ApplicationRecord
   belongs_to :admin_assessed_by, class_name: "User", optional: true
   has_many :skill_level_changes
 
+  # 今のレベルで意味のある見立て（#assessment_meaningful? で使う）。管理者画面ではこれに入る見立てだけ表示する。
+  # レベル3は▲・▼・▽、レベル4は▼・◇。それ以外（4▲・4▽・3◇など）は値を残したまま表示しない
+  MEANINGFUL_ASSESSMENTS = {
+    3 => %w[can_train needs_training training_done],
+    4 => %w[needs_training backup_trainer]
+  }.freeze
+
   # 管理者の見立て。スタッフには見せない（HTML の属性・JSON・Turbo Stream にも出さない）。
   # 付けられるレベルは付けるときのサービスで確かめ、ここでは確かめない
   enum :admin_assessment, {
@@ -21,7 +28,8 @@ class Skill < ApplicationRecord
   scope :capable, -> { where(level: 4).joins(:user).merge(User.skill_holders) }
 
   # 教える人の候補。研修画面の一覧と Training の作成時のチェックで共通に使う。
-  # レベル4（▼以外）か、レベル3で▲。▲・▽はレベル4では表示しないが、値は残るので候補に入る（NULL も含める）
+  # レベル4（▼以外）か、レベル3で▲。▲・▽はレベル4では表示しないが、値は残るので候補に入る（NULL も含める）。
+  # 並び順つき（4（◇・▼以外）→ 3▲ → 4◇ → スタッフの並び順）。別の順にしたいときは reorder を使う
   scope :trainer_candidates, lambda {
     where(level: 4, admin_assessment: [ nil, :can_train, :training_done, :backup_trainer ])
       .or(where(level: 3, admin_assessment: :can_train))
@@ -43,24 +51,22 @@ class Skill < ApplicationRecord
       .order("users.sort_order", "users.id")
   }
 
+  # 前に確認した版より、マニュアルの版が上がっている（#unread? と同じ条件を SQL で書いたもの）。
+  # 一度も確認していない（confirmed_version が NULL の）人は、比較で自然に外れる。
+  # 改訂のお知らせのタブの件数のように、まとめて数えるときはこちらを使う（1件ずつ unread? を呼ぶと N+1 になる）
+  scope :unread, -> { joins(operation: :manual).where("skills.confirmed_version < manuals.version") }
+
   # 作業ごとのできる人の数を1回のクエリで返す（{ operation_id => 人数 }）。
   # できる人がいない作業は含まないので、使う側で fetch(id, 0) にする
   def self.capable_counts
     capable.group(:operation_id).count
   end
 
-  # 今のレベルで意味のある見立てか。管理者画面ではこれが true の見立てだけ表示する。
-  # レベル3は▲・▼・▽、レベル4は▼・◇。それ以外（4▲・4▽・3◇など）は値を残したまま表示しない
-  MEANINGFUL_ASSESSMENTS = {
-    3 => %w[can_train needs_training training_done],
-    4 => %w[needs_training backup_trainer]
-  }.freeze
-
   def assessment_meaningful?
     MEANINGFUL_ASSESSMENTS.fetch(level, []).include?(admin_assessment)
   end
 
-  # 前に確認した版より、マニュアルの版が上がっている（一度も確認していなければ false）
+  # 前に確認した版より、マニュアルの版が上がっている（一度も確認していなければ false）。条件は .unread と同じ
   def unread?
     manual = operation.manual
     confirmed_version.present? && manual.present? && confirmed_version < manual.version

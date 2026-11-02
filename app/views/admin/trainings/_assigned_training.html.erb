@@ -1,0 +1,19 @@
+<%# 指示済みの研修の1件。TrainingBoard::Assigned を受け取る %>
+<% training = assigned_training.training %>
+<% status = training.trainer.admin? ? :by_admin : training.status %>
+<li class="assigned-training">
+  <p class="assigned-training-operation"><%= training.operation.name %></p>
+  <p>
+    <%= training.trainer.name %> → <%= training.trainee.name %>
+    <% if assigned_training.declared_level3_or_above? %>
+      <span class="declared-note"><%= t(".declared") %></span>
+    <% end %>
+  </p>
+  <p class="assigned-training-meta">
+    <span class="<%= "due-soon" if due_soon?(training.due_on) %>"><%= training_due_label(training.due_on) %></span>
+    <span class="badge <%= status == :requested ? "badge-warning" : "badge-secondary" %>"><%= t(".statuses.#{status}") %></span>
+  </p>
+  <% if training.trainer.admin? %>
+    <%= button_to t(".done"), training_completion_path(training), class: "btn btn-primary", form_class: "assigned-training-action" %>
+  <% end %>
+</li>
