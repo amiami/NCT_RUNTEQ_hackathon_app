@@ -1,7 +1,16 @@
+<%# 下書きのある画面を Turbo が覚えていて「戻る」で出さないよう、キャッシュから外す（共通部品 unsaved-changes の決まり） %>
+<% turbo_exempts_page_from_cache %>
 <% content_for :title, "#{t('page_titles.admin', page: t('navigation.admin.trainings'))} | #{t('app_name')}" %>
 <h1 class="page-title"><%= t("page_titles.admin", page: t("navigation.admin.trainings")) %></h1>
 
-<div class="training-layout" data-controller="training-filter">
+<%# 下書き（training-draft）と「変更を保存」の枠は、共通部品（unsaved-changes）の内側に置く %>
+<div class="training-layout"
+     data-controller="unsaved-changes training-draft training-filter"
+     data-unsaved-changes-confirm-message-value="<%= t("unsaved_changes.confirm_leaving") %>"
+     data-training-draft-due-label-value="<%= t("training_due_on.date", date: "%{date}") %>"
+     data-training-draft-no-due-label-value="<%= t("training_due_on.none") %>"
+     data-training-draft-cancel-label-value="<%= t("admin.trainings.assigned_training.cancel") %>"
+     data-training-draft-undo-cancel-label-value="<%= t("admin.trainings.assigned_training.undo_cancel") %>">
   <section class="training-main" aria-label="<%= t(".cards_label") %>">
     <p class="training-hint"><%= t(".hint") %></p>
 
@@ -33,4 +42,23 @@
       <p class="assigned-trainings-empty"><%= t(".assigned_empty") %></p>
     <% end %>
   </aside>
+
+  <%# 下書きで追加した予定のボタンのひな形。教える人を押すと、これを写してカードの研修予定の列に入れる %>
+  <template data-training-draft-target="planTemplate">
+    <button type="button" class="plan-chip plan-chip-draft" data-action="training-draft#removeDraft">
+      <span class="plan-chip-names"></span>
+      <span class="plan-chip-due"></span>
+    </button>
+  </template>
+
+  <%# 「変更を保存」の枠。下書きに変更があるときだけ共通部品が出す。送る直前に下書きを hidden の入力欄にする %>
+  <div class="save-bar" data-unsaved-changes-target="bar" hidden>
+    <%= form_with url: admin_training_plan_path, method: :patch, class: "save-bar-form",
+                  data: { unsaved_changes_skip: true, training_draft_target: "form",
+                          action: "submit->training-draft#prepare" } do |form| %>
+      <div data-training-draft-target="fields"></div>
+      <%= form.button t(".save"), type: "submit", class: "btn btn-primary" %>
+      <span class="save-bar-note"><%= t(".unsaved_note") %></span>
+    <% end %>
+  </div>
 </div>

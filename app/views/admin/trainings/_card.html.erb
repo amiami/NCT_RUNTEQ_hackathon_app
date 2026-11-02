@@ -1,8 +1,11 @@
-<%# 研修画面のカード1枚（作業1つ）。TrainingBoard::Card を受け取る。ボタンの動き（下書き）は #61 で付ける %>
+<%# 研修画面のカード1枚（作業1つ）。TrainingBoard::Card を受け取る。
+    ボタンを押したときの下書きは training-draft コントローラ（index.html.erb）が受け取る %>
 <% operation = card.operation %>
+<% assigned_trainee_ids = card.trainings.to_set(&:trainee_id) %>
 <section class="card training-card <%= "training-card-caution" if card.capable_count <= 1 %>" aria-labelledby="training-card-<%= operation.id %>"
          data-training-filter-target="card" data-status="<%= card.status %>"
-         data-needs-instruction="<%= card.needs_instruction? %>">
+         data-needs-instruction="<%= card.needs_instruction? %>"
+         data-training-draft-target="card" data-operation-id="<%= operation.id %>">
   <h2 id="training-card-<%= operation.id %>" class="training-card-title">
     <span><%= operation.name %></span>
     <% if card.capable_count <= 1 %>
@@ -15,7 +18,8 @@
       <p class="training-column-label"><%= t(".columns.due_on") %></p>
       <%= tag.input type: "date", value: card.due_on&.iso8601,
                     class: [ "date-field", ("due-soon" if due_soon?(card.due_on)) ],
-                    aria: { label: t(".due_label", name: operation.name) } %>
+                    aria: { label: t(".due_label", name: operation.name) },
+                    data: { initial_value: card.due_on&.iso8601.to_s, action: "change->training-draft#changeDue" } %>
       <% if operation.season_note.present? %>
         <p class="season-note"><%= operation.season_note %></p>
       <% end %>
@@ -25,47 +29,49 @@
       <p class="training-column-label"><%= t(".columns.trainers") %></p>
       <div class="chip-list">
         <% card.trainer_skills.each do |skill| %>
-          <button type="button" class="trainer-chip">
+          <button type="button" class="trainer-chip" data-action="training-draft#assign"
+                  data-trainer-id="<%= skill.user_id %>" data-trainer-name="<%= skill.user.name %>">
             <span class="skill-level skill-level-<%= skill.level %>"><%= skill.level %></span>
             <span><%= skill.user.name %></span>
             <%= assessment_mark(skill) %>
           </button>
         <% end %>
         <% card.admins.each do |admin| %>
-          <button type="button" class="trainer-chip"><span><%= admin.name %></span></button>
+          <button type="button" class="trainer-chip" data-action="training-draft#assign"
+                  data-trainer-id="<%= admin.id %>" data-trainer-name="<%= admin.name %>"><span><%= admin.name %></span></button>
         <% end %>
       </div>
     </div>
 
     <div class="training-column">
       <p class="training-column-label"><%= t(".columns.trainees") %></p>
-      <div class="chip-list">
-        <% card.trainee_skills.each do |skill| %>
-          <button type="button" class="trainee-chip" aria-pressed="false">
+      <div class="chip-list trainee-list">
+        <%# 研修予定がある人のチップも隠して置いておき、その予定を取り消す下書きにしたら出す %>
+        <% card.target_skills.each do |skill| %>
+          <button type="button" class="trainee-chip" aria-pressed="false" data-action="training-draft#toggleTrainee"
+                  data-trainee-id="<%= skill.user_id %>" data-trainee-name="<%= skill.user.name %>"
+                  <%= "hidden" if assigned_trainee_ids.include?(skill.user_id) %>>
             <span class="skill-level skill-level-<%= skill.level %>"><%= skill.level %></span>
             <span><%= skill.user.name %></span>
             <%= assessment_mark(skill) %>
           </button>
         <% end %>
-        <% if card.trainee_skills.empty? %>
-          <span class="chip-empty"><%= t(".no_trainees") %></span>
-        <% end %>
+        <span class="chip-empty" data-empty-for="trainees" <%= "hidden" if card.trainee_skills.any? %>><%= t(".no_trainees") %></span>
       </div>
     </div>
 
     <div class="training-column">
       <p class="training-column-label"><%= t(".columns.trainings") %></p>
-      <div class="chip-list">
+      <div class="chip-list plan-list">
         <% card.trainings.each do |training| %>
-          <button type="button" class="plan-chip"
+          <button type="button" class="plan-chip" aria-pressed="false" data-action="training-draft#toggleCancel"
+                  data-training-id="<%= training.id %>" data-trainee-id="<%= training.trainee_id %>"
                   aria-label="<%= t(".plan_label", trainer: training.trainer.name, trainee: training.trainee.name) %>">
             <span class="plan-chip-names"><%= training.trainer.name %> → <%= training.trainee.name %></span>
             <span class="plan-chip-due"><%= training_due_label(training.due_on) %></span>
           </button>
         <% end %>
-        <% if card.trainings.empty? %>
-          <span class="chip-empty"><%= t(".no_trainings") %></span>
-        <% end %>
+        <span class="chip-empty" data-empty-for="plans" <%= "hidden" if card.trainings.any? %>><%= t(".no_trainings") %></span>
       </div>
     </div>
   </div>

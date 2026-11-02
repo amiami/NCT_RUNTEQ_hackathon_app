@@ -349,3 +349,30 @@
     @apply text-xs font-bold text-notification;
   }
 }
+
+/* 研修画面の下書き（#61） */
+@layer components {
+  /* 選んだ未研修の人 */
+  .trainee-chip-selected {
+    @apply border-primary bg-primary text-primary-content;
+  }
+
+  /* 下書きで追加した予定（まだ保存していない）。点線の枠で保存済みと見分ける */
+  .plan-chip-draft {
+    @apply border border-dashed border-secondary-content;
+  }
+
+  /* 取り消す下書きにした保存済みの予定 */
+  .plan-chip-cancelled,
+  .assigned-training-cancelled {
+    @apply line-through opacity-60;
+  }
+
+  .assigned-training-actions {
+    @apply flex flex-wrap items-center gap-2;
+  }
+
+  .save-bar-form {
+    @apply flex items-center gap-3;
+  }
+}

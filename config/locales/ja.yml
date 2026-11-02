@@ -77,6 +77,8 @@ ja:
         empty: 該当する作業はありません
         assigned_title: 指示済みの研修（%{count}件）
         assigned_empty: まだありません。作業の「教える人」を押して下書きを作り、「変更を保存」を押すと、ここに出ます。
+        save: 変更を保存
+        unsaved_note: （まだ保存されていません!）
       card:
         capable_count: できる人%{count}人
         due_label: "%{name}の研修期限"
@@ -95,6 +97,8 @@ ja:
           requested: 教える人が未確認
         declared: （本人がレベル3以上に申告済み）
         done: 教え終わった
+        cancel: 取り消す
+        undo_cancel: 取り消しをやめる
 
   training_completion:
     done: 「教え終わった」にしました。教わった人は研修済みになります
