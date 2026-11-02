@@ -15,5 +15,8 @@ module OperationBrowsing
       operations.find { |operation| operation.id.to_s == params[:operation_id] } || raise(ActiveRecord::RecordNotFound)
     end
     @capable_counts = Skill.capable_counts
+    if @operation && controller_path.start_with?("admin/") && current_user&.admin?
+      @operation_staff_rows = OperationStaffStatus.rows(@operation)
+    end
   end
 end

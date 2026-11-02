@@ -7,7 +7,21 @@ ja:
       operation_date: "%m/%d"
       operation_full_date: "%Y/%m/%d"
 
+  date:
+    formats:
+      operation_full_date: "%Y/%m/%d"
+
   operations:
+    staff_status:
+      title: この作業のスタッフ状況
+      empty: スタッフが登録されていません
+      confirmations:
+        unconfirmed: 未確認
+        revised: 改定後 未確認
+        confirmed: 確認済み
+      trained: "研修：済み（%{trainer}さんから・%{date}）"
+      self_learned: 研修：なし（自分で習得）
+      not_trained: 研修：まだ
     tree_label: 作業ツリー
     level_prefix: レベル
     external_marker: URL
