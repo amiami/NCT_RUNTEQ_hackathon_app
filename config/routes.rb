@@ -6,14 +6,18 @@ Rails.application.routes.draw do
   resource :operator, only: :update
 
   namespace :admin do
-    resources :operations, only: :index
+    resources :operations, only: :index do
+      resource :manual, only: [ :edit, :update ], module: :operations
+    end
     resource :skill_map, only: :show
     resources :trainings, only: :index
     resources :manual_revisions, only: :index
   end
 
   namespace :staff do
-    resources :operations, only: :index
+    resources :operations, only: :index do
+      resource :confirmation, only: :create, module: :operations
+    end
     resources :skills, only: :index
     resources :manual_revisions, only: :index
   end

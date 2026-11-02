@@ -1,0 +1,19 @@
+<% confirmed = skill&.manual_confirmed?(manual) %>
+<% level = skill&.level || 0 %>
+<section class="operation-confirmation" aria-label="<%= t('operations.confirmation_label') %>">
+  <div class="operation-confirmation-summary">
+    <div>
+      <p class="operation-confirmation-caption"><%= t("operations.my_skill_level") %></p>
+      <p class="operation-confirmation-level">
+        <span class="skill-level skill-level-<%= level %>"><%= level %></span>
+        <span><%= t("skill_levels.#{level}") %></span>
+      </p>
+    </div>
+    <p class="operation-confirmation-hint">
+      <%= t(confirmed ? "operations.confirmed_hint" : "operations.confirmation_hint") %>
+    </p>
+  </div>
+  <%= button_to t(confirmed ? "operations.confirmed_button" : "operations.confirm_button"),
+                staff_operation_confirmation_path(operation), method: :post, params: { version: manual.version },
+                class: "btn btn-primary operation-confirm-button", disabled: confirmed %>
+</section>

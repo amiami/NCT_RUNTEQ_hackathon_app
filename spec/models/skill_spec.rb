@@ -97,6 +97,25 @@ RSpec.describe Skill do
     end
   end
 
+  describe "#manual_confirmed?" do
+    let(:manual) { create(:manual, version: 2) }
+
+    it "未確認・古い版はfalse、今の版を確認済みならtrue" do
+      skill = build(:skill, operation: manual.operation)
+      expect(skill.manual_confirmed?(manual)).to be false
+      skill.confirmed_version = 1
+      expect(skill.manual_confirmed?(manual)).to be false
+      skill.confirmed_version = 2
+      expect(skill.manual_confirmed?(manual)).to be true
+    end
+
+    it "別の作業のマニュアルは確認済みとしない" do
+      skill = build(:skill, confirmed_version: 2)
+
+      expect(skill.manual_confirmed?(manual)).to be false
+    end
+  end
+
   describe "#unread?" do
     let(:operation) { create(:operation) }
     let!(:manual) { create(:manual, operation:) }
