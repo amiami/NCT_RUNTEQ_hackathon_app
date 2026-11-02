@@ -274,6 +274,61 @@ RSpec.describe "研修画面（S-3）" do
     end
   end
 
+  describe "下書きと「変更を保存」のしくみ（#61）" do
+    let(:operation) { create(:operation, name: "給与計算") }
+    let!(:yamamoto) { skill_in(operation, 4, name: "山本") }
+    let!(:yoshida) { skill_in(operation, 1, name: "吉田") }
+    let!(:kato) { skill_in(operation, 0, name: "加藤") }
+    let!(:saved) { plan(operation, kato, trainer: yamamoto) }
+
+    before { open_screen }
+
+    it "画面が共通部品（unsaved-changes）と下書きのコントローラの内側にあり、移るときの確認の文言が付いている（AC-6）" do
+      root = page.find(".training-layout")
+
+      expect(root["data-controller"].split).to include("unsaved-changes", "training-draft", "training-filter")
+      expect(root["data-unsaved-changes-confirm-message-value"]).to eq "変更は保存されませんがよろしいですか？"
+    end
+
+    it "「変更を保存」の枠は最初は隠れていて、中に「変更を保存」と「（まだ保存されていません!）」がある（AC-4）" do
+      bar = page.find("[data-unsaved-changes-target=bar]", visible: :all)
+
+      expect(bar[:hidden]).not_to be_nil
+      expect(bar).to have_button("変更を保存", visible: :all)
+      expect(bar.text(:all)).to include("（まだ保存されていません!）")
+    end
+
+    it "「変更を保存」のフォームは PATCH /admin/training_plan に送り、共通部品の確認を出さない印が付いている（AC-5）" do
+      form = page.find("[data-unsaved-changes-target=bar] form", visible: :all)
+
+      expect(form[:action]).to eq admin_training_plan_path
+      expect(form).to have_field("_method", with: "patch", type: :hidden, visible: :all)
+      expect(form["data-unsaved-changes-skip"]).not_to be_nil
+    end
+
+    it "教える人・未研修・研修予定のボタンに、下書きに使う id が付いている（AC-1〜3）" do
+      card = card("給与計算")
+
+      expect(card["data-operation-id"]).to eq operation.id.to_s
+      expect(card.find(".trainer-chip", text: "山本")["data-trainer-id"]).to eq yamamoto.id.to_s
+      expect(card.find(".trainer-chip", text: "管理者")["data-trainer-id"]).to eq admin.id.to_s
+      expect(card.find(".trainee-chip", text: "吉田")["data-trainee-id"]).to eq yoshida.id.to_s
+      expect(card.find(".plan-chip", text: "加藤")["data-training-id"]).to eq saved.id.to_s
+      expect(card.find("input[type=date]")["data-initial-value"]).to eq ""
+    end
+
+    it "右の一覧の未完了の予定に、取り消しの下書きにする「取り消す」ボタンがある（スタッフが担当の予定にも）" do
+      item = page.find("#assigned-trainings .assigned-training", text: "加藤")
+
+      expect(item.find("button", text: "取り消す")["data-training-id"]).to eq saved.id.to_s
+      expect(item).to have_no_button("教え終わった")
+    end
+
+    it "画面を Turbo のキャッシュから外し、「戻る」で下書きが残った画面を出さない（AC-6）" do
+      expect(page).to have_css('meta[name="turbo-cache-control"][content="no-cache"]', visible: :all)
+    end
+  end
+
   it "作業や予定が増えても、DB への問い合わせの回数は変わらない" do
     count_queries = lambda do
       queries = []
