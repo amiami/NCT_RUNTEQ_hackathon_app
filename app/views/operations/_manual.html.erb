@@ -50,6 +50,9 @@
       <% end %>
     </div>
   <% end %>
+  <% if manual&.internal? && admin_page? && current_user&.admin? %>
+    <%= render "admin/operations/revision", operation: operation %>
+  <% end %>
   <% if manual && !admin_page? && staff_operator? %>
     <%= render "staff/operations/confirmation", operation: operation, manual: manual, skill: confirmation_skill %>
   <% end %>

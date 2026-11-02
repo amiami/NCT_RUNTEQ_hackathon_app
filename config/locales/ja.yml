@@ -25,6 +25,16 @@ ja:
     no_manual: この作業のマニュアルはまだ登録されていません
     empty: 作業がまだ登録されていません
     empty_manual: 作業が登録されると、ここにマニュアルを表示します
+    revision_edit: 手順を書き直す（改定）
+    revision_body: 手順（1行＝1ステップ）
+    revision_memo: 改定メモ（何が変わったか）
+    revision_memo_example: 例：貸与物の返却リストを更新
+    revision_save: 改定して保存
+    revision_cancel: やめる
+    revision_hint: 保存すると版が上がります。スキルレベル・管理者の見立ては変わりません
+    revised_notice: マニュアルを改定しました
+    revision_invalid: 手順を入力してください
+    revision_stale: マニュアルが更新されました。「やめる」で最新の手順を確認してから、編集し直してください
     confirmation_label: マニュアルの確認
     my_skill_level: わたしのスキルレベル
     confirmation_hint: 内容を読んで「マニュアルを確認した」を押してください。レベル0の人はレベル1になります

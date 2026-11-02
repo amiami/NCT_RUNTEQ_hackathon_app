@@ -6,7 +6,9 @@ Rails.application.routes.draw do
   resource :operator, only: :update
 
   namespace :admin do
-    resources :operations, only: :index
+    resources :operations, only: :index do
+      resource :manual, only: [ :edit, :update ], module: :operations
+    end
     resource :skill_map, only: :show
     resources :trainings, only: :index
     resources :manual_revisions, only: :index
