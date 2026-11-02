@@ -3,5 +3,5 @@
   <h1 id="operations-page-title" class="page-title mb-4"><%= t("page_titles.staff", page: t("navigation.staff.operations")) %></h1>
   <%= render "operations/browser", categories: @categories, operations_by_category: @operations_by_category,
              operation: @operation, capable_counts: @capable_counts, skill_levels: @skill_levels,
-             confirmation_skill: @confirmation_skill %>
+             confirmation_skill: @confirmation_skill, relearn_operation_ids: @relearn_operation_ids %>
 </section>
