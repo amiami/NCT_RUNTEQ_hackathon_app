@@ -144,16 +144,16 @@ ja:
 
   # 管理者の見立て。管理者画面だけで使い、スタッフ画面には出さない
   admin_assessments:
-    can_train: ▲ 研修権限
+    can_train: ▲ 指導できる
     needs_training: ▼ 要研修
     training_done: ▽ 研修済み
-    backup_trainer: ◇ 教えるのは後回し
+    backup_trainer: ◇ 指導に不安あり
 
   # マスや名前の横に出す印と、マウスを乗せたときの説明（admin/shared/_assessment_mark）
   admin_assessment_marks:
     can_train:
       symbol: ▲
-      description: 研修権限：レベル3だが、すでに教えられる
+      description: 指導できる：レベル3だが、すでに教えられる
     needs_training:
       symbol: ▼
       description: 要研修：研修が必要
@@ -162,7 +162,7 @@ ja:
       description: 研修済み：▼の人が研修を受け終えた
     backup_trainer:
       symbol: ◇
-      description: 教えるのは後回し：1人で作業はできるが、教えるのは少し不得意
+      description: 指導に不安あり：1人で作業はできるが、教えるのは少し不得意
 
   skills:
     assessments:
