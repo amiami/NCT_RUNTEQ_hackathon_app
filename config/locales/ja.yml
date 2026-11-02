@@ -25,6 +25,11 @@ ja:
     no_manual: この作業のマニュアルはまだ登録されていません
     empty: 作業がまだ登録されていません
     empty_manual: 作業が登録されると、ここにマニュアルを表示します
+    external_revision_label: 法改正・様式・サイトに変更があったとき
+    external_revision_placeholder: 変更内容のメモ（例：届出の様式が変わった）
+    external_revision_save: 改定あり
+    external_revision_hint: 保存すると版が上がります。URL・スキルレベル・管理者の見立ては変わりません
+    external_revision_stale: マニュアルが更新されました。最新の版と変更内容を確認してから、改めて保存してください
     revision_edit: 手順を書き直す（改定）
     revision_body: 手順（1行＝1ステップ）
     revision_memo: 改定メモ（何が変わったか）

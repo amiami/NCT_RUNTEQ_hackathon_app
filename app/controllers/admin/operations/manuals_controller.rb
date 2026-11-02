@@ -3,7 +3,7 @@ module Admin
     class ManualsController < Admin::BaseController
       include OperationBrowsing
 
-      before_action :load_internal_manual
+      before_action :load_manual
 
       def edit
         show_editor
@@ -18,19 +18,26 @@ module Admin
         show_editor(status: :unprocessable_content)
       rescue ManualReviser::StaleVersion
         @revision_error = t("operations.revision_stale")
-        show_editor(status: :conflict)
+        if @manual.external?
+          redirect_to admin_operations_path(operation_id: @manual.operation_id),
+            alert: t("operations.external_revision_stale"), status: :see_other
+        else
+          show_editor(status: :conflict)
+        end
       rescue ManualReviser::NotAdmin
         head :forbidden
       end
 
       private
 
-      def load_internal_manual
-        @manual = Manual.find_by!(operation_id: params[:operation_id], kind: :internal)
+      def load_manual
+        @manual = Manual.find_by!(operation_id: params[:operation_id])
+        raise ActiveRecord::RecordNotFound if action_name == "edit" && !@manual.internal?
       end
 
       def revision_params
-        params.require(:manual).permit(:body, :memo, :version).with_defaults(body: nil, memo: nil, version: nil)
+        fields = @manual.internal? ? [ :body, :memo, :version ] : [ :memo, :version ]
+        params.require(:manual).permit(*fields).with_defaults(body: nil, memo: nil, version: nil)
       end
 
       def show_editor(status: :ok)

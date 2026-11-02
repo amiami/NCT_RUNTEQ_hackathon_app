@@ -61,13 +61,11 @@ RSpec.describe "アプリ内マニュアルの改定" do
     expect(manual.reload).to have_attributes(body: "古い手順\n確認する", version: 1)
   end
 
-  it "外部サイトにはリンクがなく、直接指定しても編集・改定できない" do
+  it "外部サイトには手順の編集リンクがなく、編集画面は開けない" do
     manual.update!(kind: :external, url: "https://example.com")
     get admin_operations_path, params: { operation_id: operation.id }
     expect(response.body).not_to include(edit_admin_operation_manual_path(operation))
     get edit_admin_operation_manual_path(operation)
-    expect(response).to have_http_status(:not_found)
-    expect { revise }.not_to change(ManualRevision, :count)
     expect(response).to have_http_status(:not_found)
   end
 

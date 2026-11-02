@@ -62,10 +62,45 @@ RSpec.describe ManualReviser do
     expect(manual.manual_revisions).to be_empty
   end
 
-  it "外部サイトはこの操作で改定できない" do
-    manual.update!(kind: :external, url: "https://example.com")
-    expect { revise }.to raise_error(described_class::NotInternal)
-    expect(manual.reload.version).to eq(1)
-    expect(manual.manual_revisions).to be_empty
+  context "外部サイト" do
+    let(:manual) { create(:manual, :external) }
+
+    it "URLと本文を変えずに版を上げ、本文の差分なしで履歴を残す" do
+      expect { revise }.to change(ManualRevision, :count).by(1)
+      expect(manual.reload).to have_attributes(version: 2, url: "https://example.com/manual", body: nil)
+      expect(manual.manual_revisions.sole).to have_attributes(user: manager, version: 2,
+        memo: "手順を更新", body_before: nil, body_after: nil)
+    end
+
+    it "レベル・見立て・確認版とレベル変更履歴は変わらない" do
+      create(:skill, operation: manual.operation, level: 3, confirmed_version: 1,
+        admin_assessment: :needs_training, admin_assessed_by: manager, admin_assessed_at: Time.current)
+      before = Skill.order(:id).map(&:attributes)
+      expect { revise }.not_to change(SkillLevelChange, :count)
+      expect(Skill.order(:id).map(&:attributes)).to eq(before)
+    end
+
+    it "履歴保存に失敗したら版も元に戻る" do
+      allow(ManualRevision).to receive(:create!).and_raise(ActiveRecord::RecordInvalid)
+      expect { revise }.to raise_error(ActiveRecord::RecordInvalid)
+      expect(manual.reload.version).to eq(1)
+      expect(manual.manual_revisions).to be_empty
+    end
+
+    it "スタッフは外部サイトも改定できない" do
+      expect { revise(user: create(:user)) }.to raise_error(described_class::NotAdmin)
+      expect(manual.reload.version).to eq(1)
+    end
+
+    it "古い版の再送では改訂記録を重複させない" do
+      revise
+      expect { revise }.to raise_error(described_class::StaleVersion)
+      expect(manual.manual_revisions.count).to eq(1)
+    end
+
+    it "メモが空でも保存できる" do
+      revise(memo: "")
+      expect(manual.manual_revisions.sole.memo).to eq("")
+    end
   end
 end
