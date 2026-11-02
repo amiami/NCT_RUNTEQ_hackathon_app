@@ -61,7 +61,7 @@ flowchart TD
 - 共通の立場名・タブ名・ページ見出し（ブラウザのタイトルを含む）は `config/locales/ja.yml` に定義し、ビューでは `t` で参照する。立場の切り替えの文言は `navigation.roles`・`operators`、タブ名は `navigation.admin` / `navigation.staff`、見出しは `page_titles.admin` / `page_titles.staff` に画面名を渡す。
 
 - URL：管理者は `/admin/operations`・`/admin/skill_map`・`/admin/trainings`・`/admin/manual_revisions`。スタッフは `/staff/operations`・`/staff/skills`・`/staff/manual_revisions`。
-- ルート `/` はスタッフの作業マニュアルを表示する。`/staff/operations` と同じ内容・選択タブを使う。各画面の本文は専用の `app/views/admin/…`・`app/views/staff/…` に置き、h1に立場（管理者／スタッフ）と画面名を表示する。
+- ルート `/` は、操作している人の立場に合った最初の画面に移る。部長（何も選んでいないときも含む）は管理者の作業ツリー（`/admin/operations`）、スタッフはスタッフの作業マニュアル（`/staff/operations`）。移るときに注意は出さない。各画面の本文は専用の `app/views/admin/…`・`app/views/staff/…` に置き、h1に立場（管理者／スタッフ）と画面名を入れる。h1は画面には出さず、読み上げソフトだけが読む（`.page-title` に `sr-only` を付ける）。
 - `shared/header` にタイトル・操作する人の切り替えスイッチ・タブ・常時表示のレベル凡例と開閉式の「レベルの説明」・フラッシュ通知枠をまとめる。共通レイアウトから一度だけ呼び出す。
 - フラッシュは `flash` / `flash.now` のnotice・alert等を表示する。通知がなければ余白を出さず、`flash-messages` の差し替え先だけを残す。研修依頼の通知の帯は別機能。
 - 操作する人は `PATCH /operator` で切り替え、`session[:user_id]` に保存する。`current_user` は、選んだスタッフ（`User.skill_holders` の1人）。何も選んでいない、または選んだ人がいなくなったときは部長（管理者）になる。管理者の画面は `Admin::BaseController` で守り、スタッフとして操作しているときに開くとスタッフの画面に戻して理由を表示する。URLの名前空間は認可の代わりにならない。

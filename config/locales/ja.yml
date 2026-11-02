@@ -44,6 +44,13 @@ ja:
       duplicated: 同じ人の未完了の研修予定がすでにあります。画面を開き直してください
       invalid_due_on: 期限の日付が正しくありません
 
+  training_completion:
+    done: 「教え終わった」にしました。教わった人は研修済みになります
+    errors:
+      already_done: この研修予定はすでに完了しています
+      not_trainer: この研修予定の教える人だけが「教え終わった」にできます
+      not_saved: 「教え終わった」にできませんでした。画面を開き直して、もう一度押してください
+
   operators:
     switch_label: 操作する人の切り替え
     label: 操作する人
