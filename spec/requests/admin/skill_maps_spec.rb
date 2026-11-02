@@ -112,8 +112,14 @@ RSpec.describe "スキルマップ（管理者）" do
       end
 
       it "AC-1: 表より上に、できる人が1人以下の作業の件数を添えた警告が出る" do
-        expect(warning).to have_text("できる人が1人以下の作業が2件あります")
+        expect(warning).to have_text("できる人（1人でできる＝レベル4）が1人以下の作業が2件あります")
+        expect(warning).to have_text("担当者が休んだり辞めたりすると止まる恐れがあります。研修画面で優先して教える人を決めましょう。")
         expect(response.body.index("capable-warning")).to be < response.body.index("<table")
+      end
+
+      it "AC-1: 警告は表のカードの中ではなく、その上の別のカードとして出る" do
+        expect(document).to have_css(".capable-warning.card")
+        expect(document).to have_no_css("section.card .capable-warning")
       end
 
       it "AC-1: 警告に絞り込みのボタンがあり、押すと skill-map コントローラで切り替える（最初は押していない状態）" do
