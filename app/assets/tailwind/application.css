@@ -278,8 +278,16 @@
     @apply mb-4 border-primary p-4;
   }
 
+  .skill-detail-header {
+    @apply flex flex-wrap items-center gap-x-4 gap-y-2;
+  }
+
   .skill-detail-title {
     @apply text-base font-bold;
+  }
+
+  .skill-detail-level {
+    @apply flex items-center gap-2 text-sm font-bold;
   }
 
   .skill-detail-items {

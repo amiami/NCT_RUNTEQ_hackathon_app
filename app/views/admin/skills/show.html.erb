@@ -3,7 +3,14 @@
     管理者の見立ては、今のレベルで意味のない値（4▲・4▽・3◇）も実際の値で出し、説明を添える %>
 <%= turbo_frame_tag "skill_detail" do %>
   <section class="card skill-detail">
-    <h2 class="skill-detail-title"><%= t(".title", user: @skill.user.name, operation: @skill.operation.name) %></h2>
+    <div class="skill-detail-header">
+      <h2 class="skill-detail-title"><%= t(".title", user: @skill.user.name, operation: @skill.operation.name) %></h2>
+      <%# 今のレベル。数字の色と名前は凡例・マスと同じ（見立ての説明や選べる見立てがレベルで決まるため） %>
+      <p class="skill-detail-level">
+        <span class="skill-level skill-level-<%= @skill.level %>"><%= @skill.level %></span>
+        <span><%= t("skill_levels.#{@skill.level}") %></span>
+      </p>
+    </div>
     <dl class="skill-detail-items">
       <div>
         <dt><%= t(".manual_status") %></dt>
