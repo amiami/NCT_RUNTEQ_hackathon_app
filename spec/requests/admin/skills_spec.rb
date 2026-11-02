@@ -33,6 +33,20 @@ RSpec.describe "スキルマップのマスの詳細（管理者）" do
     end
   end
 
+  describe "今のレベル" do
+    it "見出しの横に、レベルの数字（マスと同じ色）と名前が出る" do
+      { 0 => "未着手", 3 => "先輩のもとでできる", 4 => "作業を最後まで1人でできる" }.each do |level, name|
+        skill = create(:skill, operation: payroll, level:)
+
+        get admin_skill_path(skill)
+
+        level_area = detail.find(".skill-detail-level")
+        expect(level_area).to have_css(".skill-level.skill-level-#{level}", exact_text: level.to_s)
+        expect(level_area).to have_text(name)
+      end
+    end
+  end
+
   describe "AC-2: マニュアル確認状況" do
     before { create(:manual, operation: payroll, version: 2) }
 
