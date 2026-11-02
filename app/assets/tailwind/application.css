@@ -507,6 +507,7 @@
   --color-operation-revision: #FFEDD5;
   --color-operation-revision-content: #9A3412;
   --color-operation-outline: #9CA3AF;
+  --color-operation-self-declaration: #F5F8FD; /* 作業マニュアルの下の「自己申告」の枠の背景 */
 }
 
 @layer components {
@@ -671,6 +672,20 @@
   }
 
   .operation-confirm-button {
+    @apply disabled:cursor-not-allowed disabled:opacity-45;
+  }
+
+  /* 自己申告の枠（「自己申告」の文字と、レベル3・4のボタン）。狭い画面では折り返す */
+  .self-declaration {
+    @apply flex flex-wrap items-center gap-2 rounded-[10px] bg-operation-self-declaration px-3.5 py-3;
+  }
+
+  .self-declaration-label {
+    @apply mr-1 text-[13px] font-bold;
+  }
+
+  /* 今のレベルから申告できないボタンは、薄く表示して押せなくする */
+  .self-declaration-button {
     @apply disabled:cursor-not-allowed disabled:opacity-45;
   }
   .operation-revision {
