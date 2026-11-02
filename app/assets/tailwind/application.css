@@ -263,6 +263,21 @@
     @apply ml-2 inline-flex items-center rounded-md bg-capable-alert px-1.5 py-0.5 text-[11px] font-bold whitespace-nowrap text-capable-alert-content;
   }
 
+  /* 表の上の警告（できる人が1人以下の作業があるときだけ出る） */
+  .capable-warning {
+    @apply mb-4 flex flex-wrap items-center justify-between gap-3 rounded-lg bg-warning px-4 py-3 text-sm font-medium text-warning-content;
+  }
+
+  /* 絞り込みのボタン。押している間（aria-pressed="true"）は塗りつぶして、絞り込み中だと分かるようにする */
+  .capable-filter[aria-pressed="true"] {
+    @apply border-primary bg-primary text-primary-content;
+  }
+
+  /* 絞り込み中は、できる人が2人以上の作業の行と、そういう作業しかない分類を隠す */
+  .skill-map-few-capable-only [data-few-capable="false"] {
+    @apply hidden;
+  }
+
   /* マスはリンク（押すと詳細が出る）。リンクの下線・色は付けず、押せることはカーソルで示す */
   a.skill-map-cell {
     @apply cursor-pointer no-underline hover:ring-2 hover:ring-link;
