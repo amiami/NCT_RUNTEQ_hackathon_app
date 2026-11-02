@@ -122,13 +122,13 @@ RSpec.describe "スキルマップのマスの詳細（管理者）" do
 
       get admin_skill_path(skill)
 
-      expect(assessment).to have_checked_field("▲ 研修権限")
+      expect(assessment).to have_checked_field("▲ 指導できる")
       expect(assessment).to have_no_css(".skill-detail-assessment-note")
     end
 
     {
-      [ 4, :can_train ] => [ "▲ 研修権限", "レベル3になっても、教える人の候補に残ります" ],
-      [ 3, :backup_trainer ] => [ "◇ 教えるのは後回し", "レベル4になると、教える人の候補の後ろに並びます" ],
+      [ 4, :can_train ] => [ "▲ 指導できる", "レベル3になっても、教える人の候補に残ります" ],
+      [ 3, :backup_trainer ] => [ "◇ 指導に不安あり", "レベル4になると、教える人の候補の後ろに並びます" ],
       [ 4, :training_done ] => [ "▽ 研修済み", "▼から研修を受け終えました（いまは普通のレベル4として扱います）" ]
     }.each do |(level, admin_assessment), (value, note)|
       it "#{level}#{value[0]} は、実際の値が選ばれていて、説明が出る" do
@@ -158,36 +158,36 @@ RSpec.describe "スキルマップのマスの詳細（管理者）" do
     it "レベル3なら、なし・▲・▼を選べて、◇は押せない。▽は出ない" do
       get admin_skill_path(create(:skill, operation: payroll, level: 3))
 
-      expect(enabled_choices).to eq [ "なし", "▲ 研修権限", "▼ 要研修" ]
-      expect(disabled_choices).to eq [ "◇ 教えるのは後回し" ]
+      expect(enabled_choices).to eq [ "なし", "▲ 指導できる", "▼ 要研修" ]
+      expect(disabled_choices).to eq [ "◇ 指導に不安あり" ]
       expect(assessment).to have_no_field("▽ 研修済み")
     end
 
     it "レベル4なら、なし・◇を選べて、▲・▼は押せない" do
       get admin_skill_path(create(:skill, operation: payroll, level: 4))
 
-      expect(enabled_choices).to eq [ "なし", "◇ 教えるのは後回し" ]
-      expect(disabled_choices).to eq [ "▲ 研修権限", "▼ 要研修" ]
+      expect(enabled_choices).to eq [ "なし", "◇ 指導に不安あり" ]
+      expect(disabled_choices).to eq [ "▲ 指導できる", "▼ 要研修" ]
     end
 
     it "レベル0〜2なら、なしだけを選べる" do
       get admin_skill_path(create(:skill, operation: payroll, level: 2))
 
       expect(enabled_choices).to eq [ "なし" ]
-      expect(disabled_choices).to eq [ "▲ 研修権限", "▼ 要研修", "◇ 教えるのは後回し" ]
+      expect(disabled_choices).to eq [ "▲ 指導できる", "▼ 要研修", "◇ 指導に不安あり" ]
     end
 
     it "今の値は、今のレベルで付けられなくても押せる（選び直すと下書きの取り消しになるため）" do
       get admin_skill_path(create(:skill, operation: payroll, level: 4, admin_assessment: :can_train))
 
-      expect(enabled_choices).to eq [ "なし", "▲ 研修権限", "◇ 教えるのは後回し" ]
+      expect(enabled_choices).to eq [ "なし", "▲ 指導できる", "◇ 指導に不安あり" ]
       expect(disabled_choices).to eq [ "▼ 要研修" ]
     end
 
     it "▽は、今の値が▽のときだけ出る（「教え終わった」でしか付かないため）" do
       get admin_skill_path(create(:skill, operation: payroll, level: 3, admin_assessment: :training_done))
 
-      expect(enabled_choices).to eq [ "なし", "▲ 研修権限", "▼ 要研修", "▽ 研修済み" ]
+      expect(enabled_choices).to eq [ "なし", "▲ 指導できる", "▼ 要研修", "▽ 研修済み" ]
       expect(assessment).to have_checked_field("▽ 研修済み")
     end
 
