@@ -203,6 +203,11 @@ ja:
     skills:
       index:
         skill_list_label: わたしのスキルの一覧
+      skill_list:
+        count_unit: 件
+        trained: 研修済み
+        reconfirm: 再確認
+        level: レベル%{level}
       trainings:
         teaching_title: 教える予定
         learning_title: 教わる予定

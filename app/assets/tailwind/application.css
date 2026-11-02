@@ -39,6 +39,10 @@
   --color-skill-4: #6E9FE3;
   --color-skill-content: #1E3A5F;
   --color-skill-strong-content: #0B2545;
+  --color-skill-bar: #1F5FBF; /* わたしのスキルの4段のバーの、塗った段 */
+  --color-trained: #ECFDF5; /* 「研修済み」のバッジ（わたしのスキル） */
+  --color-trained-content: #065F46;
+  --color-trained-line: #6EE7B7;
   --color-capable-alert: #7C2D12; /* 「できる人○人」のバッジ */
   --color-capable-alert-content: #fff;
   --color-capable-warning: #FFF7ED; /* スキルマップの上の「できる人が1人以下」の警告の背景 */
@@ -836,5 +840,70 @@
 
   .my-training-empty {
     @apply text-sm leading-[normal] text-muted;
+  }
+}
+
+/* わたしのスキルの一覧（S-6 の左の欄）：レベルごとの件数と、分類ごとの作業 */
+@layer components {
+  .my-level-counts {
+    @apply grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] gap-3;
+  }
+
+  .my-level-count {
+    @apply px-4 py-3.5;
+  }
+
+  .my-level-count-label {
+    @apply flex items-center gap-1.5 text-xs leading-[normal] text-legend-content;
+  }
+
+  .my-level-count-number {
+    @apply mt-1.5 text-[26px] leading-[normal] font-bold;
+  }
+
+  .my-level-count-unit {
+    @apply ml-0.5 text-[13px] font-normal;
+  }
+
+  .my-skill-category {
+    @apply px-4 pt-2 pb-3;
+  }
+
+  .my-skill-category-title {
+    @apply pt-2.5 pb-1.5 text-sm font-bold;
+  }
+
+  .my-skill-rows {
+    @apply flex flex-col;
+  }
+
+  /* 1行が作業1つ。行全体がその作業の作業マニュアルへのリンク */
+  .my-skill-row {
+    @apply flex min-h-10 flex-wrap items-center gap-2 border-b border-line px-2.5 py-2 text-sm leading-[normal] text-base-content hover:bg-base-200;
+  }
+
+  .my-skill-heading {
+    @apply flex flex-[1_1_160px] flex-wrap items-center gap-2;
+  }
+
+  .my-skill-badge-trained {
+    @apply rounded-md border border-trained-line bg-trained px-1.5 py-px text-[11px] font-bold whitespace-nowrap text-trained-content;
+  }
+
+  /* 4段のバー（レベルの数だけ塗る）。読み上げには「レベルN」を使うので、バーは aria-hidden */
+  .skill-bar {
+    @apply inline-flex gap-0.5;
+  }
+
+  .skill-bar-segment {
+    @apply h-2.5 w-7 rounded-sm bg-line;
+  }
+
+  .skill-bar-segment-on {
+    @apply bg-skill-bar;
+  }
+
+  .my-skill-level {
+    @apply inline-flex items-center justify-center rounded-md px-2 py-0.5 text-xs font-bold whitespace-nowrap;
   }
 }

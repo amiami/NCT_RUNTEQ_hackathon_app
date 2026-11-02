@@ -94,6 +94,10 @@ class Skill < ApplicationRecord
     end
   end
 
+  # 一覧でまとめて読んだ研修済み（Training.latest_done を index_by したもの）を入れる。入れたあとは latest_done_training が
+  # 問い合わせない（nil を入れても「研修なし」として覚える）。わたしのスキルの一覧（MySkillList）で使う
+  attr_writer :latest_done_training
+
   # 研修済み（誰から・いつ）。この作業でこの人が教わった、完了した研修予定のうち最新のもの（なければ nil）。
   # 1つのスキルで何度も使うので、結果を覚えておく（nil も覚えるので defined? で確かめる）
   def latest_done_training
