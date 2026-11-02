@@ -1,4 +1,13 @@
 <% content_for :title, "#{t('page_titles.staff', page: t('navigation.staff.skills'))} | #{t('app_name')}" %>
-<section class="card">
-  <h1 class="page-title"><%= t("page_titles.staff", page: t("navigation.staff.skills")) %></h1>
-</section>
+<h1 class="page-title"><%= t("page_titles.staff", page: t("navigation.staff.skills")) %></h1>
+
+<%# 左：わたしのスキルの一覧（#80）、右：教える予定・教わる予定（#63） %>
+<div class="my-skills-layout">
+  <section id="my-skill-list" class="my-skill-list" aria-label="<%= t(".skill_list_label") %>">
+    <%= render "skill_list" %>
+  </section>
+
+  <aside id="my-trainings" class="card my-trainings">
+    <%= render "trainings", teaching_trainings: @teaching_trainings, learning_trainings: @learning_trainings %>
+  </aside>
+</div>

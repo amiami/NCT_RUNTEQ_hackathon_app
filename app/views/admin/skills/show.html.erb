@@ -42,7 +42,7 @@
               <label class="assessment-choice">
                 <%= radio_button_tag "admin_assessment", value, value == current, disabled: !selectable,
                                      data: { action: "skill-map#chooseAssessment" } %>
-                <span><%= value.empty? ? t(".no_assessment") : t("admin_assessments.#{value}") %></span>
+                <span><%= value.empty? ? t(".no_assessment") : "#{t("admin_assessments.#{value}.mark")} #{t("admin_assessments.#{value}.label")}" %></span>
               </label>
             <% end %>
           </fieldset>
