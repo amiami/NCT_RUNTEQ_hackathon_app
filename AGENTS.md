@@ -22,7 +22,7 @@ AI 開発ツール（Codex・Claude Code など）に共通で読ませる開発
 | マニュアル | `manuals`。1作業に1つ。`kind` は `internal`（アプリ内に手順）／`external`（外部サイト）。版と改訂履歴（`manual_revisions`）を持つ |
 | 手順 | `manuals.body` に1行＝1ステップ。ステップ用のテーブルは作らない |
 | レベル | `skills.level`（0〜4）。0 未着手 / 1 マニュアル確認済み / 2 研修済み / 3 先輩のもとでできる / 4 最後まで1人でできる。本人の確認・研修・自己申告だけで変わり、変わるたびに `skill_level_changes` に記録する |
-| 管理者の見立て | `skills.admin_assessment`。管理者が付ける印で、レベルとは別に持つ：`can_train`（▲ 研修権限・レベル3）／`needs_training`（▼ 要研修・レベル3）／`training_done`（▽ 研修済み・▼の人の「教え終わった」で自動）／`backup_trainer`（◇ 教えるのは後回し・レベル4）。**スタッフには見せない**（HTML の属性・JSON・Turbo Stream にも出さない）。研修画面の候補は、レベルではなくこの値で判断する |
+| 管理者の見立て | `skills.admin_assessment`。管理者が付ける印で、レベルとは別に持つ：`can_train`（▲ 指導できる・レベル3）／`needs_training`（▼ 要研修・レベル3）／`training_done`（▽ 研修済み・▼の人の「教え終わった」で自動）／`backup_trainer`（◇ 指導に不安あり・レベル4）。**スタッフには見せない**（HTML の属性・JSON・Turbo Stream にも出さない）。研修画面の候補は、レベルではなくこの値で判断する |
 | 研修予定 | `trainings`。教わる人1人につき1件。`requested` → `acknowledged` → `done` |
 | 改定 | マニュアルの版を上げる（管理者だけ）。レベルと管理者の見立ては変えない |
 | できる人 | その作業でレベル4の人（◇・▼も数える）。1人以下なら警告 |
