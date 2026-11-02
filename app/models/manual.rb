@@ -1,6 +1,7 @@
 class Manual < ApplicationRecord
   belongs_to :operation
   has_many :manual_revisions
+  has_one :latest_revision, -> { order(version: :desc) }, class_name: "ManualRevision"
 
   # 値を url にしない（カラム url と url? などのメソッドがぶつかるため）
   enum :kind, { internal: 0, external: 1 }, validate: true

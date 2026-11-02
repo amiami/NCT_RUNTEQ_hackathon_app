@@ -6,7 +6,9 @@ Rails.application.routes.draw do
   resource :operator, only: :update
 
   namespace :admin do
-    resources :operations, only: :index
+    resources :operations, only: :index do
+      resource :manual, only: [ :edit, :update ], module: :operations
+    end
     resource :skill_map, only: :show
     resources :trainings, only: :index
     # 研修画面の「変更を保存」：下書きの予定の追加・取り消し・期限の変更をまとめて反映する
@@ -20,7 +22,9 @@ Rails.application.routes.draw do
   end
 
   namespace :staff do
-    resources :operations, only: :index
+    resources :operations, only: :index do
+      resource :confirmation, only: :create, module: :operations
+    end
     resources :skills, only: :index
     resources :manual_revisions, only: :index
   end
