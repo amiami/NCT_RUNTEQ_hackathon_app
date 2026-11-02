@@ -389,6 +389,10 @@
     @apply text-[13px] text-muted;
   }
 
+  .operation-external-revision-field {
+    @apply min-w-0 flex-1 basis-[260px];
+  }
+
   .operation-revision-save {
     @apply border-operation-warning bg-operation-warning text-primary-content;
   }
