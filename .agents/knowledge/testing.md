@@ -14,3 +14,4 @@
 - System spec（`js: true`）は手元の `web` コンテナの Chromium（`BROWSER_PATH`）でも動く → `docker compose run --rm web bundle exec rspec spec/system` で実行できる。研修の主要な流れは `spec/system/training_flow_spec.rb` の1本（#64 で続きを足す）。（2026-11-02）
 - `Capybara.string` で `hidden` の要素の中の文字を確かめるときは `have_text(..., visible: :all)` が効かない → `node.text(:all)` に `include` で確かめる。（2026-11-02）
 - コンテナの中で `bin/rubocop -a` などでファイルを書き換えると、そのファイルの持ち主が root になり、手元で書き込めなくなる（`Permission denied`）→ `docker compose run --rm web chown "$(id -u):$(id -g)" <ファイル>` で持ち主を戻す。（2026-11-02）
+- 研修の主要な流れの System spec は seeds を読み込んで動かす → seeds が変わったときに原因が分かるよう、前提にしている値（給与計算の山本・吉田のレベルなど）を最初に `expect` で確かめ、手順の文や人数・作業数は確かめない。操作する人の切り替えは `switch_operator_to(name)` の1か所にまとめてある（切り替えの見た目が変わったら、そこだけ直す）。（2026-11-02）
