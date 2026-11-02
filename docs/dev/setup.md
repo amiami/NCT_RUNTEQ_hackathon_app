@@ -39,6 +39,7 @@ docker compose run --rm web bin/rails db:prepare   # ほかの人が追加した
 ```
 
 - Gemfile が変わっていたら `docker compose run --rm web bundle install` も実行します
+- `app/services` など、起動時にはなかったコード用のディレクトリが追加されたら `docker compose restart web` を実行します。起動中のサーバーが新しい読み込み先を認識せず、`uninitialized constant` になることがあります。新しく起動するテストでは通る場合もあるため、再起動後にブラウザでも操作を確認します
 - 止めるときは `docker compose stop` です
 
 ## 4. コンテナの構成（compose.yaml）
