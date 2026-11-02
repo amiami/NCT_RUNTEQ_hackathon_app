@@ -120,6 +120,33 @@ RSpec.describe Skill do
     end
   end
 
+  describe ".unread（改訂のお知らせのタブの件数）" do
+    let(:operation) { create(:operation) }
+
+    before { create(:manual, operation:, version: 2) }
+
+    it "前に確認した版より、マニュアルの版が上がっている Skill だけを返す" do
+      old = create(:skill, operation:, confirmed_version: 1)
+      create(:skill, operation:, confirmed_version: 2)
+      create(:skill, operation:, confirmed_version: nil)
+
+      expect(described_class.unread).to contain_exactly(old)
+    end
+
+    it "マニュアルがない作業の Skill は返さない" do
+      create(:skill, confirmed_version: 1)
+
+      expect(described_class.unread).to be_empty
+    end
+
+    it "どの Skill でも #unread? と同じ結果になる" do
+      skills = [ nil, 1, 2 ].map { |version| create(:skill, operation:, confirmed_version: version) }
+      skills << create(:skill, confirmed_version: 1)
+
+      expect(described_class.unread).to match_array(skills.select(&:unread?))
+    end
+  end
+
   describe "できる人" do
     let(:operation) { create(:operation) }
 
