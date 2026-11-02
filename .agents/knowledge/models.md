@@ -3,6 +3,8 @@
 - `Operation#capable_count` は作業ごとに COUNT を出すため、一覧で呼ぶと N+1 になる → 一覧では `Skill.capable_counts`（`{ operation_id => 人数 }`、いない作業は含まないので `fetch(id, 0)`）を使う。（2026-10-31）
 - `Skill#unread?` は `operation.manual` をたどる → Skill の一覧で使うときは `includes(operation: :manual)` で先に読み込む。（2026-10-31）
 - 「できる人」の条件（スキルを持つ人のうちレベル4。◇・▼も含む）は `Skill.capable` にまとめてある → 条件を書き直さず、このスコープを使う。（2026-10-31）
+- 最終改定日は日付の最大値ではなく最大版の `created_at` → `Manual#latest_revision` を使い、作業一覧では `manual: :latest_revision` を先読みする。（2026-11-01）
+- マニュアルの確認は `ManualConfirmation.call` を使う → 本人をロックして二重作成を防ぎ、既存スキルもロックし、確認版・レベル・変更履歴を同じトランザクションで保存する。フォームの版が古い場合は保存しない。（2026-11-01）
 - `Training` の作成時の条件チェック（教える人・教わる人）は1件ごとに `Skill` のスコープで `exists?` を2回出す → 「変更を保存」でまとめて作るときはクエリが件数に比例する。件数が増えたら候補のスキルを先にまとめて読み込む。（2026-10-31）
 - 研修の候補の条件は `Skill.trainer_candidates`（教える人。並び順つき、管理者は含まない）と `Skill.training_targets`（レベル0・1と▼）にまとめてある → Training の作成時のチェックも研修画面（`TrainingBoard.cards`）もこれを使う。条件を書き直さない。（2026-11-01）
 - 見立てを画面に出すかは値ではなく `Skill#assessment_meaningful?` で決める（4▲・4▽・3◇は出さない）。教える人の候補になるかは値で決まるので別物。（2026-11-01）
@@ -18,3 +20,7 @@
 - その人の教える予定・教わる予定は `Training.involving(user)`（未完了だけなら `.unfinished` と組み合わせる）。（2026-11-01）
 - 研修画面の右の一覧は `TrainingBoard.assigned_trainings`（未完了の予定すべて＋教わる人のスキル）→ カード（`TrainingBoard.cards`）は対象の人がいる作業だけなので、カードの予定から作らない（申告で対象から外れた作業の予定が消えてしまう）。（2026-11-02）
 - 見立ての記号は `TrainingsHelper#assessment_mark(skill)` で出す → `assessment_meaningful?` が false なら何も出さない。管理者の画面だけで使い、スタッフの画面では呼ばない。（2026-11-02）
+- 作業ツリーのスタッフ状況は `OperationStaffStatus.rows(operation)` を使う。スキルを持つ人全員と必要なスキル項目、`Training.latest_done.includes(:trainer)` をまとめて取得し、見立てをカードに渡さない（スキル未作成はレベル0）。（2026-11-02）
+- マニュアルの改定は `ManualReviser` がマニュアルをロックして本文・版・改訂記録をまとめて保存する。編集画面の版を渡し、古い版からの保存は409で拒否する（確認版・スキルは更新しない）。（2026-11-02）
+- 外部サイトの改定も `ManualReviser` を使い、本文を渡さずメモと表示中の版を渡す。URL・本文・スキルを変えず、履歴の本文差分はNULLにする。外部用フォームの二重送信は最新表示へ戻して案内する。（2026-11-02）
+- 教える予定（申告済みの判定つき）は `TrainingBoard.assigned_trainings(Training.where(trainer: user))`、教わる予定は `Training.learning_for(user)`（未完了 → 完了した予定は作業ごとに最新の1件）。条件を書き直さない。（2026-11-02）

@@ -62,6 +62,10 @@ class Skill < ApplicationRecord
     capable.group(:operation_id).count
   end
 
+  def manual_confirmed?(manual)
+    operation_id == manual.operation_id && confirmed_version.present? && confirmed_version >= manual.version
+  end
+
   def assessment_meaningful?
     MEANINGFUL_ASSESSMENTS.fetch(level, []).include?(admin_assessment)
   end

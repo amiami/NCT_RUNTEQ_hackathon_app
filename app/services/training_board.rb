@@ -75,8 +75,9 @@ class TrainingBoard
 
   # 指示済みの研修：保存済みの未完了の予定すべて。カードに出ない作業（対象の人がいなくなった作業）の予定も入れ、
   # 部長が「教え終わった」を押す場所がなくならないようにする。並び順は期限が近い順（期限なしは最後）
-  def self.assigned_trainings
-    trainings = Training.unfinished.includes(:operation, :trainer, :trainee)
+  # 対象の予定（trainings）を渡すと、その中の未完了の予定だけにする（わたしのスキルの教える予定で使う）
+  def self.assigned_trainings(trainings = Training.all)
+    trainings = trainings.unfinished.includes(:operation, :trainer, :trainee)
                         .order(Training.arel_table[:due_on].asc.nulls_last, :id).to_a
     skills = Skill.where(operation_id: trainings.map(&:operation_id), user_id: trainings.map(&:trainee_id))
                   .index_by { |skill| [ skill.operation_id, skill.user_id ] }

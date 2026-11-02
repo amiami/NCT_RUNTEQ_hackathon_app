@@ -1,5 +1,8 @@
 # テスト
 
+- 起動後に `app/services` を新設すると、稼働中のwebだけが `uninitialized constant` になることがある → `docker compose restart web` 後、通常の開発用URLでも操作を確認する。新規プロセスのRSpec成功だけでは反映済みと判断しない。（2026-11-02）
+- サブエージェントでのチェックはユーザーの明示依頼がある場合だけ行う。使用する場合も GitHub の最新 Issue と関連 Issue を読み、AC ごとに実装・テスト・画面確認・未確認を照合する。チェック欄の状態だけで完了と判断しない。（2026-11-01）
+- `/` は立場別画面へのリダイレクト → 振り分けと遷移後の表示は `root_spec`、本文と作業選択は `/admin/operations`・`/staff/operations` の Request spec で検証する。（2026-11-01）
 - `build(:training)` は作成時の条件を満たすスキル（教える人はレベル4、教わる人はレベル0）をその作業に自動で作る → `operation: nil` や別の作業を渡すときは、`trainer:`・`trainee:` やスキルを自分で用意する。（2026-10-31）
 - `validates :trainee_id, uniqueness:` のエラーは `trainee` ではなく `trainee_id` に付く → `ja.yml` の翻訳キー（`errors.models.training.attributes.trainee_id.taken`）と属性名も `trainee_id` で書く。（2026-10-31）
 - `bin/rails runner` で動きを確かめるときに `create!` すると開発用 DB にデータが残る → `ActiveRecord::Base.transaction do … raise ActiveRecord::Rollback end` の中で実行する（`raise` をトランザクションの外に書かない）。（2026-10-31）
@@ -10,3 +13,4 @@
 - `includes` は先読みする相手が0件だと問い合わせ自体を省く → 「件数が増えても問い合わせの回数が変わらない」テストは、比べる前の状態にも1件以上入れておく（0件と1件で差が出て落ちる）。（2026-11-02）
 - System spec（`js: true`）は手元の `web` コンテナの Chromium（`BROWSER_PATH`）でも動く → `docker compose run --rm web bundle exec rspec spec/system` で実行できる。研修の主要な流れは `spec/system/training_flow_spec.rb` の1本（#64 で続きを足す）。（2026-11-02）
 - `Capybara.string` で `hidden` の要素の中の文字を確かめるときは `have_text(..., visible: :all)` が効かない → `node.text(:all)` に `include` で確かめる。（2026-11-02）
+- コンテナの中で `bin/rubocop -a` などでファイルを書き換えると、そのファイルの持ち主が root になり、手元で書き込めなくなる（`Permission denied`）→ `docker compose run --rm web chown "$(id -u):$(id -g)" <ファイル>` で持ち主を戻す。（2026-11-02）
