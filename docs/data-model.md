@@ -172,7 +172,7 @@ erDiagram
 | operation_id | references | NO | |
 | level | integer | NO | 0〜4。既定値 0 |
 | confirmed_version | integer | YES | 「マニュアルを確認した」を押したときの版。NULL＝一度も確認していない |
-| admin_assessment | integer (enum) | YES | 管理者の見立て。`can_train: 0`（▲ 研修権限）, `needs_training: 1`（▼ 要研修）, `training_done: 2`（▽ 研修済み）, `backup_trainer: 3`（◇ 教えるのは後回し）。NULL＝なし |
+| admin_assessment | integer (enum) | YES | 管理者の見立て。`can_train: 0`（▲ 指導できる）, `needs_training: 1`（▼ 要研修）, `training_done: 2`（▽ 研修済み）, `backup_trainer: 3`（◇ 指導に不安あり）。NULL＝なし |
 | admin_assessed_at | datetime | YES | 見立てを付けた日時 |
 | admin_assessed_by_id | references (users) | YES | 見立てを付けた人。管理者。「教え終わった」で▽に変わったときは、押した人 |
 
