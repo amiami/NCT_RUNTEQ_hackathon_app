@@ -63,6 +63,8 @@ ja:
     confirmed_button: マニュアル確認済み
     confirmed_notice: マニュアルを確認しました
     confirmation_stale: マニュアルが更新されました。内容を確認して、もう一度押してください
+    relearn_badge: 再確認
+    revised_alert: このマニュアルは改定されました
 
   # アプリ固有の翻訳（モデル名・属性名など）はここに書く。
   # エラーメッセージや日付などの Rails 標準の翻訳は rails-i18n gem に入っている
