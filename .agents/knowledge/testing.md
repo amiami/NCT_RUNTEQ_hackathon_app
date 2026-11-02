@@ -1,5 +1,7 @@
 # テスト
 
+- 起動後に `app/services` を新設すると、稼働中のwebだけが `uninitialized constant` になることがある → `docker compose restart web` 後、通常の開発用URLでも操作を確認する。新規プロセスのRSpec成功だけでは反映済みと判断しない。（2026-11-02）
+
 - サブエージェントでのチェックはユーザーの明示依頼がある場合だけ行う。使用する場合も GitHub の最新 Issue と関連 Issue を読み、AC ごとに実装・テスト・画面確認・未確認を照合する。チェック欄の状態だけで完了と判断しない。（2026-11-01）
 - `/` は立場別画面へのリダイレクト → 振り分けと遷移後の表示は `root_spec`、本文と作業選択は `/admin/operations`・`/staff/operations` の Request spec で検証する。（2026-11-01）
 

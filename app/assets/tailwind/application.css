@@ -341,4 +341,32 @@
   .operation-empty {
     @apply py-3 text-sm leading-relaxed text-muted;
   }
+
+  .operation-confirmation {
+    @apply mt-6 flex flex-col gap-3.5 border-t border-line pt-5;
+  }
+
+  .operation-confirmation-summary {
+    @apply flex flex-wrap items-center gap-6;
+  }
+
+  .operation-confirmation-caption {
+    @apply text-xs leading-[normal] text-muted;
+  }
+
+  .operation-confirmation-level {
+    @apply mt-1 flex items-center gap-2 text-sm leading-[normal] font-bold;
+  }
+
+  .operation-confirmation-level .skill-level {
+    @apply h-[30px] min-w-9 text-base;
+  }
+
+  .operation-confirmation-hint {
+    @apply min-w-0 flex-1 basis-[200px] text-[13px] text-legend-content;
+  }
+
+  .operation-confirm-button {
+    @apply disabled:cursor-not-allowed disabled:opacity-45;
+  }
 }

@@ -26,6 +26,10 @@ class Skill < ApplicationRecord
     capable.group(:operation_id).count
   end
 
+  def manual_confirmed?(manual)
+    operation_id == manual.operation_id && confirmed_version.present? && confirmed_version >= manual.version
+  end
+
   # 前に確認した版より、マニュアルの版が上がっている（一度も確認していなければ false）
   def unread?
     manual = operation.manual
