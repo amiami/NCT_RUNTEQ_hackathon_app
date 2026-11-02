@@ -117,6 +117,9 @@ ja:
         operations_count: "%{count}作業"
         capable_count: "できる人%{count}人"
         few_capable_operations: "できる人1人以下 %{count}件"
+        few_capable_warning: "できる人（1人でできる＝レベル4）が1人以下の作業が%{count}件あります"
+        few_capable_warning_description: 担当者が休んだり辞めたりすると止まる恐れがあります。研修画面で優先して教える人を決めましょう。
+        few_capable_filter: できる人が1人以下の作業だけ表示
       cell:
         unread: 未読
         unread_description: 改定後のマニュアルをまだ確認していません

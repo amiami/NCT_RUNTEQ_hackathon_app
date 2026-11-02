@@ -40,6 +40,7 @@
   --color-skill-strong-content: #0B2545;
   --color-capable-alert: #7C2D12; /* 「できる人○人」のバッジ */
   --color-capable-alert-content: #fff;
+  --color-capable-warning: #FFF7ED; /* スキルマップの上の「できる人が1人以下」の警告の背景 */
   --color-unread: #FFEDD5; /* スキルマップの「未読」の印 */
   --color-unread-content: #9A3412;
 }
@@ -261,6 +262,38 @@
 
   .capable-alert {
     @apply ml-2 inline-flex items-center rounded-md bg-capable-alert px-1.5 py-0.5 text-[11px] font-bold whitespace-nowrap text-capable-alert-content;
+  }
+
+  /* 表のカードの上の警告（できる人が1人以下の作業があるときだけ出る）。.card と組み合わせて使う */
+  .capable-warning {
+    @apply mb-4 flex flex-wrap items-center gap-3 border-capable-alert bg-capable-warning px-[18px] py-3.5;
+  }
+
+  .capable-warning-icon {
+    @apply size-[22px] shrink-0 text-capable-alert;
+  }
+
+  /* 狭い画面では、ボタンを文の下に回り込ませる */
+  .capable-warning-body {
+    @apply min-w-60 flex-1;
+  }
+
+  .capable-warning-title {
+    @apply text-[15px] font-bold text-capable-alert;
+  }
+
+  .capable-warning-description {
+    @apply text-[13px] text-legend-content;
+  }
+
+  /* 絞り込みのボタン。押している間（aria-pressed="true"）は塗りつぶして、絞り込み中だと分かるようにする */
+  .capable-filter[aria-pressed="true"] {
+    @apply border-primary bg-primary text-primary-content;
+  }
+
+  /* 絞り込み中は、できる人が2人以上の作業の行と、そういう作業しかない分類を隠す */
+  .skill-map-few-capable-only [data-few-capable="false"] {
+    @apply hidden;
   }
 
   /* マスはリンク（押すと詳細が出る）。リンクの下線・色は付けず、押せることはカーソルで示す */

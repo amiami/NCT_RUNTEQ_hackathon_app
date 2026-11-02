@@ -1,12 +1,32 @@
 <% content_for :title, "#{t('page_titles.admin', page: t('navigation.admin.skill_map'))} | #{t('app_name')}" %>
 <h1 class="page-title"><%= t("page_titles.admin", page: t("navigation.admin.skill_map")) %></h1>
 
+<%# 表は入れ替わらないので、どのマスの詳細を見ているかの印と絞り込みは skill-map コントローラ（Stimulus）で行う。
+    警告のボタンも表も操作するので、警告・詳細・表をまとめて囲む %>
+<div data-controller="skill-map">
+<% few_capable_total = @few_capable_counts.values.sum %>
+<% if few_capable_total.positive? %>
+  <%# 表のカードの上に、別のカードとして出す %>
+  <div class="card capable-warning">
+    <svg class="capable-warning-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M12 3l9 16H3z"></path><path d="M12 10v4"></path><path d="M12 17h.01"></path>
+    </svg>
+    <div class="capable-warning-body">
+      <p class="capable-warning-title"><%= t(".few_capable_warning", count: few_capable_total) %></p>
+      <p class="capable-warning-description"><%= t(".few_capable_warning_description") %></p>
+    </div>
+    <%# 押すたびに、できる人が2人以上の行（data-few-capable="false"）を隠す・戻す。押した状態は aria-pressed で示す %>
+    <button type="button" class="btn capable-filter" aria-pressed="false" data-action="skill-map#toggleFewCapable">
+      <%= t(".few_capable_filter") %>
+    </button>
+  </div>
+<% end %>
+
 <%# マスの詳細を入れる枠。表のカードの外（上）に置き、マスを押すと admin/skills/show の同じ id の枠の中身に入れ替わる %>
 <%= turbo_frame_tag "skill_detail" %>
-<%# 表は入れ替わらないので、どのマスの詳細を見ているかの印は skill-map コントローラ（Stimulus）で付け替える %>
-<section class="card" data-controller="skill-map">
+<section class="card">
   <div class="skill-map-scroll">
-    <table class="skill-map">
+    <table class="skill-map" data-skill-map-target="table">
       <%# 作業名の列だけ幅を決め、残りはスタッフの列に同じ幅ずつ配る（.skill-map の table-fixed） %>
       <colgroup>
         <col class="skill-map-operation-column">
@@ -23,8 +43,8 @@
         </tr>
       </thead>
       <% @categories.each do |category| %>
-        <% few_capable_count = category.operations.to_a.count { |operation| @capable_counts.fetch(operation.id, 0) <= 1 } %>
-        <tbody>
+        <% few_capable_count = @few_capable_counts[category.id] %>
+        <tbody data-few-capable="<%= few_capable_count.positive? %>">
           <tr class="skill-map-category">
             <th scope="rowgroup" colspan="<%= @staff.size + 1 %>">
               <span class="skill-map-category-name"><%= category.name %></span>
@@ -36,7 +56,7 @@
           </tr>
           <% category.operations.each do |operation| %>
             <% capable_count = @capable_counts.fetch(operation.id, 0) %>
-            <tr>
+            <tr data-few-capable="<%= capable_count <= 1 %>">
               <th scope="row" class="skill-map-operation">
                 <span><%= operation.name %></span>
                 <% if capable_count <= 1 %>
@@ -53,3 +73,4 @@
     </table>
   </div>
 </section>
+</div>
