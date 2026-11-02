@@ -208,7 +208,7 @@
 /* スキルマップ（管理者） */
 @layer components {
   .skill-map-scroll {
-    @apply mt-4 overflow-x-auto;
+    @apply overflow-x-auto;
   }
 
   /* 列の幅を中身の長さで変えない（table-fixed）。スタッフの列は同じ幅にそろい、狭い画面では横にスクロールする */
@@ -268,9 +268,14 @@
     @apply cursor-pointer no-underline hover:ring-2 hover:ring-link;
   }
 
-  /* マスの詳細（表の上に出る） */
+  /* 詳細を見ているマス（skill-map コントローラが aria-current を付ける）。詳細のカードの枠と同じ色にする */
+  a.skill-map-cell[aria-current="true"] {
+    @apply ring-2 ring-primary;
+  }
+
+  /* マスの詳細。表のカードの上に別のカードとして出し、枠の色で表のカードと区別する */
   .skill-detail {
-    @apply mt-4 p-4;
+    @apply mb-4 border-primary p-4;
   }
 
   .skill-detail-title {

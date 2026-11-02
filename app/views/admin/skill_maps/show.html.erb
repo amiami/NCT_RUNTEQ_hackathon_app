@@ -1,9 +1,10 @@
 <% content_for :title, "#{t('page_titles.admin', page: t('navigation.admin.skill_map'))} | #{t('app_name')}" %>
-<section class="card">
-  <h1 class="page-title"><%= t("page_titles.admin", page: t("navigation.admin.skill_map")) %></h1>
+<h1 class="page-title"><%= t("page_titles.admin", page: t("navigation.admin.skill_map")) %></h1>
 
-  <%# マスの詳細を入れる枠。マスを押すと、admin/skills/show の同じ id の枠の中身に入れ替わる %>
-  <%= turbo_frame_tag "skill_detail" %>
+<%# マスの詳細を入れる枠。表のカードの外（上）に置き、マスを押すと admin/skills/show の同じ id の枠の中身に入れ替わる %>
+<%= turbo_frame_tag "skill_detail" %>
+<%# 表は入れ替わらないので、どのマスの詳細を見ているかの印は skill-map コントローラ（Stimulus）で付け替える %>
+<section class="card" data-controller="skill-map">
   <div class="skill-map-scroll">
     <table class="skill-map">
       <%# 作業名の列だけ幅を決め、残りはスタッフの列に同じ幅ずつ配る（.skill-map の table-fixed） %>

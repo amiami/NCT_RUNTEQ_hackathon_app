@@ -122,7 +122,7 @@ ja:
         unread_description: 改定後のマニュアルをまだ確認していません
     skills:
       show:
-        title: "%{user}・%{operation}"
+        title: "%{user} × %{operation}"
         manual_status: マニュアル確認状況
         manual_statuses:
           unconfirmed: 未確認
