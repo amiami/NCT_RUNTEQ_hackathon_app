@@ -2,6 +2,68 @@ ja:
   # 画面に出すアプリ名。変えるときはここだけ直す
   app_name: マニュあっぷ
 
+  time:
+    formats:
+      operation_date: "%m/%d"
+      operation_full_date: "%Y/%m/%d"
+
+  date:
+    formats:
+      operation_full_date: "%Y/%m/%d"
+
+  operations:
+    staff_status:
+      title: この作業のスタッフ状況
+      empty: スタッフが登録されていません
+      confirmations:
+        unconfirmed: 未確認
+        revised: 改定後 未確認
+        confirmed: 確認済み
+      trainer_name: "%{name}さん"
+      trained: "研修：済み（%{trainer}から・%{date}）"
+      self_learned: 研修：なし（自分で習得）
+      not_trained: 研修：まだ
+    tree_label: 作業ツリー
+    level_prefix: レベル
+    external_marker: URL
+    kinds:
+      internal: アプリ内
+      external: 外部サイト
+    version: "第%{version}版"
+    capable_count: "できる人%{count}人"
+    revision_badge: "改定 %{date}"
+    last_revised: "最終改定：%{date}"
+    no_revision: 改定なし
+    season: "時期：%{note}"
+    external_hint: 手順は外部サイト・ソフトのガイドを見てください
+    open_site: サイトを開く
+    no_manual: この作業のマニュアルはまだ登録されていません
+    empty: 作業がまだ登録されていません
+    empty_manual: 作業が登録されると、ここにマニュアルを表示します
+    external_revision_label: 法改正・様式・サイトに変更があったとき
+    external_revision_placeholder: 変更内容のメモ（例：届出の様式が変わった）
+    external_revision_save: 改定あり
+    external_revision_hint: 保存すると版が上がります。URL・スキルレベル・管理者の見立ては変わりません
+    external_revision_stale: マニュアルが更新されました。最新の版と変更内容を確認してから、改めて保存してください
+    revision_edit: 手順を書き直す（改定）
+    revision_body: 手順（1行＝1ステップ）
+    revision_memo: 改定メモ（何が変わったか）
+    revision_memo_example: 例：貸与物の返却リストを更新
+    revision_save: 改定して保存
+    revision_cancel: やめる
+    revision_hint: 保存すると版が上がります。スキルレベル・管理者の見立ては変わりません
+    revised_notice: マニュアルを改定しました
+    revision_invalid: 手順を入力してください
+    revision_stale: マニュアルが更新されました。「やめる」で最新の手順を確認してから、編集し直してください
+    confirmation_label: マニュアルの確認
+    my_skill_level: わたしのスキルレベル
+    confirmation_hint: 内容を読んで「マニュアルを確認した」を押してください。レベル0の人はレベル1になります
+    confirmed_hint: この版のマニュアルは確認済みです
+    confirm_button: マニュアルを確認した
+    confirmed_button: マニュアル確認済み
+    confirmed_notice: マニュアルを確認しました
+    confirmation_stale: マニュアルが更新されました。内容を確認して、もう一度押してください
+
   # アプリ固有の翻訳（モデル名・属性名など）はここに書く。
   # エラーメッセージや日付などの Rails 標準の翻訳は rails-i18n gem に入っている
 
@@ -147,3 +209,7 @@ ja:
             training_done: ▼から研修を受け終えました（いまは普通のレベル4として扱います）
           level_3:
             backup_trainer: レベル4になると、教える人の候補の後ろに並びます
+
+  # 下書きの「変更を保存」と、保存しないまま移るときの確認（unsaved-changes コントローラ）
+  unsaved_changes:
+    confirm_leaving: 変更は保存されませんがよろしいですか？

@@ -3,10 +3,18 @@
 - `Operation#capable_count` は作業ごとに COUNT を出すため、一覧で呼ぶと N+1 になる → 一覧では `Skill.capable_counts`（`{ operation_id => 人数 }`、いない作業は含まないので `fetch(id, 0)`）を使う。（2026-10-31）
 - `Skill#unread?` は `operation.manual` をたどる → Skill の一覧で使うときは `includes(operation: :manual)` で先に読み込む。（2026-10-31）
 - 「できる人」の条件（スキルを持つ人のうちレベル4。◇・▼も含む）は `Skill.capable` にまとめてある → 条件を書き直さず、このスコープを使う。（2026-10-31）
+- 最終改定日は日付の最大値ではなく最大版の `created_at` → `Manual#latest_revision` を使い、作業一覧では `manual: :latest_revision` を先読みする。（2026-11-01）
+- マニュアルの確認は `ManualConfirmation.call` を使う → 本人をロックして二重作成を防ぎ、既存スキルもロックし、確認版・レベル・変更履歴を同じトランザクションで保存する。フォームの版が古い場合は保存しない。（2026-11-01）
 - `Training` の作成時の条件チェック（教える人・教わる人）は1件ごとに `Skill.find_by` を2回出す → 「変更を保存」でまとめて作るときはクエリが件数に比例する。件数が増えたら候補のスキルを先にまとめて読み込む。（2026-10-31）
-- 管理者の見立ての保存は `Skills::AssessmentUpdate`（`{ スキルの ID => 見立て }`、`""` は「なし」）を使う → 付けられるレベルは `ASSIGNABLE_LEVELS` にまとめてあり、値が変わるマスだけ確かめる。画面からは `PATCH /skills/assessment` に `assessments[ID]=値` で送る（キーが決まらないので `params.expect(assessments: {})` で受け取る）。（2026-11-01）
 - 研修の候補の条件は `Skill.trainer_candidates`（教える人。並び順つき、管理者は含まない）と `Skill.training_targets`（レベル0・1と▼）にまとめてある → Training の作成時のチェックも研修画面（`TrainingBoard.cards`）もこれを使う。条件を書き直さない。（2026-11-01）
 - 見立てを画面に出すかは値ではなく `Skill#assessment_meaningful?` で決める（4▲・4▽・3◇は出さない）。教える人の候補になるかは値で決まるので別物。（2026-11-01）
 - `where.not(admin_assessment: :needs_training)` は見立てなし（NULL）の行も外してしまう → 入れたい値を `[ nil, … ]` で並べる。（2026-11-01）
 - `DISTINCT ON` を外側のクエリに直接書くと `.count`・`.reorder` がエラーになる → `Training.latest_done` のように id を選ぶ部分をサブクエリに閉じ込めて `where(id: …)` にする。（2026-11-01）
+- 管理者の見立ての保存は `Skills::AssessmentUpdate`（`{ スキルの ID => 見立て }`、`""` は「なし」）を使う → 付けられるレベルは `ASSIGNABLE_LEVELS` にまとめてあり、値が変わるマスだけ確かめる。画面からは `PATCH /skills/assessment` に `assessments[ID]=値` で送る（キーが決まらないので `params.expect(assessments: {})` で受け取る）。（2026-11-01）
+- 「改定後に未確認」をまとめて数えるときは `Skill.unread`（`unread?` と同じ条件の SQL）を使う → `skills.count(&:unread?)` は1件ずつ `operation.manual` を読んで N+1 になる。（2026-11-01）
+- できる人が1人以下の作業の数は `Operation.few_capable_count` → `Skill.capable_counts` は0人の作業を含まないので、そのまま `count { <= 1 }` すると0人の作業を数え落とす。（2026-11-01）
+- その人の教える予定・教わる予定は `Training.involving(user)`（未完了だけなら `.unfinished` と組み合わせる）。（2026-11-01）
+- 作業ツリーのスタッフ状況は `OperationStaffStatus.rows(operation)` を使う。スキルを持つ人全員と必要なスキル項目、`Training.latest_done.includes(:trainer)` をまとめて取得し、見立てをカードに渡さない（スキル未作成はレベル0）。（2026-11-02）
 - マニュアル確認状況（未確認／改定後 未確認／確認済み）は `Skill#manual_status`、研修（済み／なし〈自分で習得〉／まだ）は `Skill#training_status` と `Skill#latest_done_training`（誰から・いつ）にまとめてある → スキルマップの詳細と作業ごとのスタッフ状況で同じものを使う。一覧で `latest_done_training` を呼ぶと1人ずつクエリが出るので、`Training.latest_done` をまとめて引いて `index_by` する。（2026-11-02）
+- マニュアルの改定は `ManualReviser` がマニュアルをロックして本文・版・改訂記録をまとめて保存する。編集画面の版を渡し、古い版からの保存は409で拒否する（確認版・スキルは更新しない）。（2026-11-02）
+- 外部サイトの改定も `ManualReviser` を使い、本文を渡さずメモと表示中の版を渡す。URL・本文・スキルを変えず、履歴の本文差分はNULLにする。外部用フォームの二重送信は最新表示へ戻して案内する。（2026-11-02）

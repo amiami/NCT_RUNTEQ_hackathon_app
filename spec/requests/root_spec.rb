@@ -19,7 +19,10 @@ RSpec.describe "トップページ" do
 
       expect(response).to have_http_status(:ok)
       expect(flash).to be_empty
-      expect(Capybara.string(response.body)).to have_no_css(".flash-message")
+      document = Capybara.string(response.body)
+      expect(document).to have_no_css(".flash-message")
+      expect(document).to have_css("main h1", exact_text: "管理者：作業ツリー（マニュアル）")
+      expect(document).to have_css('nav[aria-label="画面切り替え"] a[aria-current="page"]', count: 1, text: "作業ツリー（マニュアル）")
     end
   end
 
@@ -40,6 +43,7 @@ RSpec.describe "トップページ" do
       expect(flash).to be_empty
       document = Capybara.string(response.body)
       expect(document).to have_no_css(".flash-message")
+      expect(document).to have_css("main h1", exact_text: "スタッフ：作業マニュアル")
       expect(document).to have_select("操作する人", selected: "中村 健太")
       expect(document).to have_css('nav[aria-label="画面切り替え"] a[aria-current="page"]', count: 1, text: "作業マニュアル")
       expect(response.body).not_to include("管理者の見立て", "▲", "▼", "▽", "◇")

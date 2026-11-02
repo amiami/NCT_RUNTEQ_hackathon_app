@@ -1,8 +1,16 @@
 require "rails_helper"
 
 RSpec.describe "layouts/application" do
+  before do
+    assign(:categories, [])
+    assign(:operations_by_category, {})
+    assign(:operation, nil)
+    assign(:capable_counts, {})
+    assign(:skill_levels, nil)
+  end
+
   [
-    [ "staff/operations/index", false, { training_count: 0, unread_count: 8 }, { "わたしのスキル" => "0", "改訂のお知らせ" => "8" } ],
+    [ "staff/operations/index", false, { training_count: 2, unread_count: 8 }, { "わたしのスキル" => "2", "改訂のお知らせ" => "8" } ],
     [ "admin/operations/index", true, { skill_map_count: 4 }, { "スキルマップ" => "4" } ]
   ].each do |template, admin, counts, badges|
     it "#{admin ? '管理者' : 'スタッフ'}画面でnavigation_countsの件数を共通ヘッダー1つへ渡す" do

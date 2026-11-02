@@ -1,0 +1,11 @@
+<div class="operation-revision">
+  <%= form_with url: admin_operation_manual_path(operation), method: :patch, scope: :manual, class: "operation-revision-form" do |form| %>
+    <%= form.hidden_field :version, value: manual.version %>
+    <%= form.label :memo, t("operations.external_revision_label") %>
+    <div class="operation-revision-actions">
+      <%= form.text_field :memo, placeholder: t("operations.external_revision_placeholder"), class: "operation-revision-field operation-external-revision-field" %>
+      <%= form.submit t("operations.external_revision_save"), class: "btn operation-revision-save" %>
+    </div>
+    <p class="operation-revision-hint"><%= t("operations.external_revision_hint") %></p>
+  <% end %>
+</div>

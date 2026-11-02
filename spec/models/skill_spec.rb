@@ -97,6 +97,25 @@ RSpec.describe Skill do
     end
   end
 
+  describe "#manual_confirmed?" do
+    let(:manual) { create(:manual, version: 2) }
+
+    it "未確認・古い版はfalse、今の版を確認済みならtrue" do
+      skill = build(:skill, operation: manual.operation)
+      expect(skill.manual_confirmed?(manual)).to be false
+      skill.confirmed_version = 1
+      expect(skill.manual_confirmed?(manual)).to be false
+      skill.confirmed_version = 2
+      expect(skill.manual_confirmed?(manual)).to be true
+    end
+
+    it "別の作業のマニュアルは確認済みとしない" do
+      skill = build(:skill, confirmed_version: 2)
+
+      expect(skill.manual_confirmed?(manual)).to be false
+    end
+  end
+
   describe "#unread?" do
     let(:operation) { create(:operation) }
     let!(:manual) { create(:manual, operation:) }
@@ -117,6 +136,33 @@ RSpec.describe Skill do
       manual.update!(version: 2)
 
       expect(skill.reload.unread?).to be true
+    end
+  end
+
+  describe ".unread（改訂のお知らせのタブの件数）" do
+    let(:operation) { create(:operation) }
+
+    before { create(:manual, operation:, version: 2) }
+
+    it "前に確認した版より、マニュアルの版が上がっている Skill だけを返す" do
+      old = create(:skill, operation:, confirmed_version: 1)
+      create(:skill, operation:, confirmed_version: 2)
+      create(:skill, operation:, confirmed_version: nil)
+
+      expect(described_class.unread).to contain_exactly(old)
+    end
+
+    it "マニュアルがない作業の Skill は返さない" do
+      create(:skill, confirmed_version: 1)
+
+      expect(described_class.unread).to be_empty
+    end
+
+    it "どの Skill でも #unread? と同じ結果になる" do
+      skills = [ nil, 1, 2 ].map { |version| create(:skill, operation:, confirmed_version: version) }
+      skills << create(:skill, confirmed_version: 1)
+
+      expect(described_class.unread).to match_array(skills.select(&:unread?))
     end
   end
 

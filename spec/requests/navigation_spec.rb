@@ -21,13 +21,8 @@ RSpec.describe "共通レイアウト" do
         expect(document).to have_css("main h1", exact_text: "#{audience == :admin ? '管理者' : 'スタッフ'}：#{title}")
         expect(document).to have_css("details summary", text: "レベルの説明")
         expect(document).to have_css("#flash-messages", visible: :all)
-        if audience == :staff
-          expect(document.find_link("わたしのスキル")).to have_css(".notification-count", exact_text: "99")
-          expect(document.find_link("改訂のお知らせ")).to have_css(".notification-count", exact_text: "99")
-        else
-          expect(document.find_link("スキルマップ")).to have_css(".notification-count", exact_text: "99")
-          expect(document).to have_css(".notification-count", count: 1)
-        end
+        # ユーザーも作業もないので、どのタブも0件。0件のときはバッジを出さず、仮表示の99も出さない
+        expect(document).to have_no_css(".notification-count")
       end
 
       it "同じ立場の全タブにリンクし、現在のタブだけを強調する" do

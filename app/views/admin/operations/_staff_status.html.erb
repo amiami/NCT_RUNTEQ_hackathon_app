@@ -1,0 +1,27 @@
+<section class="operation-staff-status" aria-labelledby="operation-staff-status-title">
+  <h2 id="operation-staff-status-title" class="operation-staff-status-title"><%= t("operations.staff_status.title") %></h2>
+  <% if rows.empty? %>
+    <p class="operation-empty"><%= t("operations.staff_status.empty") %></p>
+  <% else %>
+    <div class="operation-staff-status-scroll">
+      <ul class="operation-staff-status-list">
+        <% rows.each do |row| %>
+          <li class="operation-staff-status-row">
+            <span class="operation-staff-status-person">
+              <span class="operation-staff-status-avatar" aria-hidden="true"><%= row.user.name.first %></span>
+              <%= row.user.name %>
+            </span>
+            <span class="operation-staff-status-level">
+              <span class="skill-level skill-level-<%= row.level %>"><span class="sr-only"><%= t("operations.level_prefix") %></span><%= row.level %></span>
+              <span class="operation-staff-status-level-name"><%= t("skill_levels.#{row.level}") %></span>
+            </span>
+            <span class="operation-staff-status-details">
+              <span class="operation-badge operation-badge-neutral"><%= operation_staff_confirmation(row, manual) %></span>
+              <span><%= operation_staff_training(row) %></span>
+            </span>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+</section>
