@@ -47,6 +47,12 @@ RSpec.describe "スキルマップ（管理者）" do
     it "分類の見出しに作業の数が出る" do
       expect(document.find("tr.skill-map-category", text: "勤怠・給与")).to have_text("2作業")
     end
+
+    it "スタッフの名前の行の下に、全部の列にまたがる区切りの線がある（セルのすき間で途切れないよう1つの行にする）" do
+      rule = document.find("table.skill-map thead tr:last-child td.skill-map-head-rule")
+
+      expect(rule[:colspan]).to eq "3"
+    end
   end
 
   describe "AC-2: マスにレベルが出て、高いほど濃い青になる" do
@@ -271,6 +277,12 @@ RSpec.describe "スキルマップ（管理者）" do
 
       expect(document).to have_css("turbo-frame#skill_detail + section.card .skill-map-scroll")
       expect(document.find("turbo-frame#skill_detail", visible: :all).text).to be_blank
+    end
+
+    it "詳細が入ると、詳細が見える位置まで自動でスクロールする（Turbo Frame の autoscroll。見えていればスクロールしない）" do
+      get admin_skill_map_path
+
+      expect(document).to have_css("turbo-frame#skill_detail[autoscroll][data-autoscroll-block='nearest']", visible: :all)
     end
 
     it "マスを押すと、そのマスの詳細が skill_detail の枠に入る（マスが詳細へのリンクになっている）" do
