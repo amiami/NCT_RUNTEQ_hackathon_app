@@ -9,3 +9,4 @@
 - 見立てを画面に出すかは値ではなく `Skill#assessment_meaningful?` で決める（4▲・4▽・3◇は出さない）。教える人の候補になるかは値で決まるので別物。（2026-11-01）
 - `where.not(admin_assessment: :needs_training)` は見立てなし（NULL）の行も外してしまう → 入れたい値を `[ nil, … ]` で並べる。（2026-11-01）
 - `DISTINCT ON` を外側のクエリに直接書くと `.count`・`.reorder` がエラーになる → `Training.latest_done` のように id を選ぶ部分をサブクエリに閉じ込めて `where(id: …)` にする。（2026-11-01）
+- マニュアル確認状況（未確認／改定後 未確認／確認済み）は `Skill#manual_status`、研修（済み／なし〈自分で習得〉／まだ）は `Skill#training_status` と `Skill#latest_done_training`（誰から・いつ）にまとめてある → スキルマップの詳細と作業ごとのスタッフ状況で同じものを使う。一覧で `latest_done_training` を呼ぶと1人ずつクエリが出るので、`Training.latest_done` をまとめて引いて `index_by` する。（2026-11-02）

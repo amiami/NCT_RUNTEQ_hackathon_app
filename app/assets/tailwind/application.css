@@ -208,7 +208,7 @@
 /* スキルマップ（管理者） */
 @layer components {
   .skill-map-scroll {
-    @apply mt-4 overflow-x-auto;
+    @apply overflow-x-auto;
   }
 
   /* 列の幅を中身の長さで変えない（table-fixed）。スタッフの列は同じ幅にそろい、狭い画面では横にスクロールする */
@@ -261,5 +261,48 @@
 
   .capable-alert {
     @apply ml-2 inline-flex items-center rounded-md bg-capable-alert px-1.5 py-0.5 text-[11px] font-bold whitespace-nowrap text-capable-alert-content;
+  }
+
+  /* マスはリンク（押すと詳細が出る）。リンクの下線・色は付けず、押せることはカーソルで示す */
+  a.skill-map-cell {
+    @apply cursor-pointer no-underline hover:ring-2 hover:ring-link;
+  }
+
+  /* 詳細を見ているマス（skill-map コントローラが aria-current を付ける）。詳細のカードの枠と同じ色にする */
+  a.skill-map-cell[aria-current="true"] {
+    @apply ring-2 ring-primary;
+  }
+
+  /* マスの詳細。表のカードの上に別のカードとして出し、枠の色で表のカードと区別する */
+  .skill-detail {
+    @apply mb-4 border-primary p-4;
+  }
+
+  .skill-detail-header {
+    @apply flex flex-wrap items-center gap-x-4 gap-y-2;
+  }
+
+  .skill-detail-title {
+    @apply text-base font-bold;
+  }
+
+  .skill-detail-level {
+    @apply flex items-center gap-2 text-sm font-bold;
+  }
+
+  .skill-detail-items {
+    @apply mt-3 grid gap-3 text-sm sm:grid-cols-3;
+  }
+
+  .skill-detail-items dt {
+    @apply text-xs font-bold text-muted;
+  }
+
+  .skill-detail-items dd {
+    @apply mt-1;
+  }
+
+  .skill-detail-assessment-note {
+    @apply mt-1 text-xs text-muted;
   }
 }

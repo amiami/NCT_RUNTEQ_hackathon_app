@@ -66,6 +66,37 @@ class Skill < ApplicationRecord
     confirmed_version.present? && manual.present? && confirmed_version < manual.version
   end
 
+  # マニュアル確認状況。:unconfirmed（未確認）／:unread（改定後 未確認）／:confirmed（確認済み）
+  def manual_status
+    if confirmed_version.nil?
+      :unconfirmed
+    elsif unread?
+      :unread
+    else
+      :confirmed
+    end
+  end
+
+  # 研修済み（誰から・いつ）。この作業でこの人が教わった、完了した研修予定のうち最新のもの（なければ nil）。
+  # 1つのスキルで何度も使うので、結果を覚えておく（nil も覚えるので defined? で確かめる）
+  def latest_done_training
+    return @latest_done_training if defined?(@latest_done_training)
+
+    @latest_done_training = Training.latest_done.includes(:trainer).find_by(operation_id:, trainee_id: user_id)
+  end
+
+  # 研修。:done（済み）／:self_taught（なし〈自分で習得〉）／:not_yet（まだ）。
+  # 完了した研修があれば、レベルとは関係なく「済み」
+  def training_status
+    if latest_done_training
+      :done
+    elsif level >= 3
+      :self_taught
+    else
+      :not_yet
+    end
+  end
+
   private
 
   def user_must_be_skill_holder

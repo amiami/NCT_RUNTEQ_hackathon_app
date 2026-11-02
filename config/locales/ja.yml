@@ -120,3 +120,27 @@ ja:
       cell:
         unread: 未読
         unread_description: 改定後のマニュアルをまだ確認していません
+    skills:
+      show:
+        title: "%{user} × %{operation}"
+        manual_status: マニュアル確認状況
+        manual_statuses:
+          unconfirmed: 未確認
+          unread: 改定後 未確認
+          confirmed: 確認済み
+        training: 研修
+        trainings:
+          done: "済み（%{trainer}から・%{date}）"
+          self_taught: なし（自分で習得）
+          not_yet: まだ
+        # 教えた人がスタッフのときの呼び方（管理者は名前だけ）
+        staff_name: "%{name}さん"
+        admin_assessment: 管理者の見立て
+        no_assessment: なし
+        # 今のレベルで意味のない見立て（マスには出さない）に添える説明。レベル・見立ての組み合わせで引く
+        hidden_assessment_notes:
+          level_4:
+            can_train: レベル3になっても、教える人の候補に残ります
+            training_done: ▼から研修を受け終えました（いまは普通のレベル4として扱います）
+          level_3:
+            backup_trainer: レベル4になると、教える人の候補の後ろに並びます

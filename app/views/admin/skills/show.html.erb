@@ -1,0 +1,45 @@
+<% content_for :title, "#{t('page_titles.admin', page: t('navigation.admin.skill_map'))} | #{t('app_name')}" %>
+<%# スキルマップのマスの詳細。スキルマップのマスを押すと、この turbo_frame_tag の中身が表の上の枠に入る。
+    管理者の見立ては、今のレベルで意味のない値（4▲・4▽・3◇）も実際の値で出し、説明を添える %>
+<%= turbo_frame_tag "skill_detail" do %>
+  <section class="card skill-detail">
+    <div class="skill-detail-header">
+      <h2 class="skill-detail-title"><%= t(".title", user: @skill.user.name, operation: @skill.operation.name) %></h2>
+      <%# 今のレベル。数字の色と名前は凡例・マスと同じ（見立ての説明や選べる見立てがレベルで決まるため） %>
+      <p class="skill-detail-level">
+        <span class="skill-level skill-level-<%= @skill.level %>"><%= @skill.level %></span>
+        <span><%= t("skill_levels.#{@skill.level}") %></span>
+      </p>
+    </div>
+    <dl class="skill-detail-items">
+      <div>
+        <dt><%= t(".manual_status") %></dt>
+        <dd class="skill-detail-manual-status"><%= t(".manual_statuses.#{@skill.manual_status}") %></dd>
+      </div>
+      <div>
+        <dt><%= t(".training") %></dt>
+        <dd class="skill-detail-training">
+          <% if (training = @skill.latest_done_training) %>
+            <%= t(".trainings.done", trainer: training.trainer.admin? ? training.trainer.name : t(".staff_name", name: training.trainer.name), date: l(training.done_on)) %>
+          <% else %>
+            <%= t(".trainings.#{@skill.training_status}") %>
+          <% end %>
+        </dd>
+      </div>
+      <div>
+        <dt><%= t(".admin_assessment") %></dt>
+        <dd class="skill-detail-assessment">
+          <% if @skill.admin_assessment %>
+            <span><%= t("admin_assessments.#{@skill.admin_assessment}") %></span>
+            <% note = t(".hidden_assessment_notes.level_#{@skill.level}.#{@skill.admin_assessment}", default: "") %>
+            <% if note.present? %>
+              <p class="skill-detail-assessment-note"><%= note %></p>
+            <% end %>
+          <% else %>
+            <%= t(".no_assessment") %>
+          <% end %>
+        </dd>
+      </div>
+    </dl>
+  </section>
+<% end %>

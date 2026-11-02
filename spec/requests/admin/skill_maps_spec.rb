@@ -193,6 +193,38 @@ RSpec.describe "スキルマップ（管理者）" do
     end
   end
 
+  describe "マスの詳細" do
+    it "表のカードの上（カードの外）に、詳細を入れる空の枠（skill_detail）がある" do
+      get admin_skill_map_path
+
+      expect(document).to have_css("turbo-frame#skill_detail + section.card .skill-map-scroll")
+      expect(document.find("turbo-frame#skill_detail", visible: :all).text).to be_blank
+    end
+
+    it "マスを押すと、そのマスの詳細が skill_detail の枠に入る（マスが詳細へのリンクになっている）" do
+      skill = create(:skill, user: yamamoto, operation: payroll)
+
+      get admin_skill_map_path
+
+      link = cell(skill).find("a.skill-map-cell")
+      expect(link[:href]).to eq admin_skill_path(skill)
+      expect(link["data-turbo-frame"]).to eq "skill_detail"
+    end
+
+    it "マスを押すと、そのマスに選択中の印が付く（Stimulus の skill-map コントローラで付け替える）" do
+      skill = create(:skill, user: yamamoto, operation: payroll)
+
+      get admin_skill_map_path
+
+      expect(document).to have_css("[data-controller='skill-map'] table.skill-map")
+      link = cell(skill).find("a.skill-map-cell")
+      expect(link["data-action"]).to eq "skill-map#select"
+      expect(link["data-skill-map-target"]).to eq "cell"
+      # 開いた直後は、どのマスも選ばれていない
+      expect(document).to have_no_css("a.skill-map-cell[aria-current]")
+    end
+  end
+
   describe "AC-10: スタッフのとき" do
     it "スタッフの画面に戻される" do
       patch operator_path, params: { user_id: yamamoto.id }

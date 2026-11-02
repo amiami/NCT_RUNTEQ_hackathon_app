@@ -8,6 +8,8 @@ Rails.application.routes.draw do
   namespace :admin do
     resources :operations, only: :index
     resource :skill_map, only: :show
+    # スキルマップのマスの詳細。マスを押すと、表の上の Turbo Frame に入る
+    resources :skills, only: :show
     resources :trainings, only: :index
     resources :manual_revisions, only: :index
   end
