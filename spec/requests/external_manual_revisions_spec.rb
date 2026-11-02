@@ -23,10 +23,11 @@ RSpec.describe "外部サイトの改定あり" do
 
   it "メモと改定者を記録し、URLと本文を保って版だけを上げる" do
     travel_to Time.zone.local(2026, 11, 2, 15) do
+      original_url = manual.url
       expect { revise }.to change(ManualRevision, :count).by(1)
       expect(response).to have_http_status(:see_other)
       expect(response).to redirect_to(admin_operations_path(operation_id: operation.id))
-      expect(manual.reload).to have_attributes(version: 2, url: "https://example.com/manual", body: nil, kind: "external")
+      expect(manual.reload).to have_attributes(version: 2, url: original_url, body: nil, kind: "external")
       expect(manual.manual_revisions.sole).to have_attributes(version: 2, user: manager,
         memo: "法改正に合わせて様式が更新された", created_at: Time.current, body_before: nil, body_after: nil)
       follow_redirect!

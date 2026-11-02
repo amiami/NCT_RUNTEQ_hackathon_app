@@ -401,4 +401,48 @@
     @apply mb-3 text-sm text-warning-content;
   }
 
+  .operation-detail {
+    @apply flex min-w-0 flex-col gap-4;
+  }
+
+  .operation-staff-status {
+    @apply rounded-xl border border-line bg-base-100 p-5;
+  }
+
+  .operation-staff-status-title {
+    @apply mb-3 text-[15px] font-bold;
+  }
+
+  .operation-staff-status-scroll {
+    @apply overflow-x-auto;
+  }
+
+  .operation-staff-status-list {
+    @apply min-w-[520px];
+  }
+
+  .operation-staff-status-row {
+    @apply grid grid-cols-[160px_230px_minmax(0,1fr)] items-center gap-3 border-b border-line py-2.5 text-sm;
+  }
+
+  .operation-staff-status-person {
+    @apply flex items-center gap-2;
+  }
+
+  .operation-staff-status-avatar {
+    @apply flex size-7 shrink-0 items-center justify-center rounded-full bg-secondary text-xs font-bold text-secondary-content;
+  }
+
+  .operation-staff-status-level {
+    @apply flex items-center gap-1.5;
+  }
+
+  .operation-staff-status-level-name {
+    @apply text-xs text-legend-content;
+  }
+
+  .operation-staff-status-details {
+    @apply flex flex-wrap items-center gap-1.5 text-xs text-muted;
+  }
+
 }
