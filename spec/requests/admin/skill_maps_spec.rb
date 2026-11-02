@@ -92,6 +92,72 @@ RSpec.describe "スキルマップ（管理者）" do
     end
   end
 
+  describe "できる人チェック（上部の警告と絞り込み）" do
+    let(:filter_label) { "できる人が1人以下の作業だけ表示" }
+
+    def warning
+      document.find(".capable-warning")
+    end
+
+    def make_capable(operation, users)
+      users.each { |user| create(:skill, user:, operation:, level: 4) }
+    end
+
+    context "できる人が1人以下の作業があるとき" do
+      before do
+        # 給与計算：0人、勤怠の締め：1人、入社手続き：2人
+        make_capable(attendance, [ yamamoto ])
+        make_capable(joining, [ yamamoto, nakamura ])
+        get admin_skill_map_path
+      end
+
+      it "AC-1: 表より上に、できる人が1人以下の作業の件数を添えた警告が出る" do
+        expect(warning).to have_text("できる人が1人以下の作業が2件あります")
+        expect(response.body.index("capable-warning")).to be < response.body.index("<table")
+      end
+
+      it "AC-1: 警告に絞り込みのボタンがあり、押すと skill-map コントローラで切り替える（最初は押していない状態）" do
+        button = warning.find("button", text: filter_label)
+
+        expect(button[:type]).to eq "button"
+        expect(button["aria-pressed"]).to eq "false"
+        expect(button["data-action"]).to eq "skill-map#toggleFewCapable"
+        expect(document).to have_css("[data-controller='skill-map'] .capable-warning")
+      end
+
+      it "AC-3: 作業の行に、できる人が1人以下か（絞り込みで残すか）の印が付く" do
+        expect(row(payroll)["data-few-capable"]).to eq "true"
+        expect(row(attendance)["data-few-capable"]).to eq "true"
+        expect(row(joining)["data-few-capable"]).to eq "false"
+      end
+
+      it "AC-3: できる人が1人以下の作業がない分類は、見出しごと隠す印が付く" do
+        expect(document.find("tbody", text: "勤怠・給与")["data-few-capable"]).to eq "true"
+        expect(document.find("tbody", text: "入退社")["data-few-capable"]).to eq "false"
+      end
+    end
+
+    it "AC-2: 全作業でできる人が2人以上のときは、警告もボタンも出ない" do
+      [ payroll, attendance, joining ].each { |operation| make_capable(operation, [ yamamoto, nakamura ]) }
+
+      get admin_skill_map_path
+
+      expect(document).to have_no_css(".capable-warning")
+      expect(document).to have_no_button(filter_label)
+    end
+
+    it "AC-4: レベル4の◇・▼の人も、できる人に数える" do
+      make_capable(payroll, [ yamamoto, nakamura ])
+      make_capable(attendance, [ yamamoto, nakamura ])
+      create(:skill, user: yamamoto, operation: joining, level: 4, admin_assessment: :backup_trainer)
+      create(:skill, user: nakamura, operation: joining, level: 4, admin_assessment: :needs_training)
+
+      get admin_skill_map_path
+
+      expect(document).to have_no_css(".capable-warning")
+    end
+  end
+
   describe "「未読」の印" do
     let!(:manual) { create(:manual, operation: payroll, version: 2) }
 
