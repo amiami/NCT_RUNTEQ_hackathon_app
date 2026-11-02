@@ -1,13 +1,14 @@
-<%# スキルマップのマス1つ分。スキルがない組み合わせ（人×作業）は空のマスにする %>
+<%# スキルマップのマス1つ分。スキルがない組み合わせ（人×作業）は空のマスにする。
+    マスは詳細へのリンクで、押すと表の上の枠（skill_detail）に詳細が入る %>
 <% if skill %>
   <td id="<%= dom_id(skill) %>">
-    <div class="skill-map-cell skill-level-<%= skill.level %>">
+    <%= link_to admin_skill_path(skill), class: "skill-map-cell skill-level-#{skill.level}", data: { turbo_frame: "skill_detail" } do %>
       <span><%= skill.level %></span>
       <%= render "admin/shared/assessment_mark", skill: %>
       <% if skill.unread? %>
         <span class="skill-map-unread" title="<%= t(".unread_description") %>"><%= t(".unread") %></span>
       <% end %>
-    </div>
+    <% end %>
   </td>
 <% else %>
   <td></td>

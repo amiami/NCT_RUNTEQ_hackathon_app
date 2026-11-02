@@ -262,4 +262,34 @@
   .capable-alert {
     @apply ml-2 inline-flex items-center rounded-md bg-capable-alert px-1.5 py-0.5 text-[11px] font-bold whitespace-nowrap text-capable-alert-content;
   }
+
+  /* マスはリンク（押すと詳細が出る）。リンクの下線・色は付けず、押せることはカーソルで示す */
+  a.skill-map-cell {
+    @apply cursor-pointer no-underline hover:ring-2 hover:ring-link;
+  }
+
+  /* マスの詳細（表の上に出る） */
+  .skill-detail {
+    @apply mt-4 p-4;
+  }
+
+  .skill-detail-title {
+    @apply text-base font-bold;
+  }
+
+  .skill-detail-items {
+    @apply mt-3 grid gap-3 text-sm sm:grid-cols-3;
+  }
+
+  .skill-detail-items dt {
+    @apply text-xs font-bold text-muted;
+  }
+
+  .skill-detail-items dd {
+    @apply mt-1;
+  }
+
+  .skill-detail-assessment-note {
+    @apply mt-1 text-xs text-muted;
+  }
 }
