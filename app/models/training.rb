@@ -6,6 +6,17 @@ class Training < ApplicationRecord
   # 数字は部分ユニークインデックス index_trainings_open_per_trainee の条件（status <> 2）と合わせる
   enum :status, { requested: 0, acknowledged: 1, done: 2 }, validate: true
 
+  # 完了していない予定（教える人の未確認・確認済み）
+  scope :unfinished, -> { where.not(status: :done) }
+  # 研修済み（誰から・いつ）。作業×教わる人ごとに、done の予定のうち done_on が最新の1件。
+  # 1組なら find_by(operation:, trainee:)、一覧なら includes(:trainer) を付けて index_by で引く。
+  # 最新の id を選ぶ部分（PostgreSQL の DISTINCT ON）は中に閉じ込め、外側では count や並べ替えも使えるようにする
+  scope :latest_done, lambda {
+    latest_ids = done.select("DISTINCT ON (trainings.operation_id, trainings.trainee_id) trainings.id")
+                     .order(:operation_id, :trainee_id, done_on: :desc, id: :desc)
+    where(id: latest_ids)
+  }
+
   validates :trainee_id, uniqueness: { scope: :operation_id, conditions: -> { where.not(status: :done) } },
                          unless: :done?
   validate :trainee_must_differ_from_trainer
@@ -35,26 +46,19 @@ class Training < ApplicationRecord
     errors.add(:trainee, :same_as_trainer) if trainee_id.present? && trainee_id == trainer_id
   end
 
-  # 教える人：その作業でレベル4（▼を除く）か、レベル3で▲、または管理者（どの作業でも）
+  # 教える人：Skill.trainer_candidates に入る人、または管理者（Skill を持たないが、どの作業でも教えられる）
   def trainer_must_be_candidate
     return if trainer.nil? || trainer.admin?
 
-    skill = skill_of(trainer)
-    candidate = skill.present? &&
-                ((skill.level == 4 && !skill.needs_training?) || (skill.level == 3 && skill.can_train?))
+    candidate = Skill.trainer_candidates.exists?(user: trainer, operation:)
     errors.add(:trainer, :not_trainer_candidate) unless candidate
   end
 
-  # 教わる人：その作業でレベル0・1か、▼（4▼も含む）
+  # 教わる人：Skill.training_targets に入る人
   def trainee_must_be_candidate
     return if trainee.nil?
 
-    skill = skill_of(trainee)
-    candidate = skill.present? && (skill.level <= 1 || skill.needs_training?)
+    candidate = Skill.training_targets.exists?(user: trainee, operation:)
     errors.add(:trainee, :not_trainee_candidate) unless candidate
-  end
-
-  def skill_of(user)
-    Skill.find_by(user:, operation:)
   end
 end
