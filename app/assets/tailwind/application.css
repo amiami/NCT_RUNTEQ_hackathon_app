@@ -225,6 +225,11 @@
     @apply px-2 py-1 text-center text-xs font-bold text-muted;
   }
 
+  /* スタッフの名前の行の下の区切り線（モックと同じ 2px・枠線の色） */
+  .skill-map-head-rule {
+    @apply h-0.5 bg-line p-0;
+  }
+
   .skill-map-category th {
     @apply pt-4 pb-1 text-left;
   }

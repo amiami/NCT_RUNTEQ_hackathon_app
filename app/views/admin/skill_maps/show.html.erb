@@ -23,8 +23,9 @@
   </div>
 <% end %>
 
-<%# マスの詳細を入れる枠。表のカードの外（上）に置き、マスを押すと admin/skills/show の同じ id の枠の中身に入れ替わる %>
-<%= turbo_frame_tag "skill_detail" %>
+<%# マスの詳細を入れる枠。表のカードの外（上）に置き、マスを押すと admin/skills/show の同じ id の枠の中身に入れ替わる。
+    下のほうのマスを押したときも詳細が見えるよう、入れ替わったら枠までスクロールする（Turbo の autoscroll。見えていれば動かない） %>
+<%= turbo_frame_tag "skill_detail", autoscroll: true, data: { autoscroll_block: "nearest", autoscroll_behavior: "smooth" } %>
 <section class="card">
   <div class="skill-map-scroll">
     <table class="skill-map" data-skill-map-target="table">
@@ -41,6 +42,10 @@
           <% @staff.each do |user| %>
             <th scope="col" class="skill-map-staff"><%= user.name %></th>
           <% end %>
+        </tr>
+        <%# スタッフの名前と表の間の区切り線。セルの間のすき間で線が途切れないよう、全部の列にまたがる1つのセルで引く %>
+        <tr aria-hidden="true">
+          <td colspan="<%= @staff.size + 1 %>" class="skill-map-head-rule"></td>
         </tr>
       </thead>
       <% @categories.each do |category| %>
