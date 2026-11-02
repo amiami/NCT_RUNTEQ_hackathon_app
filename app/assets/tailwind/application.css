@@ -438,6 +438,10 @@
     @apply text-[13px] text-muted;
   }
 
+  .operation-revised-alert {
+    @apply mt-4 rounded-lg bg-operation-revision px-3 py-2.5 text-sm font-bold text-operation-revision-content;
+  }
+
   .operation-manual-steps {
     @apply mt-5 flex list-decimal flex-col gap-2.5 pl-6 text-[15px] leading-[1.7];
   }
