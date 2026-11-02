@@ -200,3 +200,16 @@
     @apply bg-error text-error-content;
   }
 }
+
+/* 下書きの「変更を保存」の枠（unsaved-changes コントローラの bar ターゲット）。研修画面・スキルマップで共通に使う */
+@layer components {
+  /* 画面の右下に固定する。変更がないときは hidden 属性で隠れる */
+  .save-bar {
+    @apply fixed right-6 bottom-6 z-10 flex items-center gap-3 rounded-xl border border-line bg-base-100 px-4 py-3 shadow-lg;
+  }
+
+  /* 「（まだ保存されていません!）」などの小さな文言 */
+  .save-bar-note {
+    @apply text-xs font-bold text-notification;
+  }
+}
