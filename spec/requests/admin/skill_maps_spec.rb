@@ -134,7 +134,7 @@ RSpec.describe "スキルマップ（管理者）" do
         expect(button[:type]).to eq "button"
         expect(button["aria-pressed"]).to eq "false"
         expect(button["data-action"]).to eq "skill-map#toggleFewCapable"
-        expect(document).to have_css("[data-controller='skill-map'] .capable-warning")
+        expect(document).to have_css("[data-controller~='skill-map'] .capable-warning")
       end
 
       it "AC-3: 作業の行に、できる人が1人以下か（絞り込みで残すか）の印が付く" do
@@ -300,12 +300,62 @@ RSpec.describe "スキルマップ（管理者）" do
 
       get admin_skill_map_path
 
-      expect(document).to have_css("[data-controller='skill-map'] table.skill-map")
+      expect(document).to have_css("[data-controller~='skill-map'] table.skill-map")
       link = cell(skill).find("a.skill-map-cell")
       expect(link["data-action"]).to eq "skill-map#select"
       expect(link["data-skill-map-target"]).to eq "cell"
       # 開いた直後は、どのマスも選ばれていない
       expect(document).to have_no_css("a.skill-map-cell[aria-current]")
+    end
+  end
+
+  # 下書きの動き（選ぶ・取り消す・別のマスへ移る・確認）は JavaScript なので、ブラウザで確かめる。
+  # ここでは、その動きに必要な部品が画面にそろっていることを確かめる
+  describe "見立ての下書きと「変更を保存」" do
+    let(:skill) { create(:skill, user: yamamoto, operation: payroll, level: 3) }
+
+    before do
+      skill
+      get admin_skill_map_path
+    end
+
+    def wrapper
+      document.find("[data-controller~='unsaved-changes'][data-controller~='skill-map']")
+    end
+
+    it "詳細の枠・表・「変更を保存」を、下書き（skill-map）と離脱確認（unsaved-changes）の囲みに入れる" do
+      expect(wrapper).to have_css("turbo-frame#skill_detail", visible: :all)
+      expect(wrapper).to have_css("table.skill-map")
+      expect(wrapper).to have_css(".save-bar", visible: :all)
+      expect(wrapper["data-unsaved-changes-confirm-message-value"]).to eq "変更は保存されませんがよろしいですか？"
+    end
+
+    it "AC-1: 「変更を保存」は最初は隠れていて、下書きがあるときだけ共通部品が出す" do
+      bar = wrapper.find(".save-bar", visible: :all)
+
+      expect(bar["data-unsaved-changes-target"]).to eq "bar"
+      expect(bar[:hidden]).to be_present
+      expect(bar).to have_button("変更を保存", visible: :all)
+      expect(bar).to have_css(".save-bar-note", exact_text: "（まだ保存されていません!）", visible: :all)
+    end
+
+    it "AC-5: 「変更を保存」は見立ての保存（PATCH /skills/assessment）に送り、離脱確認を出さない" do
+      form = wrapper.find("form.save-bar", visible: :all)
+
+      expect(form[:action]).to eq skills_assessment_path
+      expect(form).to have_field("_method", with: "patch", type: :hidden, visible: :all)
+      expect(form["data-unsaved-changes-skip"]).to eq "true"
+      # 押した直前に、下書きを hidden の入力欄（assessments[スキルの ID]）にして fields の中に入れる
+      expect(form["data-action"]).to eq "submit->skill-map#prepare"
+      expect(form).to have_css("[data-skill-map-target='fields']", visible: :all)
+    end
+
+    it "AC-2: マスに、未保存の見た目を付け替えるためのスキルの ID がある" do
+      expect(cell(skill).find("a.skill-map-cell")["data-skill-id"]).to eq skill.id.to_s
+    end
+
+    it "AC-6: 「戻る」で下書きの入った画面が出ないよう、Turbo のキャッシュに入れない" do
+      expect(document).to have_css("meta[name='turbo-cache-control'][content='no-cache']", visible: :all)
     end
   end
 

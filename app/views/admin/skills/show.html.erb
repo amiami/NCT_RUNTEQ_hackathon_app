@@ -29,14 +29,26 @@
       <div>
         <dt><%= t(".admin_assessment") %></dt>
         <dd class="skill-detail-assessment">
-          <% if @skill.admin_assessment %>
-            <span><%= t("admin_assessments.#{@skill.admin_assessment}") %></span>
-            <% note = t(".hidden_assessment_notes.level_#{@skill.level}.#{@skill.admin_assessment}", default: "") %>
-            <% if note.present? %>
-              <p class="skill-detail-assessment-note"><%= note %></p>
+          <%# 今の値を選んだ状態で出す。選び直しても保存はせず、skill-map コントローラの下書きに入る（「変更を保存」でまとめて保存）。
+              選べるのは、なし・今のレベルで付けられる見立て（Skills::AssessmentUpdate::ASSIGNABLE_LEVELS）・今の値（選び直すと下書きの取り消し）。
+              ▽は「教え終わった」でしか付かないので、今の値が▽のときだけ出す %>
+          <% current = @skill.admin_assessment.to_s %>
+          <% choices = [ "", "can_train", "needs_training", ("training_done" if current == "training_done"), "backup_trainer" ].compact %>
+          <fieldset class="assessment-choices" data-skill-map-target="assessment"
+                    data-skill-id="<%= @skill.id %>" data-original-assessment="<%= current %>">
+            <legend class="sr-only"><%= t(".admin_assessment") %></legend>
+            <% choices.each do |value| %>
+              <% selectable = value.empty? || value == current || Skills::AssessmentUpdate::ASSIGNABLE_LEVELS[value] == @skill.level %>
+              <label class="assessment-choice">
+                <%= radio_button_tag "admin_assessment", value, value == current, disabled: !selectable,
+                                     data: { action: "skill-map#chooseAssessment" } %>
+                <span><%= value.empty? ? t(".no_assessment") : t("admin_assessments.#{value}") %></span>
+              </label>
             <% end %>
-          <% else %>
-            <%= t(".no_assessment") %>
+          </fieldset>
+          <% note = t(".hidden_assessment_notes.level_#{@skill.level}.#{current}", default: "") if @skill.admin_assessment %>
+          <% if note.present? %>
+            <p class="skill-detail-assessment-note"><%= note %></p>
           <% end %>
         </dd>
       </div>

@@ -1,9 +1,11 @@
 <%# スキルマップのマス1つ分。スキルがない組み合わせ（人×作業）は空のマスにする。
-    マスは詳細へのリンクで、押すと表の上の枠（skill_detail）に詳細が入り、押したマスに選択中の印（aria-current）が付く %>
+    マスは詳細へのリンクで、押すと表の上の枠（skill_detail）に詳細が入り、押したマスに選択中の印（aria-current）が付く。
+    見立ての下書きがあるマスには、skill-map コントローラが未保存の見た目を付ける（data-skill-id で探す） %>
 <% if skill %>
   <td id="<%= dom_id(skill) %>">
     <%= link_to admin_skill_path(skill), class: "skill-map-cell skill-level-#{skill.level}",
-                                         data: { turbo_frame: "skill_detail", skill_map_target: "cell", action: "skill-map#select" } do %>
+                                         data: { turbo_frame: "skill_detail", skill_map_target: "cell", action: "skill-map#select",
+                                                 skill_id: skill.id } do %>
       <span><%= skill.level %></span>
       <%= render "admin/shared/assessment_mark", skill: %>
       <% if skill.unread? %>
