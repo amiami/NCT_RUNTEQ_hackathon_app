@@ -14,6 +14,11 @@ Rails.application.routes.draw do
     resources :manual_revisions, only: :index
   end
 
+  # 研修予定の「教え終わった」。押せるのはその予定の教える人だけなので、管理者・スタッフで共通に使う
+  resources :trainings, only: [] do
+    resource :completion, only: :create, module: :trainings
+  end
+
   namespace :staff do
     resources :operations, only: :index
     resources :skills, only: :index

@@ -253,6 +253,7 @@ erDiagram
 | 改定して保存／改定あり | 管理者 | ― | マニュアルの版を1上げ、改訂履歴に1行追加。レベル・管理者の見立て・`confirmed_version` は変えない |
 
 - レベルが変わる操作はすべて、`skills.level` の更新と `skill_level_changes` の追加を1つのトランザクションで行う（`app/services/` に置く）
+- 「教え終わった」は `POST /trainings/:training_id/completion`（`Trainings::CompletionsController#create`）で受け、`app/services/training_completion.rb`（`TrainingCompletion`）で反映する。部長（研修画面の「指示済みの研修」）とスタッフ（わたしのスキル）で共通に使い、押せるかどうか（その予定の教える人か）はサービスで確かめる
 
 ## 5. その場で計算するもの（テーブルを作らない）
 
