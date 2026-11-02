@@ -4,7 +4,8 @@
 <%# 表は入れ替わらないので、どのマスの詳細を見ているかの印と絞り込みは skill-map コントローラ（Stimulus）で行う。
     警告のボタンも表も操作するので、警告・詳細・表をまとめて囲む %>
 <div data-controller="skill-map">
-<% few_capable_total = @few_capable_counts.values.sum %>
+<%# 全体の件数は、タブの件数と同じ数え方を使う（分類ごとの件数はコントローラで数える） %>
+<% few_capable_total = Operation.few_capable_count %>
 <% if few_capable_total.positive? %>
   <%# 表のカードの上に、別のカードとして出す %>
   <div class="card capable-warning">
