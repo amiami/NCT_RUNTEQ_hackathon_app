@@ -115,7 +115,7 @@ ja:
   admin_assessments:
     can_train:
       mark: ▲
-      label: 研修権限
+      label: 指導できる
     needs_training:
       mark: ▼
       label: 要研修
@@ -124,7 +124,7 @@ ja:
       label: 研修済み（▼から研修を受け終えた）
     backup_trainer:
       mark: ◇
-      label: 教えるのは後回し
+      label: 指導に不安あり
 
   admin:
     trainings:
