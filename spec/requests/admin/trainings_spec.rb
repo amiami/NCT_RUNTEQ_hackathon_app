@@ -360,6 +360,41 @@ RSpec.describe "研修画面（S-3）" do
       expect(card.find("input[type=date]")["data-initial-value"]).to eq ""
     end
 
+    # 下書きのチップは JavaScript が <template> を写して作る。<template> の中身は Capybara の HTML 解析では空になるので、
+    # レスポンスの HTML から中身を切り出して読む
+    def plan_template_chip
+      template_html = response.body[%r{<template[^>]*planTemplate[^>]*>(.*?)</template>}m, 1]
+      Capybara.string(template_html).find(".plan-chip-draft", visible: :all)
+    end
+
+    # 押せるのはチップ全体で、「×」は押せる場所を示す飾り（#158）
+    it "下書きのチップのひな形に、飾りの「×」が名前の右にある。「×」は押す対象ではなく、チップ全体のボタンは今までと同じ" do
+      chip = plan_template_chip
+
+      expect(chip.tag_name).to eq "button"
+      expect(chip["data-action"]).to eq "training-draft#removeDraft"
+      head = chip.find(".plan-chip-head", visible: :all)
+      expect(head).to have_css(".plan-chip-names", visible: :all)
+      remove = head.find(".plan-chip-remove", visible: :all)
+      expect(remove.text(:all)).to eq "×"
+      expect(remove["aria-hidden"]).to eq "true"
+      expect(remove["data-action"]).to be_nil
+      expect(remove).to have_no_css("button, a", visible: :all)
+    end
+
+    it "下書きのチップの読み上げ（aria-label）の文言は、画面のルートから Stimulus の値で渡す（名前は JavaScript がチップを作るときに入れる）" do
+      expect(page.find(".training-layout")["data-training-draft-remove-plan-label-value"])
+        .to eq "%{trainer} → %{trainee} の予定を取り消す"
+      expect(plan_template_chip["aria-label"]).to be_nil
+    end
+
+    it "保存済みのチップには「×」がなく、読み上げの名前も今までどおり" do
+      saved_chip = card("給与計算").find(".plan-chip", text: "加藤")
+
+      expect(saved_chip).to have_no_css(".plan-chip-remove", visible: :all)
+      expect(saved_chip["aria-label"]).to eq "山本 から 加藤 への研修予定"
+    end
+
     it "右の一覧の未完了の予定に、取り消しの下書きにする「取り消す」ボタンがある（スタッフが担当の予定にも）" do
       item = page.find("#assigned-trainings .assigned-training", text: "加藤")
 

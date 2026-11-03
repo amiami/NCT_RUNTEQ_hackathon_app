@@ -154,6 +154,7 @@ ja:
         assigned_empty: まだありません。作業の「教える人」を押して下書きを作り、「変更を保存」を押すと、ここに出ます。
         save: 変更を保存
         unsaved_note: （まだ保存されていません!）
+        plan_remove_label: "%{trainer} → %{trainee} の予定を取り消す"
       card:
         capable_count: できる人%{count}人
         due_label: "%{name}の研修期限"

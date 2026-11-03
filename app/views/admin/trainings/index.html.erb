@@ -10,7 +10,8 @@
      data-training-draft-due-label-value="<%= t("training_due_on.date", date: "%{date}") %>"
      data-training-draft-no-due-label-value="<%= t("training_due_on.none") %>"
      data-training-draft-cancel-label-value="<%= t("admin.trainings.assigned_training.cancel") %>"
-     data-training-draft-undo-cancel-label-value="<%= t("admin.trainings.assigned_training.undo_cancel") %>">
+     data-training-draft-undo-cancel-label-value="<%= t("admin.trainings.assigned_training.undo_cancel") %>"
+     data-training-draft-remove-plan-label-value="<%= t(".plan_remove_label", trainer: "%{trainer}", trainee: "%{trainee}") %>">
   <section class="training-main" aria-label="<%= t(".cards_label") %>">
     <p class="training-hint"><%= t(".hint") %></p>
 
@@ -43,10 +44,15 @@
     <% end %>
   </aside>
 
-  <%# 下書きで追加した予定のボタンのひな形。教える人を押すと、これを写してカードの研修予定の列に入れる %>
+  <%# 下書きで追加した予定のボタンのひな形。教える人を押すと、これを写してカードの研修予定の列に入れる。
+      押せるのはチップ全体で、「×」は押せる場所を示す飾り（aria-hidden）。読み上げの名前（aria-label）は、
+      名前が決まったときに JavaScript が入れる（remove-plan-label の値） %>
   <template data-training-draft-target="planTemplate">
     <button type="button" class="plan-chip plan-chip-draft" data-action="training-draft#removeDraft">
-      <span class="plan-chip-names"></span>
+      <span class="plan-chip-head">
+        <span class="plan-chip-names"></span>
+        <span class="plan-chip-remove" aria-hidden="true">×</span>
+      </span>
       <span class="plan-chip-due"></span>
     </button>
   </template>
