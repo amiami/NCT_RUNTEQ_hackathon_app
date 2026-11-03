@@ -70,8 +70,41 @@ RSpec.describe "研修画面（S-3）" do
 
       open_screen
 
-      expect(card("給与計算")).to have_css(".capable-warning", exact_text: "できる人1人")
-      expect(card("入社手続き")).to have_no_css(".capable-warning")
+      expect(card("給与計算")).to have_css(".training-capable-count", exact_text: "できる人1人")
+      expect(card("入社手続き")).to have_no_css(".training-capable-count")
+    end
+
+    # 見た目（色・大きさ・位置）は作業ツリーと同じ部品でそろえる。スキルマップの警告カード（.capable-warning）の
+    # クラスを持つと、その見た目がまざって大きくずれるので、持たないことを確かめる
+    it "「できる人○人」は作業ツリーと同じ部品で出し、スキルマップの警告カードのクラスを持たない" do
+      zero = create(:operation, name: "労働保険の年度更新")
+      skill_in(zero, 0, name: "吉田")
+      one = create(:operation, name: "給与計算")
+      skill_in(one, 4, name: "山本")
+      skill_in(one, 1, name: "吉田")
+
+      open_screen
+
+      { "労働保険の年度更新" => "できる人0人", "給与計算" => "できる人1人" }.each do |name, text|
+        badge = card(name).find(".training-capable-count", exact_text: text)
+        expect(badge[:class].split).to include("operation-badge", "operation-badge-warning")
+        expect(badge[:class].split).not_to include("capable-warning", "badge", "badge-warning")
+        expect(card(name)).to have_no_css(".capable-warning")
+      end
+    end
+
+    it "できる人の数え方は変えない：レベル4の◇・▼もできる人に数える（2人なら出ず、1人なら出る）" do
+      two = create(:operation, name: "勤怠の締め")
+      skill_in(two, 4, :backup_trainer, name: "中村")
+      skill_in(two, 4, :needs_training, name: "高橋")
+      one = create(:operation, name: "年末調整")
+      skill_in(one, 4, :backup_trainer, name: "山本")
+      skill_in(one, 0, name: "吉田")
+
+      open_screen
+
+      expect(card("勤怠の締め")).to have_no_css(".training-capable-count")
+      expect(card("年末調整")).to have_css(".training-capable-count", exact_text: "できる人1人")
     end
 
     it "できる人が1人以下の作業のカードは、枠の色を変えて目立たせる" do
