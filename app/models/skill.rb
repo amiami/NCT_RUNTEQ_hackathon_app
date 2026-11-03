@@ -66,13 +66,6 @@ class Skill < ApplicationRecord
     operation_id == manual.operation_id && confirmed_version.present? && confirmed_version >= manual.version
   end
 
-  # 今のレベルで意味のある見立てか。管理者画面ではこれが true の見立てだけ表示する。
-  # レベル3は▲・▼・▽、レベル4は▼・◇。それ以外（4▲・4▽・3◇など）は値を残したまま表示しない
-  MEANINGFUL_ASSESSMENTS = {
-    3 => %w[can_train needs_training training_done],
-    4 => %w[needs_training backup_trainer]
-  }.freeze
-
   def assessment_meaningful?
     MEANINGFUL_ASSESSMENTS.fetch(level, []).include?(admin_assessment)
   end
