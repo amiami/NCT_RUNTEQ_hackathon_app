@@ -8,8 +8,9 @@
          data-training-draft-target="card" data-operation-id="<%= operation.id %>">
   <h2 id="training-card-<%= operation.id %>" class="training-card-title">
     <span><%= operation.name %></span>
+    <%# 見た目は作業ツリーと同じ operation-badge operation-badge-warning。training-capable-count は研修画面の目印（CSS は持たない） %>
     <% if card.capable_count <= 1 %>
-      <span class="badge badge-warning capable-warning"><%= t(".capable_count", count: card.capable_count) %></span>
+      <span class="operation-badge operation-badge-warning training-capable-count"><%= t(".capable_count", count: card.capable_count) %></span>
     <% end %>
   </h2>
 

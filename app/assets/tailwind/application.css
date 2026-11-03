@@ -274,7 +274,8 @@
     @apply ml-2 inline-flex items-center rounded-md bg-capable-alert px-1.5 py-0.5 text-[11px] font-bold whitespace-nowrap text-capable-alert-content;
   }
 
-  /* 表のカードの上の警告（できる人が1人以下の作業があるときだけ出る）。.card と組み合わせて使う */
+  /* 表のカードの上の警告（できる人が1人以下の作業があるときだけ出る）。.card と組み合わせて使う。
+     スキルマップ専用。研修画面の「できる人○人」には使わない（余白や背景がまざって見た目がずれる。そちらは operation-badge を使う） */
   .capable-warning {
     @apply mb-4 flex flex-wrap items-center gap-3 border-capable-alert bg-capable-warning px-[18px] py-3.5;
   }
@@ -410,7 +411,7 @@
   }
 
   .training-card-title {
-    @apply flex flex-wrap items-center gap-2.5 px-3.5 py-2.5 text-[17px] font-bold;
+    @apply flex flex-wrap items-center gap-2 px-3.5 py-2.5 text-[17px] font-bold;
   }
 
   /* 日付の列だけ狭くする。狭い画面では2列ずつに折り返す */

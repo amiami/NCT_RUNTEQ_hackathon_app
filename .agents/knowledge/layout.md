@@ -18,3 +18,6 @@
 - 管理者の見立ての印は `render "admin/shared/assessment_mark", skill:` で出す（研修画面の名前の横でも使う）→ `Skill#assessment_meaningful?` が false なら何も出さない。記号と説明（マウスを乗せたとき）は `ja.yml` の `admin_assessment_marks`。置き場所は使う側の CSS で決める（スキルマップは `.skill-map-cell > .assessment-mark` で右上）。（2026-11-01）
 - スキルマップの見立ての下書きは `skill-map` コントローラが `{ スキルの ID => 見立て }` で持つ → 詳細は Turbo Frame で入れ替わるので、詳細の中に置くと別のマスを押したときに消える。詳細が入れ替わったら `assessmentTargetConnected` で下書きを選び直す（targetConnected は connect より先に呼ばれることがあるので、下書きは `initialize` で用意する）。（2026-11-02）
 - `form_with` に `hidden: true` を渡しても `hidden` 属性にならない（知らないオプションは捨てられる）→ `html: { hidden: true }` で渡す。（2026-11-02）
+- 「できる人○人」のバッジは、作業ツリー・作業マニュアルの見出し・研修画面のカードで `operation-badge operation-badge-warning` を使う。スキルマップの行だけ `.capable-alert`（同じ見た目）。`.capable-warning` はスキルマップの上の警告カード専用 → ほかの部品に付けると余白・背景がまざって大きくずれる。画面専用の目印には `training-capable-count` のように別のクラス名を付ける。（2026-11-03）
+- 同じ茶色 `#7C2D12` のトークンが3つある（`--color-caution`・`--color-capable-alert`・`--color-operation-warning`）→ 色を変えるときは3つそろえて直す。1つにまとめるのは別の作業。（2026-11-03）
+- 「できる人%{count}人」の翻訳キーが3つある（`operations.capable_count`・`admin.trainings.card.capable_count`・`admin.skill_maps.show.capable_count`）→ 文言を変えるときは3つそろえて直す。1つにまとめるのは別の作業。（2026-11-03）
