@@ -21,3 +21,4 @@
 - 「できる人○人」のバッジは、作業ツリー・作業マニュアルの見出し・研修画面のカードで `operation-badge operation-badge-warning` を使う。スキルマップの行だけ `.capable-alert`（同じ見た目）。`.capable-warning` はスキルマップの上の警告カード専用 → ほかの部品に付けると余白・背景がまざって大きくずれる。画面専用の目印には `training-capable-count` のように別のクラス名を付ける。（2026-11-03）
 - 同じ茶色 `#7C2D12` のトークンが3つある（`--color-caution`・`--color-capable-alert`・`--color-operation-warning`）→ 色を変えるときは3つそろえて直す。1つにまとめるのは別の作業。（2026-11-03）
 - 「できる人%{count}人」の翻訳キーが3つある（`operations.capable_count`・`admin.trainings.card.capable_count`・`admin.skill_maps.show.capable_count`）→ 文言を変えるときは3つそろえて直す。1つにまとめるのは別の作業。（2026-11-03）
+- JavaScript が `<template>` を写して作る要素の文言（`aria-label` など）は、`ja.yml` に置き、`%{…}` を残したまま Stimulus の値で渡して、JavaScript で置き換える（`admin.trainings.index.plan_remove_label`・`training_due_on.date` など）。チップの「×」のように、押せる場所を示す飾りは `aria-hidden` にして、押せるのはチップ全体のままにする。（2026-11-04）
