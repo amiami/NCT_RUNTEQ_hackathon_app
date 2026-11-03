@@ -163,6 +163,18 @@ ja:
         done: 教え終わった
         cancel: 取り消す
         undo_cancel: 取り消しをやめる
+    manual_revisions:
+      index:
+        list_label: 改訂履歴の一覧
+        columns:
+          date: 日付
+          operation: 作業
+          kind: 種類
+          memo: 変更内容
+          link: マニュアル
+        no_memo: （メモなし）
+        open_manual: マニュアルを見る
+        empty: 改訂はまだありません
 
   staff:
     skills:
