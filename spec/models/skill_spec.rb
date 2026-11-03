@@ -166,6 +166,89 @@ RSpec.describe Skill do
     end
   end
 
+  describe "#manual_status（マニュアル確認状況）" do
+    let(:operation) { create(:operation) }
+    let!(:manual) { create(:manual, operation:) }
+
+    it "一度も確認していなければ :unconfirmed（未確認）" do
+      expect(create(:skill, operation:, confirmed_version: nil).manual_status).to eq :unconfirmed
+    end
+
+    it "前の版を確認して、改定後に確認していなければ :unread（改定後 未確認）" do
+      skill = create(:skill, operation:, confirmed_version: 1)
+      manual.update!(version: 2)
+
+      expect(skill.reload.manual_status).to eq :unread
+    end
+
+    it "今の版を確認していれば :confirmed（確認済み）" do
+      manual.update!(version: 2)
+
+      expect(create(:skill, operation:, confirmed_version: 2).manual_status).to eq :confirmed
+    end
+  end
+
+  describe "研修済みかどうか" do
+    let(:operation) { create(:operation) }
+    # 教わる人として登録できるよう、レベル0で作る（研修の作成時の条件）。レベルは研修を作ったあとで変える
+    let(:skill) { create(:skill, operation:, level: 0) }
+
+    def create_training(status:, done_on: nil, trainer_name: "山本 直子", operation: skill.operation)
+      trainee_skill = Skill.find_or_create_by!(user: skill.user, operation:)
+      trainer = create(:skill, operation:, level: 4, user: create(:user, name: trainer_name)).user
+      create(:training, operation:, trainer:, trainee: trainee_skill.user, status:, done_on:)
+    end
+
+    describe "#latest_done_training" do
+      it "完了した研修のうち、教え終わった日が最新のものを返す" do
+        create_training(status: :done, done_on: Date.new(2026, 6, 25), trainer_name: "山本 直子")
+        latest = create_training(status: :done, done_on: Date.new(2026, 7, 24), trainer_name: "小林 由美")
+
+        expect(skill.latest_done_training).to eq latest
+      end
+
+      it "完了していない研修と、別の作業の研修は使わない" do
+        create_training(status: :acknowledged)
+        create_training(status: :done, done_on: Date.new(2026, 6, 25), operation: create(:operation))
+
+        expect(skill.latest_done_training).to be_nil
+      end
+    end
+
+    describe "#training_status（研修）" do
+      it "完了した研修があれば :done（済み）" do
+        create_training(status: :done, done_on: Date.new(2026, 6, 25))
+
+        expect(skill.training_status).to eq :done
+      end
+
+      it "完了した研修があれば、レベル3以上でも :done（済み）" do
+        create_training(status: :done, done_on: Date.new(2026, 6, 25))
+        skill.update!(level: 3)
+
+        expect(skill.training_status).to eq :done
+      end
+
+      it "完了した研修がなく、レベル3以上なら :self_taught（なし〈自分で習得〉）" do
+        [ 3, 4 ].each do |level|
+          expect(create(:skill, level:).training_status).to eq :self_taught
+        end
+      end
+
+      it "完了した研修がなく、レベル0〜2なら :not_yet（まだ）" do
+        (0..2).each do |level|
+          expect(create(:skill, level:).training_status).to eq :not_yet
+        end
+      end
+
+      it "完了していない研修しかなければ、完了した研修がないものとして扱う" do
+        create_training(status: :requested)
+
+        expect(skill.training_status).to eq :not_yet
+      end
+    end
+  end
+
   describe "できる人" do
     let(:operation) { create(:operation) }
 

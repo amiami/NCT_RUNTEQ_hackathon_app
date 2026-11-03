@@ -1,4 +1,95 @@
+<%# 見立ての下書きのある画面を Turbo が覚えていて「戻る」で出さないよう、キャッシュから外す（共通部品 unsaved-changes の決まり） %>
+<% turbo_exempts_page_from_cache %>
 <% content_for :title, "#{t('page_titles.admin', page: t('navigation.admin.skill_map'))} | #{t('app_name')}" %>
+<h1 class="page-title"><%= t("page_titles.admin", page: t("navigation.admin.skill_map")) %></h1>
+
+<%# 表は入れ替わらないので、どのマスの詳細を見ているかの印・絞り込み・見立ての下書きは skill-map コントローラ（Stimulus）で行う。
+    警告のボタン・詳細・表・「変更を保存」をすべて操作するのでまとめて囲み、共通部品（unsaved-changes）も同じところに付ける %>
+<div data-controller="unsaved-changes skill-map"
+     data-unsaved-changes-confirm-message-value="<%= t("unsaved_changes.confirm_leaving") %>">
+<%# 全体の件数は、タブの件数と同じ数え方を使う（分類ごとの件数はコントローラで数える） %>
+<% few_capable_total = Operation.few_capable_count %>
+<% if few_capable_total.positive? %>
+  <%# 表のカードの上に、別のカードとして出す %>
+  <div class="card capable-warning">
+    <svg class="capable-warning-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M12 3l9 16H3z"></path><path d="M12 10v4"></path><path d="M12 17h.01"></path>
+    </svg>
+    <div class="capable-warning-body">
+      <p class="capable-warning-title"><%= t(".few_capable_warning", count: few_capable_total) %></p>
+      <p class="capable-warning-description"><%= t(".few_capable_warning_description") %></p>
+    </div>
+    <%# 押すたびに、できる人が2人以上の行（data-few-capable="false"）を隠す・戻す。押した状態は aria-pressed で示す %>
+    <button type="button" class="btn capable-filter" aria-pressed="false" data-action="skill-map#toggleFewCapable">
+      <%= t(".few_capable_filter") %>
+    </button>
+  </div>
+<% end %>
+
+<%# マスの詳細を入れる枠。表のカードの外（上）に置き、マスを押すと admin/skills/show の同じ id の枠の中身に入れ替わる。
+    下のほうのマスを押したときも詳細が見えるよう、入れ替わったら枠までスクロールする（Turbo の autoscroll。見えていれば動かない） %>
+<%= turbo_frame_tag "skill_detail", autoscroll: true, data: { autoscroll_block: "nearest", autoscroll_behavior: "smooth" } %>
 <section class="card">
-  <h1 class="page-title"><%= t("page_titles.admin", page: t("navigation.admin.skill_map")) %></h1>
+  <div class="skill-map-scroll">
+    <table class="skill-map" data-skill-map-target="table">
+      <%# 作業名の列だけ幅を決め、残りはスタッフの列に同じ幅ずつ配る（.skill-map の table-fixed） %>
+      <colgroup>
+        <col class="skill-map-operation-column">
+        <% @staff.each do %>
+          <col>
+        <% end %>
+      </colgroup>
+      <thead>
+        <tr>
+          <td></td>
+          <% @staff.each do |user| %>
+            <th scope="col" class="skill-map-staff"><%= user.name %></th>
+          <% end %>
+        </tr>
+        <%# スタッフの名前と表の間の区切り線。セルの間のすき間で線が途切れないよう、全部の列にまたがる1つのセルで引く %>
+        <tr aria-hidden="true">
+          <td colspan="<%= @staff.size + 1 %>" class="skill-map-head-rule"></td>
+        </tr>
+      </thead>
+      <% @categories.each do |category| %>
+        <% few_capable_count = @few_capable_counts[category.id] %>
+        <tbody data-few-capable="<%= few_capable_count.positive? %>">
+          <tr class="skill-map-category">
+            <th scope="rowgroup" colspan="<%= @staff.size + 1 %>">
+              <span class="skill-map-category-name"><%= category.name %></span>
+              <span class="skill-map-operations-count"><%= t(".operations_count", count: category.operations.size) %></span>
+              <% if few_capable_count.positive? %>
+                <span class="capable-alert"><%= t(".few_capable_operations", count: few_capable_count) %></span>
+              <% end %>
+            </th>
+          </tr>
+          <% category.operations.each do |operation| %>
+            <% capable_count = @capable_counts.fetch(operation.id, 0) %>
+            <tr data-few-capable="<%= capable_count <= 1 %>">
+              <th scope="row" class="skill-map-operation">
+                <span><%= operation.name %></span>
+                <% if capable_count <= 1 %>
+                  <span class="capable-alert"><%= t(".capable_count", count: capable_count) %></span>
+                <% end %>
+              </th>
+              <% @staff.each do |user| %>
+                <%= render "cell", skill: @skills[[ user.id, operation.id ]] %>
+              <% end %>
+            </tr>
+          <% end %>
+        </tbody>
+      <% end %>
+    </table>
+  </div>
 </section>
+
+<%# 「変更を保存」の枠。見立ての下書きがあるときだけ共通部品が出す。送る直前（prepare）に下書きを hidden の入力欄にする。
+    研修画面と違い、フォームそのものを枠（.save-bar）にしている（枠の中に並べるための CSS を足さずに済むため） %>
+<%= form_with url: skills_assessment_path, method: :patch, class: "save-bar", html: { hidden: true },
+              data: { unsaved_changes_target: "bar", unsaved_changes_skip: true,
+                      action: "submit->skill-map#prepare" } do |form| %>
+  <div data-skill-map-target="fields"></div>
+  <%= form.button t(".save"), type: "submit", class: "btn btn-primary" %>
+  <span class="save-bar-note"><%= t(".unsaved_note") %></span>
+<% end %>
+</div>

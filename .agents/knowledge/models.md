@@ -15,13 +15,16 @@
 - DB のユニークインデックス違反（`RecordNotUnique`）はバリデーションのエラーとは別の例外 → 2回押しがほぼ同時に届く場合に備えて、`TrainingPlan` では個別に受け止めている。（2026-11-01）
 - 「教え終わった」は `TrainingCompletion.new(training:, by: current_user).save` → 予定の完了・レベル2・記録・確認した版・▼→▽ を1つのトランザクションで行う。押せるのは教える人だけ（サービスで確かめる）なので、画面側でボタンを出す条件も「教える人のとき」にそろえる。（2026-11-02）
 - 2回押しで二重に完了しないよう、`TrainingCompletion` は予定を `lock!` で読み直してから完了済みかを見る → 画面を開いたときに読み込んだ古い予定のまま渡されても、DB の今の状態で判断できる。（2026-11-02）
+- 管理者の見立ての保存は `Skills::AssessmentUpdate`（`{ スキルの ID => 見立て }`、`""` は「なし」）を使う → 付けられるレベルは `ASSIGNABLE_LEVELS` にまとめてあり、値が変わるマスだけ確かめる。画面からは `PATCH /skills/assessment` に `assessments[ID]=値` で送る（キーが決まらないので `params.expect(assessments: {})` で受け取る）。（2026-11-01）
 - 「改定後に未確認」をまとめて数えるときは `Skill.unread`（`unread?` と同じ条件の SQL）を使う → `skills.count(&:unread?)` は1件ずつ `operation.manual` を読んで N+1 になる。（2026-11-01）
 - できる人が1人以下の作業の数は `Operation.few_capable_count` → `Skill.capable_counts` は0人の作業を含まないので、そのまま `count { <= 1 }` すると0人の作業を数え落とす。（2026-11-01）
 - その人の教える予定・教わる予定は `Training.involving(user)`（未完了だけなら `.unfinished` と組み合わせる）。（2026-11-01）
 - 研修画面の右の一覧は `TrainingBoard.assigned_trainings`（未完了の予定すべて＋教わる人のスキル）→ カード（`TrainingBoard.cards`）は対象の人がいる作業だけなので、カードの予定から作らない（申告で対象から外れた作業の予定が消えてしまう）。（2026-11-02）
 - 見立ての記号は `TrainingsHelper#assessment_mark(skill)` で出す → `assessment_meaningful?` が false なら何も出さない。管理者の画面だけで使い、スタッフの画面では呼ばない。（2026-11-02）
 - 作業ツリーのスタッフ状況は `OperationStaffStatus.rows(operation)` を使う。スキルを持つ人全員と必要なスキル項目、`Training.latest_done.includes(:trainer)` をまとめて取得し、見立てをカードに渡さない（スキル未作成はレベル0）。（2026-11-02）
+- マニュアル確認状況（未確認／改定後 未確認／確認済み）は `Skill#manual_status`、研修（済み／なし〈自分で習得〉／まだ）は `Skill#training_status` と `Skill#latest_done_training`（誰から・いつ）にまとめてある → スキルマップの詳細と作業ごとのスタッフ状況で同じものを使う。一覧で `latest_done_training` を呼ぶと1人ずつクエリが出るので、`Training.latest_done` をまとめて引いて `index_by` する。（2026-11-02）
 - マニュアルの改定は `ManualReviser` がマニュアルをロックして本文・版・改訂記録をまとめて保存する。編集画面の版を渡し、古い版からの保存は409で拒否する（確認版・スキルは更新しない）。（2026-11-02）
 - 外部サイトの改定も `ManualReviser` を使い、本文を渡さずメモと表示中の版を渡す。URL・本文・スキルを変えず、履歴の本文差分はNULLにする。外部用フォームの二重送信は最新表示へ戻して案内する。（2026-11-02）
 - 教える予定（申告済みの判定つき）は `TrainingBoard.assigned_trainings(Training.where(trainer: user))`、教わる予定は `Training.learning_for(user)`（未完了 → 完了した予定は作業ごとに最新の1件）。条件を書き直さない。（2026-11-02）
+- わたしのスキルの一覧は `MySkillList.for(user)`（レベルごとの件数と、分類ごとの行）→ 「研修済み」は `Skill#training_status`、「再確認」は `Skill#unread?` を使う。`latest_done_training` は1件ずつ問い合わせるので、一覧では `Training.latest_done` をまとめて読んで `skill.latest_done_training = …`（`attr_writer`）で先に入れる。（2026-11-03）
 - 改訂履歴の並び順は `ManualRevision.newest_first`（`created_at` → `id` の新しい順）。一覧では `includes(manual: :operation)` で作業名と種類を先読みする。改訂の記録は種類を持たないので、種類はマニュアルの今の `kind` を出す。（2026-11-03）

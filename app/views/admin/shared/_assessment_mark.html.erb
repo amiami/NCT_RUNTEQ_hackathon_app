@@ -1,0 +1,5 @@
+<%# 管理者の見立ての印（スキルマップのマス・研修画面の名前の横）。管理者画面だけで使う。
+    今のレベルで意味のある見立て（Skill#assessment_meaningful?）のときだけ出し、それ以外は値も HTML に出さない %>
+<% if skill.assessment_meaningful? %>
+  <span class="assessment-mark" title="<%= t("admin_assessment_marks.#{skill.admin_assessment}.description") %>"><%= t("admin_assessment_marks.#{skill.admin_assessment}.symbol") %></span>
+<% end %>

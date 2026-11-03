@@ -1,1 +1,44 @@
-<%# わたしのスキルの一覧（S-6 の左側）。#80 で中身を入れる %>
+<%# わたしのスキルの一覧（S-6 の左側）。MySkillList を受け取る（部長が開いたときは nil で、何も出さない）。
+    スタッフの画面なので、管理者の見立て（▲・▼・▽・◇）は HTML の属性も含めて出さない %>
+<% if my_skill_list %>
+  <div class="my-level-counts">
+    <% my_skill_list.level_counts.each do |level, count| %>
+      <div class="card my-level-count" data-level="<%= level %>">
+        <p class="my-level-count-label">
+          <span class="skill-level skill-level-<%= level %>"><%= level %></span>
+          <span><%= t("skill_level_short_labels")[level.to_s.to_sym] %></span>
+        </p>
+        <p class="my-level-count-number"><%= count %><span class="my-level-count-unit"><%= t(".count_unit") %></span></p>
+      </div>
+    <% end %>
+  </div>
+
+  <% my_skill_list.categories.each do |category, rows| %>
+    <section class="card my-skill-category" aria-labelledby="my-skill-category-<%= category.id %>">
+      <h2 id="my-skill-category-<%= category.id %>" class="my-skill-category-title"><%= category.name %></h2>
+      <ul class="my-skill-rows">
+        <% rows.each do |row| %>
+          <li>
+            <%= link_to staff_operations_path(operation_id: row.operation.id), class: "my-skill-row" do %>
+              <span class="my-skill-heading">
+                <span class="my-skill-name"><%= row.operation.name %></span>
+                <% if row.trained? %>
+                  <span class="my-skill-badge-trained"><%= t(".trained") %></span>
+                <% end %>
+                <% if row.reconfirm? %>
+                  <span class="operation-badge operation-badge-revision"><%= t("operations.relearn_badge") %></span>
+                <% end %>
+              </span>
+              <span class="skill-bar" aria-hidden="true">
+                <% MySkillList::LEVELS.drop(1).each do |step| %>
+                  <span class="skill-bar-segment <%= "skill-bar-segment-on" if step <= row.level %>"></span>
+                <% end %>
+              </span>
+              <span class="my-skill-level skill-level-<%= row.level %>"><%= t(".level", level: row.level) %></span>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    </section>
+  <% end %>
+<% end %>

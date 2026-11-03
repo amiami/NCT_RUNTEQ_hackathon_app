@@ -15,3 +15,6 @@
 - 研修画面の下書きは `training-draft` コントローラ（追加・取り消し・期限）→ 「変更を保存」を押した直前（`prepare`）に hidden の入力欄を作って `PATCH /admin/training_plan` に送る。研修予定がある人の未研修のチップも `hidden` で置いておき、取り消しの下書きにしたら出す。並び順と絞り込みの区分（`data-needs-instruction`）は下書きで変えない。（2026-11-02）
 - マニュアル改定編集のURLは作業ツリーと異なるため、`NavigationHelper#navigation_current?` で `admin/operations/manuals` を管理者の作業ツリータブに対応させる。保存失敗時の再表示でも同じタブを強調する。（2026-11-02）
 - わたしのスキル（S-6）は左右2列の1画面 → 左（わたしのスキルの一覧）は `staff/skills/_skill_list.html.erb`、右（教える予定・教わる予定）は `staff/skills/_trainings.html.erb`。それぞれの部品の中だけを書き換えれば、もう片方とぶつからない。（2026-11-02）
+- 管理者の見立ての印は `render "admin/shared/assessment_mark", skill:` で出す（研修画面の名前の横でも使う）→ `Skill#assessment_meaningful?` が false なら何も出さない。記号と説明（マウスを乗せたとき）は `ja.yml` の `admin_assessment_marks`。置き場所は使う側の CSS で決める（スキルマップは `.skill-map-cell > .assessment-mark` で右上）。（2026-11-01）
+- スキルマップの見立ての下書きは `skill-map` コントローラが `{ スキルの ID => 見立て }` で持つ → 詳細は Turbo Frame で入れ替わるので、詳細の中に置くと別のマスを押したときに消える。詳細が入れ替わったら `assessmentTargetConnected` で下書きを選び直す（targetConnected は connect より先に呼ばれることがあるので、下書きは `initialize` で用意する）。（2026-11-02）
+- `form_with` に `hidden: true` を渡しても `hidden` 属性にならない（知らないオプションは捨てられる）→ `html: { hidden: true }` で渡す。（2026-11-02）

@@ -57,12 +57,23 @@ ja:
     revision_stale: マニュアルが更新されました。「やめる」で最新の手順を確認してから、編集し直してください
     confirmation_label: マニュアルの確認
     my_skill_level: わたしのスキルレベル
-    confirmation_hint: 内容を読んで「マニュアルを確認した」を押してください。レベル0の人はレベル1になります
-    confirmed_hint: この版のマニュアルは確認済みです
+    # 本人のレベルに合わせて、マニュアルの下に出すヒント（次に何をすればよいか）
+    level_hints:
+      "0": マニュアルを読んで「マニュアルを確認した」を押すとレベル1になります。
+      "1": 研修を受けるとレベル2になります。自分で覚えてできるようになった場合は、下の自己申告を押してください。
+      "2": 研修済みです。先輩についてもらえばできるようになったら、下の「先輩のもとでできる」を押してください。
+      "3": 最後まで1人でできるようになったら、下の「最後まで1人でできる」を押してください。
+      "4": 最後まで1人でできる状態です。まわりの人のサポートをお願いすることがあります。
     confirm_button: マニュアルを確認した
     confirmed_button: マニュアル確認済み
     confirmed_notice: マニュアルを確認しました
     confirmation_stale: マニュアルが更新されました。内容を確認して、もう一度押してください
+    self_declaration_label: 自己申告
+    declare_buttons:
+      "3": 先輩のもとでできる（レベル3）
+      "4": 最後まで1人でできる（レベル4）
+    self_declared_notice: "レベル%{level}（%{name}）を申告しました"
+    not_declarable: 今のレベルからは申告できません
     relearn_badge: 再確認
     revised_alert: このマニュアルは改定されました
 
@@ -163,6 +174,43 @@ ja:
         done: 教え終わった
         cancel: 取り消す
         undo_cancel: 取り消しをやめる
+    skill_maps:
+      show:
+        operations_count: "%{count}作業"
+        capable_count: "できる人%{count}人"
+        few_capable_operations: "できる人1人以下 %{count}件"
+        few_capable_warning: "できる人（1人でできる＝レベル4）が1人以下の作業が%{count}件あります"
+        few_capable_warning_description: 担当者が休んだり辞めたりすると止まる恐れがあります。研修画面で優先して教える人を決めましょう。
+        few_capable_filter: できる人が1人以下の作業だけ表示
+        save: 変更を保存
+        unsaved_note: （まだ保存されていません!）
+      cell:
+        unread: 未読
+        unread_description: 改定後のマニュアルをまだ確認していません
+    skills:
+      show:
+        title: "%{user} × %{operation}"
+        manual_status: マニュアル確認状況
+        manual_statuses:
+          unconfirmed: 未確認
+          unread: 改定後 未確認
+          confirmed: 確認済み
+        training: 研修
+        trainings:
+          done: "済み（%{trainer}から・%{date}）"
+          self_taught: なし（自分で習得）
+          not_yet: まだ
+        # 教えた人がスタッフのときの呼び方（管理者は名前だけ）
+        staff_name: "%{name}さん"
+        admin_assessment: 管理者の見立て
+        no_assessment: なし
+        # 今のレベルで意味のない見立て（マスには出さない）に添える説明。レベル・見立ての組み合わせで引く
+        hidden_assessment_notes:
+          level_4:
+            can_train: レベル3になっても、教える人の候補に残ります
+            training_done: ▼から研修を受け終えました（いまは普通のレベル4として扱います）
+          level_3:
+            backup_trainer: レベル4になると、教える人の候補の後ろに並びます
     manual_revisions:
       index:
         list_label: 改訂履歴の一覧
@@ -180,6 +228,10 @@ ja:
     skills:
       index:
         skill_list_label: わたしのスキルの一覧
+      skill_list:
+        count_unit: 件
+        trained: 研修済み
+        level: レベル%{level}
       trainings:
         teaching_title: 教える予定
         learning_title: 教わる予定
@@ -241,6 +293,30 @@ ja:
     "2": 教えた人が「教え終わった」を押した
     "3": 本人が自己申告
     "4": 本人が自己申告
+
+  # マスや名前の横に出す印と、マウスを乗せたときの説明（admin/shared/_assessment_mark）
+  admin_assessment_marks:
+    can_train:
+      symbol: ▲
+      description: 指導できる：レベル3だが、すでに教えられる
+    needs_training:
+      symbol: ▼
+      description: 要研修：研修が必要
+    training_done:
+      symbol: ▽
+      description: 研修済み：▼の人が研修を受け終えた
+    backup_trainer:
+      symbol: ◇
+      description: 指導に不安あり：1人で作業はできるが、教えるのは少し不得意
+
+  skills:
+    assessments:
+      update:
+        saved: 管理者の見立てを保存しました
+        failed: 管理者の見立てを保存できませんでした
+      errors:
+        not_assignable: "%{user}さんの「%{operation}」：%{assessment}はレベル%{level}のときだけ付けられます"
+        invalid: "%{user}さんの「%{operation}」：選べない見立てです"
 
   # 下書きの「変更を保存」と、保存しないまま移るときの確認（unsaved-changes コントローラ）
   unsaved_changes:

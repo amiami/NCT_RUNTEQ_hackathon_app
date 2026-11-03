@@ -15,3 +15,7 @@
 - `Capybara.string` で `hidden` の要素の中の文字を確かめるときは `have_text(..., visible: :all)` が効かない → `node.text(:all)` に `include` で確かめる。（2026-11-02）
 - コンテナの中で `bin/rubocop -a` などでファイルを書き換えると、そのファイルの持ち主が root になり、手元で書き込めなくなる（`Permission denied`）→ `docker compose run --rm web chown "$(id -u):$(id -g)" <ファイル>` で持ち主を戻す。（2026-11-02）
 - 研修の主要な流れの System spec は seeds を読み込んで動かす → seeds が変わったときに原因が分かるよう、前提にしている値（給与計算の山本・吉田のレベルなど）を最初に `expect` で確かめ、手順の文や人数・作業数は確かめない。操作する人の切り替えは `switch_operator_to(name)` の1か所にまとめてある（切り替えの見た目が変わったら、そこだけ直す）。（2026-11-02）
+- main を取り込んだあと rspec が `Bundler::GemNotFound` で動かない → Gemfile.lock が変わっているので、`docker compose run --rm web bundle install` を先に実行する。（2026-11-01）
+- `have_css(..., exact_text: "0")` が、要素の中の改行・インデントのせいで一致しない（このプロジェクトの Capybara は空白をそのまま比べる）→ 複数行の ERB で組んだ要素には `normalize_ws: true` を付ける。（2026-11-01）
+- 開発用 DB が空だと、画面を開いても何も出ない → `docker compose run --rm web bin/rails db:seed` でサンプルデータを入れてから見る。（2026-11-01）
+- スタッフ画面に見立てが出ないことは `spec/requests/staff/assessment_hiding_spec.rb` でまとめて確かめている（見立て4種類と▼の人の予定がそろったデータで、スタッフが開ける画面・操作すべて）→ スタッフの画面や操作を足したら、ここの `staff_paths` や操作の例にも足す。スタッフの画面は Turbo Stream つきで開くと HTML、JSON で開くと 406 を返す。（2026-11-03）
