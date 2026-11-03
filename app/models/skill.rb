@@ -14,10 +14,10 @@ class Skill < ApplicationRecord
   # 管理者の見立て。スタッフには見せない（HTML の属性・JSON・Turbo Stream にも出さない）。
   # 付けられるレベルは付けるときのサービスで確かめ、ここでは確かめない
   enum :admin_assessment, {
-    can_train: 0,       # ▲ 研修権限
+    can_train: 0,       # ▲ 指導できる
     needs_training: 1,  # ▼ 要研修
     training_done: 2,   # ▽ 研修済み
-    backup_trainer: 3   # ◇ 教えるのは後回し
+    backup_trainer: 3   # ◇ 指導に不安あり
   }, validate: { allow_nil: true }
 
   validates :level, numericality: { only_integer: true, in: 0..4 }
