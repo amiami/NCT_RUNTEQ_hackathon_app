@@ -211,6 +211,18 @@ ja:
             training_done: ▼から研修を受け終えました（いまは普通のレベル4として扱います）
           level_3:
             backup_trainer: レベル4になると、教える人の候補の後ろに並びます
+    manual_revisions:
+      index:
+        list_label: 改訂履歴の一覧
+        columns:
+          date: 日付
+          operation: 作業
+          kind: 種類
+          memo: 変更内容
+          link: マニュアル
+        no_memo: （メモなし）
+        open_manual: マニュアルを見る
+        empty: 改訂はまだありません
 
   staff:
     skills:

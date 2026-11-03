@@ -860,6 +860,47 @@
   .my-training-empty {
     @apply text-sm leading-[normal] text-muted;
   }
+
+  /* 改訂履歴（管理者）。狭い画面では表ごと横にスクロールする */
+  .revision-list {
+    @apply overflow-x-auto p-0;
+  }
+
+  .revision-list-empty {
+    @apply px-4 py-5 text-sm leading-[normal] text-muted;
+  }
+
+  .revision-table {
+    @apply w-full min-w-[760px] border-collapse text-left text-sm leading-[normal];
+  }
+
+  .revision-table th {
+    @apply border-b border-line px-4 py-3 text-xs font-bold whitespace-nowrap text-muted;
+  }
+
+  .revision-table td {
+    @apply border-b border-line px-4 py-3 align-middle;
+  }
+
+  .revision-table tbody tr:last-child td {
+    @apply border-b-0;
+  }
+
+  .revision-table-date {
+    @apply whitespace-nowrap;
+  }
+
+  .revision-table-operation {
+    @apply font-bold;
+  }
+
+  .revision-table-version {
+    @apply ml-1 text-xs text-muted;
+  }
+
+  .revision-table-link {
+    @apply font-bold whitespace-nowrap text-link underline hover:text-link-hover;
+  }
 }
 
 /* わたしのスキルの一覧（S-6 の左の欄）：レベルごとの件数と、分類ごとの作業 */
