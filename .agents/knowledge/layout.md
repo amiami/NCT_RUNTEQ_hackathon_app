@@ -21,3 +21,4 @@
 - 「できる人○人」のバッジは、作業ツリー・作業マニュアルの見出し・研修画面のカードで `operation-badge operation-badge-warning` を使う。スキルマップの行だけ `.capable-alert`（同じ見た目）。`.capable-warning` はスキルマップの上の警告カード専用 → ほかの部品に付けると余白・背景がまざって大きくずれる。画面専用の目印には `training-capable-count` のように別のクラス名を付ける。（2026-11-03）
 - 同じ茶色 `#7C2D12` のトークンが3つある（`--color-caution`・`--color-capable-alert`・`--color-operation-warning`）→ 色を変えるときは3つそろえて直す。1つにまとめるのは別の作業。（2026-11-03）
 - 「できる人%{count}人」の翻訳キーが3つある（`operations.capable_count`・`admin.trainings.card.capable_count`・`admin.skill_maps.show.capable_count`）→ 文言を変えるときは3つそろえて直す。1つにまとめるのは別の作業。（2026-11-03）
+- 「変更を保存」の枠（`.save-bar`、画面に固定）が出ているあいだは、枠のすぐ外側の要素に `:has(> .save-bar:not([hidden]))` で下の余白を付けている → `main` に付けても、ビューの `pb-6` などのクラス（`@layer utilities`）が `@layer components` より必ず勝つので効かない。枠を別の場所に置くときも、枠のすぐ外側の要素が一番下までの内容を包むようにする。（2026-11-04）
