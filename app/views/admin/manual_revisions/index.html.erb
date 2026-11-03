@@ -1,4 +1,36 @@
 <% content_for :title, "#{t('page_titles.admin', page: t('navigation.admin.manual_revisions'))} | #{t('app_name')}" %>
-<section class="card">
-  <h1 class="page-title"><%= t("page_titles.admin", page: t("navigation.admin.manual_revisions")) %></h1>
+<section class="card revision-list" aria-labelledby="revisions-page-title">
+  <h1 id="revisions-page-title" class="page-title"><%= t("page_titles.admin", page: t("navigation.admin.manual_revisions")) %></h1>
+  <% if @revisions.empty? %>
+    <p class="revision-list-empty"><%= t(".empty") %></p>
+  <% else %>
+    <%# 変更前・変更後の手順（body_before・body_after）は記録として残すだけで、画面には出さない %>
+    <table class="revision-table" aria-label="<%= t('.list_label') %>">
+      <thead>
+        <tr>
+          <th scope="col"><%= t(".columns.date") %></th>
+          <th scope="col"><%= t(".columns.operation") %></th>
+          <th scope="col"><%= t(".columns.kind") %></th>
+          <th scope="col"><%= t(".columns.memo") %></th>
+          <th scope="col"><span class="sr-only"><%= t(".columns.link") %></span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @revisions.each do |revision| %>
+          <% manual = revision.manual %>
+          <tr>
+            <td class="revision-table-date"><%= l(revision.created_at.in_time_zone.to_date, format: :operation_full_date) %></td>
+            <td>
+              <span class="revision-table-operation"><%= manual.operation.name %></span>
+              <span class="revision-table-version"><%= t("operations.version", version: revision.version) %></span>
+            </td>
+            <%# 改訂の記録は種類を持たないので、マニュアルの今の種類を出す %>
+            <td><span class="operation-badge operation-badge-neutral"><%= t("operations.kinds.#{manual.kind}") %></span></td>
+            <td class="revision-table-memo"><%= revision.memo.presence || t(".no_memo") %></td>
+            <td><%= link_to t(".open_manual"), admin_operations_path(operation_id: manual.operation_id), class: "revision-table-link" %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
 </section>
