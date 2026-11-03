@@ -31,6 +31,8 @@ Rails.application.routes.draw do
   namespace :staff do
     resources :operations, only: :index do
       resource :confirmation, only: :create, module: :operations
+      # 自己申告（レベル3・4）。送るのはレベルだけで、操作しているスタッフ本人のスキルを変える
+      resource :self_declaration, only: :create, module: :operations
     end
     resources :skills, only: :index
     resources :manual_revisions, only: :index
