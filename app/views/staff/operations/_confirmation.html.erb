@@ -9,11 +9,20 @@
         <span><%= t("skill_levels.#{level}") %></span>
       </p>
     </div>
-    <p class="operation-confirmation-hint">
-      <%= t(confirmed ? "operations.confirmed_hint" : "operations.confirmation_hint") %>
-    </p>
+    <%# 次に何をすればよいか。本人のレベルで決まる %>
+    <p class="operation-confirmation-hint"><%= t("operations.level_hints.#{level}") %></p>
   </div>
   <%= button_to t(confirmed ? "operations.confirmed_button" : "operations.confirm_button"),
                 staff_operation_confirmation_path(operation), method: :post, params: { version: manual.version },
                 class: "btn btn-primary operation-confirm-button", disabled: confirmed %>
+  <%# 自己申告。押せるのは今のレベルが SelfDeclaration::DECLARABLE_FROM の元のレベルのとき（押せないボタンは薄く表示する）。
+      研修を受けたかどうかや管理者の見立てでは押せなくしない %>
+  <div class="self-declaration" role="group" aria-label="<%= t('operations.self_declaration_label') %>">
+    <span class="self-declaration-label"><%= t("operations.self_declaration_label") %></span>
+    <% SelfDeclaration::DECLARABLE_FROM.each do |to_level, from_levels| %>
+      <%= button_to t("operations.declare_buttons.#{to_level}"),
+                    staff_operation_self_declaration_path(operation), method: :post, params: { level: to_level },
+                    class: "btn self-declaration-button", disabled: !from_levels.include?(level) %>
+    <% end %>
+  </div>
 </section>
