@@ -219,7 +219,6 @@ ja:
       skill_list:
         count_unit: 件
         trained: 研修済み
-        reconfirm: 再確認
         level: レベル%{level}
       trainings:
         teaching_title: 教える予定
