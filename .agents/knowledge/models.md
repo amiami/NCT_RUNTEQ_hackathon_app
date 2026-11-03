@@ -27,3 +27,4 @@
 - 外部サイトの改定も `ManualReviser` を使い、本文を渡さずメモと表示中の版を渡す。URL・本文・スキルを変えず、履歴の本文差分はNULLにする。外部用フォームの二重送信は最新表示へ戻して案内する。（2026-11-02）
 - 教える予定（申告済みの判定つき）は `TrainingBoard.assigned_trainings(Training.where(trainer: user))`、教わる予定は `Training.learning_for(user)`（未完了 → 完了した予定は作業ごとに最新の1件）。条件を書き直さない。（2026-11-02）
 - わたしのスキルの一覧は `MySkillList.for(user)`（レベルごとの件数と、分類ごとの行）→ 「研修済み」は `Skill#training_status`、「再確認」は `Skill#unread?` を使う。`latest_done_training` は1件ずつ問い合わせるので、一覧では `Training.latest_done` をまとめて読んで `skill.latest_done_training = …`（`attr_writer`）で先に入れる。（2026-11-03）
+- 改訂履歴の並び順は `ManualRevision.newest_first`（`created_at` → `id` の新しい順）。一覧では `includes(manual: :operation)` で作業名と種類を先読みする。改訂の記録は種類を持たないので、種類はマニュアルの今の `kind` を出す。（2026-11-03）
