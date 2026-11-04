@@ -11,7 +11,7 @@
         <span class="app-brand-department"><%= t("app_department") %></span>
       </span>
     <% end %>
-    <% if admin_page? && current_user&.admin? && ENV["DEMO_RESET_ENABLED"] == "true" %>
+    <% if demo_reset_available? %>
       <%= button_to t("demo_reset.button"), admin_demo_reset_path, method: :post,
                     class: "btn", data: { turbo_confirm: t("demo_reset.confirm") } %>
     <% end %>

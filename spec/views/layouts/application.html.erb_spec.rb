@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe "layouts/application" do
   before do
-    allow(view).to receive(:current_user).and_return(nil)
+    allow(view).to receive(:demo_reset_available?).and_return(false)
     assign(:categories, [])
     assign(:operations_by_category, {})
     assign(:operation, nil)

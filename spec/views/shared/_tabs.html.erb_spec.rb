@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe "shared/_tabs" do
   before do
-    allow(view).to receive(:current_user).and_return(nil)
+    allow(view).to receive(:demo_reset_available?).and_return(false)
     allow(view).to receive_messages(admin_page?: false, navigation_current?: false,
                                     operator_switch: { staff: true, selected_id: nil, candidates: [] })
   end
