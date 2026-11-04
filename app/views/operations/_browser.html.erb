@@ -52,7 +52,7 @@
       <%= render "operations/manual", operation: operation, capable_count: capable_counts.fetch(operation.id, 0),
                  confirmation_skill: confirmation_skill %>
       <% if @operation_staff_rows %>
-        <%= render "admin/operations/staff_status", rows: @operation_staff_rows, manual: operation.manual %>
+        <%= render "admin/operations/staff_status", rows: @operation_staff_rows %>
       <% end %>
     </div>
   <% else %>
