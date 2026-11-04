@@ -11,12 +11,13 @@
               <%= row.user.name %>
             </span>
             <span class="operation-staff-status-level">
-              <span class="skill-level skill-level-<%= row.level %>"><span class="sr-only"><%= t("operations.level_prefix") %></span><%= row.level %></span>
-              <span class="operation-staff-status-level-name"><%= t("skill_levels.#{row.level}") %></span>
+              <span class="skill-level skill-level-<%= row.skill.level %>"><span class="sr-only"><%= t("operations.level_prefix") %></span><%= row.skill.level %></span>
+              <span class="operation-staff-status-level-name"><%= t("skill_levels.#{row.skill.level}") %></span>
             </span>
+            <%# 確認状況と研修の文は、スキルマップのマスの詳細と同じヘルパー（SkillsHelper）で出す %>
             <span class="operation-staff-status-details">
-              <span class="operation-badge operation-badge-neutral"><%= operation_staff_confirmation(row, manual) %></span>
-              <span><%= operation_staff_training(row) %></span>
+              <span class="operation-badge operation-badge-neutral"><%= skill_manual_status_label(row.skill) %></span>
+              <span><%= t("operations.staff_status.training", status: skill_training_label(row.skill)) %></span>
             </span>
           </li>
         <% end %>
