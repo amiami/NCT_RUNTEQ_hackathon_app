@@ -35,10 +35,11 @@
   --color-skill-0: #EEF0F3;
   --color-skill-1: #E3EDFB;
   --color-skill-2: #C7DAF6;
-  --color-skill-3: #9FC0EE;
-  --color-skill-4: #6E9FE3;
+  --color-skill-3: #6E9FE3;
+  --color-skill-4: #1F5FBF;
   --color-skill-content: #1E3A5F;
   --color-skill-strong-content: #0B2545;
+  --color-skill-max-content: #FFFFFF; /* 最上位レベルの数字 */
   --color-skill-bar: #1F5FBF; /* わたしのスキルの4段のバーの、塗った段 */
   --color-trained: #ECFDF5; /* 「研修済み」のバッジ（わたしのスキル） */
   --color-trained-content: #065F46;
@@ -203,7 +204,7 @@
   }
 
   .skill-level-4 {
-    @apply bg-skill-4 text-skill-strong-content;
+    @apply bg-skill-4 text-skill-max-content;
   }
 
   .flash-message {
