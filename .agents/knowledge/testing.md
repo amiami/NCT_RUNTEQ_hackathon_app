@@ -20,3 +20,4 @@
 - 開発用 DB が空だと、画面を開いても何も出ない → `docker compose run --rm web bin/rails db:seed` でサンプルデータを入れてから見る。（2026-11-01）
 - スタッフ画面に見立てが出ないことは `spec/requests/staff/assessment_hiding_spec.rb` でまとめて確かめている（見立て4種類と▼の人の予定がそろったデータで、スタッフが開ける画面・操作すべて）→ スタッフの画面や操作を足したら、ここの `staff_paths` や操作の例にも足す。スタッフの画面は Turbo Stream つきで開くと HTML、JSON で開くと 406 を返す。（2026-11-03）
 - `<template>` の中身は `Capybara.string` の HTML 解析では空になる → Request spec では、レスポンスの HTML から `<template>` の中身を切り出して（`response.body[%r{<template[^>]*名前[^>]*>(.*?)</template>}m, 1]`）`Capybara.string` に渡して読む。JavaScript が作った要素の `aria-label` は、既存の System spec の例に `have_button("…")` を1行足して確かめる。（2026-11-04）
+- Request spec（`Capybara.string`）で `have_css(":scope > .x")` と書くと `Nokogiri::XML::XPath::SyntaxError` になる（HTML の解析に使う Nokogiri が `:scope` に対応していない）→ 親の要素の CSS セレクタから `th.親 > .x` のように書く。（2026-11-04）
