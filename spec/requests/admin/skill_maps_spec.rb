@@ -221,12 +221,12 @@ RSpec.describe "スキルマップ（管理者）" do
         [ 4, :needs_training ] => "▼",
         [ 4, :backup_trainer ] => "◇"
       }.each do |(level, assessment), symbol|
-        it "レベル#{level}・#{assessment} は #{symbol} が出る" do
+        it "レベル#{level}・#{assessment} は #{symbol} のアイコン（SVG）が出る" do
           skill = skill_with(level, assessment)
 
           get admin_skill_map_path
 
-          expect(cell(skill)).to have_css(".assessment-mark", exact_text: symbol)
+          expect(cell(skill)).to have_css(".assessment-mark.assessment-mark-#{assessment} > svg[aria-hidden='true']")
         end
       end
 
@@ -243,19 +243,23 @@ RSpec.describe "スキルマップ（管理者）" do
       end
     end
 
-    describe "AC-4: マウスを乗せると説明が出る" do
+    # 研修画面と同じく、凡例と同じ名前を出す
+    describe "AC-4: マウスを乗せると見立ての名前が出て、読み上げでも名前が読まれる" do
       {
-        [ 3, :can_train ] => "指導できる：レベル3だが、すでに教えられる",
-        [ 3, :needs_training ] => "要研修：研修が必要",
-        [ 3, :training_done ] => "研修済み：▼の人が研修を受け終えた",
-        [ 4, :backup_trainer ] => "指導に不安あり：1人で作業はできるが、教えるのは少し不得意"
-      }.each do |(level, assessment), description|
-        it "#{assessment} の説明" do
+        [ 3, :can_train ] => "指導できる",
+        [ 3, :needs_training ] => "要研修",
+        [ 3, :training_done ] => "研修済み（▼から研修を受け終えた）",
+        [ 4, :backup_trainer ] => "指導に不安あり"
+      }.each do |(level, assessment), name|
+        it "#{assessment} は「#{name}」" do
           skill = skill_with(level, assessment)
 
           get admin_skill_map_path
 
-          expect(cell(skill).find(".assessment-mark")[:title]).to eq description
+          mark = cell(skill).find(".assessment-mark")
+          expect(mark[:title]).to eq name
+          expect(mark[:role]).to eq "img"
+          expect(mark["aria-label"]).to eq name
         end
       end
     end
@@ -266,7 +270,7 @@ RSpec.describe "スキルマップ（管理者）" do
 
       get admin_skill_map_path
 
-      expect(cell(skill)).to have_css(".skill-map-cell > .assessment-mark", exact_text: "▲")
+      expect(cell(skill)).to have_css(".skill-map-cell > .assessment-mark.assessment-mark-can_train")
       expect(cell(skill)).to have_css(".skill-map-cell > .skill-map-unread", exact_text: "未読")
     end
   end

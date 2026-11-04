@@ -29,6 +29,12 @@ RSpec.describe "研修画面（S-3）" do
     expect(response).to have_http_status(:ok)
   end
 
+  # チップの文字（レベルと名前）に、見立ての印があればその名前（読み上げ用の名前）を [ ] で付ける。例：「3 小林 [指導できる]」
+  def chip_with_mark(chip)
+    mark = chip.all(".assessment-mark").first
+    [ chip.text.squish, (mark && "[#{mark['aria-label']}]") ].compact.join(" ")
+  end
+
   describe "AC-1: カードに出す作業" do
     it "レベル0・1の人か▼の人がいる作業だけがカードで並ぶ" do
       skill_in(create(:operation, name: "給与計算"), 1, name: "吉田")
@@ -174,8 +180,8 @@ RSpec.describe "研修画面（S-3）" do
     it "教える人が #58 の順で並び、▲・◇は今のレベルで意味があるときだけ出る。管理者はレベルなしで最後" do
       open_screen
 
-      trainers = card("勤怠の締め").all(".trainer-chip").map { |chip| chip.text.squish }
-      expect(trainers).to eq [ "4 山本", "4 佐藤", "4 田中", "3 小林 ▲", "4 中村 ◇", "管理者" ]
+      trainers = card("勤怠の締め").all(".trainer-chip").map { |chip| chip_with_mark(chip) }
+      expect(trainers).to eq [ "4 山本", "4 佐藤", "4 田中", "3 小林 [指導できる]", "4 中村 [指導に不安あり]", "管理者" ]
     end
 
     # 凡例（ページの上）は main 側で直すので、ここではカードの中だけを確かめる
@@ -191,8 +197,8 @@ RSpec.describe "研修画面（S-3）" do
     it "未研修に、レベル0・1と▼の人が並び、▼が名前の横に出る" do
       open_screen
 
-      trainees = card("勤怠の締め").all(".trainee-chip").map { |chip| chip.text.squish }
-      expect(trainees).to eq [ "0 吉田", "3 加藤 ▼", "4 高橋 ▼" ]
+      trainees = card("勤怠の締め").all(".trainee-chip").map { |chip| chip_with_mark(chip) }
+      expect(trainees).to eq [ "0 吉田", "3 加藤 [要研修]", "4 高橋 [要研修]" ]
     end
 
     it "未研修の人がいなければ「対象者なし」と出る" do
