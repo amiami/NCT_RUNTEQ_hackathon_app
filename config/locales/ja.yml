@@ -256,6 +256,8 @@ ja:
       not_saved: 「教え終わった」にできませんでした。画面を開き直して、もう一度押してください
 
   operators:
+    role_switch_label: 立場の切り替え
+    current_label: ログイン中：
     switch_label: 操作する人の切り替え
     label: 操作する人
     submit: 切り替え
