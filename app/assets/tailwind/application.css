@@ -542,8 +542,7 @@
 
 @layer components {
   .operation-browser {
-    @apply grid items-start gap-5;
-    grid-template-columns: minmax(280px, 380px) minmax(0, 1fr);
+    @apply grid grid-cols-1 items-start gap-5 lg:grid-cols-[minmax(280px,380px)_minmax(0,1fr)];
   }
 
   .operation-tree-panel {
@@ -682,7 +681,7 @@
   }
 
   .operation-confirmation-summary {
-    @apply flex flex-wrap items-center gap-6;
+    @apply flex flex-wrap items-start gap-x-6 gap-y-3;
   }
 
   .operation-confirmation-caption {
@@ -698,7 +697,7 @@
   }
 
   .operation-confirmation-hint {
-    @apply min-w-0 flex-1 basis-[200px] text-[13px] text-legend-content;
+    @apply min-w-0 flex-1 basis-[200px] text-xs text-legend-content;
   }
 
   .operation-confirm-button {
