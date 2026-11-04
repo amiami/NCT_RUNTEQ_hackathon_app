@@ -292,7 +292,7 @@ docker compose run --rm web bin/rails db:prepare
 docker compose run --rm web bin/rails db:seed
 ```
 
-再実行では既存レコードを上書きせず、不足分だけ追加します。初期状態に戻す場合は `docker compose run --rm web bin/rails db:seed:replant` を使います。この操作は既存データを全件削除します。本番への投入はデプロイ手順で扱います。
+再実行では既存レコードを上書きせず、不足分だけ追加します。初期状態に戻す場合は `docker compose run --rm web bin/rails db:seed:replant` を使います。この操作は既存データを全件削除します。管理者画面のヘッダーに常に表示する「デモ用データに戻す」でも、確認ダイアログを経て同じ初期状態に戻せます。環境変数の設定は不要で、スタッフからは実行できません。本番への投入はデプロイ手順で扱います。
 
 ## やめたこと・今後の検討
 

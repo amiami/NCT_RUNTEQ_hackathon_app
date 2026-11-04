@@ -11,7 +11,7 @@ module Admin
     private
 
     def require_demo_reset
-      head :not_found unless ENV["DEMO_RESET_ENABLED"] == "true" && current_user&.admin?
+      head :not_found unless current_user&.admin?
     end
   end
 end
