@@ -279,6 +279,12 @@ RSpec.describe "スキルマップ（管理者）" do
       expect(document.find("turbo-frame#skill_detail", visible: :all).text).to be_blank
     end
 
+    it "詳細の枠に、スクロールしても画面の上に残るクラス（skill-detail-frame）が付いている" do
+      get admin_skill_map_path
+
+      expect(document).to have_css("turbo-frame#skill_detail.skill-detail-frame", visible: :all)
+    end
+
     it "詳細が入ると、詳細が見える位置まで自動でスクロールする（Turbo Frame の autoscroll。見えていればスクロールしない）" do
       get admin_skill_map_path
 
