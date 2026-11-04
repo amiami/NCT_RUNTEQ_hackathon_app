@@ -665,7 +665,7 @@
   }
 
   .operation-confirmation-summary {
-    @apply flex flex-wrap items-center gap-6;
+    @apply flex flex-wrap items-start gap-x-6 gap-y-3;
   }
 
   .operation-confirmation-caption {
