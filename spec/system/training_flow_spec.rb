@@ -20,8 +20,11 @@ RSpec.describe "研修の流れ", :js do
     within('nav[aria-label="画面切り替え"]') { click_link label }
   end
 
-  # 名前のボタンで操作する人を切り替える。
+  # 立場のスイッチをスタッフにしてから、名前のボタンで操作する人を切り替える。
   def switch_operator_to(name)
+    unless has_css?(".operator-navigation", wait: 0)
+      within(".role-navigation") { click_button I18n.t("navigation.roles.staff") }
+    end
     within(%([role="group"][aria-label="#{I18n.t('operators.switch_label')}"])) do
       click_button name
     end
@@ -151,9 +154,9 @@ RSpec.describe "研修の流れ", :js do
       visit admin_trainings_path
       draft_training_from_yamamoto_to_yoshida
 
-      # 名前ボタンでの離脱も確認し、キャンセルなら下書きと操作中ユーザーを保つ。
+      # 立場のスイッチでの離脱も確認し、キャンセルなら下書きと操作中ユーザーを保つ。
       dismiss_confirm("変更は保存されませんがよろしいですか？") do
-        within('[role="group"][aria-label="操作する人の切り替え"]') { click_button "吉田 あかり" }
+        within(".role-navigation") { click_button I18n.t("navigation.roles.staff") }
       end
       expect(page).to have_current_path(admin_trainings_path)
       expect(page).to have_css(".plan-chip", text: "山本 直子 → 吉田 あかり")

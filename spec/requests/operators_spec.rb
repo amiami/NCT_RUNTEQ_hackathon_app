@@ -34,6 +34,19 @@ RSpec.describe "操作する人の切り替え" do
     end
   end
 
+  it "管理者には立場のスイッチだけを表示し、スタッフ名のスイッチは表示しない" do
+    get admin_operations_path
+    header = header_of(response)
+    expect(header.find(".role-navigation").all("button").map(&:text)).to eq([ "管理者（部長）", "スタッフ" ])
+    expect(header).to have_no_css(".operator-navigation")
+  end
+
+  it "スタッフ側へ切り替えるボタンは先頭のスタッフを指定する" do
+    get admin_operations_path
+    form = header_of(response).find_button("スタッフ").find(:xpath, "..")
+    expect(form.find('input[name="user_id"]', visible: false).value).to eq(yamamoto.id.to_s)
+  end
+
   describe "AC-1: スタッフを選んだとき" do
     before { switch_to(nakamura) }
 
@@ -47,14 +60,15 @@ RSpec.describe "操作する人の切り替え" do
 
         expect(response).to have_http_status(:ok)
         expect(header_of(response)).to have_css('button[aria-pressed="true"]', exact_text: "中村 健太")
-        expect(header_of(response)).to have_css('button[aria-pressed="true"]', count: 1)
+        expect(header_of(response).find('.operator-navigation')).to have_css('button[aria-pressed="true"]', count: 1)
       end
     end
 
     it "選べるのはスキルを持つ人（管理者以外）だけ" do
       get staff_operations_path
 
-      expect(header_of(response).all("button").map(&:text)).to eq([ "管理者（部長）", "山本 直子", "中村 健太" ])
+      expect(header_of(response).find(".role-navigation").all("button").map(&:text)).to eq([ "管理者（部長）", "スタッフ" ])
+      expect(header_of(response).find(".operator-navigation").all("button").map(&:text)).to eq([ "山本 直子", "中村 健太" ])
     end
 
     it "別のスタッフに選び直せる" do
@@ -145,6 +159,7 @@ RSpec.describe "操作する人の切り替え" do
       get admin_operations_path
 
       expect(response).to have_http_status(:ok)
+      expect(header_of(response)).to have_button("スタッフ", disabled: true)
     end
   end
 end
