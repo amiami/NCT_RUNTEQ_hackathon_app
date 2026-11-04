@@ -11,6 +11,10 @@
         <span class="app-brand-department"><%= t("app_department") %></span>
       </span>
     <% end %>
+    <% if demo_reset_available? %>
+      <%= button_to t("demo_reset.button"), admin_demo_reset_path, method: :post,
+                    class: "btn", data: { turbo_confirm: t("demo_reset.confirm") } %>
+    <% end %>
     <% operator = operator_switch %>
     <div role="group" aria-label="<%= t("operators.switch_label") %>" class="role-navigation">
       <% if operator[:staff] %>
