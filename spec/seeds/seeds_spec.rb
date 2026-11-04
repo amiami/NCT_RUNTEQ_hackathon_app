@@ -26,7 +26,12 @@ RSpec.describe "サンプルデータ" do # rubocop:disable RSpec/DescribeClass 
     Manual.includes(:operation).find_each do |manual|
       name = manual.operation.name
       expect(manual.kind).to eq(external_names.include?(name) ? "external" : "internal")
-      expect(manual.external? ? manual.url : manual.body).to eq(manual.external? ? "[#{name}のURL]" : "（サンプル）")
+      if manual.external?
+        expect(manual.url).to eq("[#{name}のURL]")
+      else
+        expect(manual.steps.length).to be >= 3
+        expect(manual.body).not_to include("（サンプル）")
+      end
       expect(manual.version).to eq([ "有給休暇の管理", "社会保険の資格取得・喪失", "年末調整" ].include?(name) ? 2 : 1)
     end
     notes = Operation.where.not(season_note: nil).pluck(:name, :season_note).to_h
@@ -34,6 +39,14 @@ RSpec.describe "サンプルデータ" do # rubocop:disable RSpec/DescribeClass 
       "算定基礎届" => "年1回・夏（提出期限は案内ページで確認）", "労働保険の年度更新" => "年1回・初夏",
       "年末調整" => "毎年11月中に準備", "健康診断の手配" => "年1回"
     )
+  end
+
+  it "改訂前後の手順と変更内容を用意する" do
+    seed
+    revision = ManualRevision.joins(manual: :operation).find_by!(operations: { name: "有給休暇の管理" })
+    expect(revision.body_before).not_to eq(revision.body_after)
+    expect(revision.body_after).to include("年5日の取得状況")
+    expect(revision.memo).to eq("年5日の取得状況を確認する手順を追加")
   end
 
   it "給与計算のデモ用研修を頼めて、年度更新は▲を付けた山本が教えられる" do

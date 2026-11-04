@@ -18,30 +18,6 @@ module OperationsHelper
     manual&.latest_revision&.created_at&.in_time_zone
   end
 
-  def operation_staff_confirmation(row, manual)
-    state = if row.confirmed_version.nil? || manual.nil?
-      "unconfirmed"
-    elsif row.confirmed_version < manual.version
-      "revised"
-    else
-      "confirmed"
-    end
-    t("operations.staff_status.confirmations.#{state}")
-  end
-
-  def operation_staff_training(row)
-    if row.training
-      trainer = row.training.trainer
-      name = trainer.admin? ? trainer.name : t("operations.staff_status.trainer_name", name: trainer.name)
-      t("operations.staff_status.trained", trainer: name,
-        date: l(row.training.done_on, format: :operation_full_date))
-    elsif row.level >= 3
-      t("operations.staff_status.self_learned")
-    else
-      t("operations.staff_status.not_trained")
-    end
-  end
-
   def manual_site_url(manual)
     uri = URI.parse(manual.url.to_s)
     manual.url if uri.is_a?(URI::HTTP) && uri.host.present?
