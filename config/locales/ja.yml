@@ -1,4 +1,13 @@
 ja:
+  revision_notices:
+    empty: 改訂のお知らせはありません
+    list_label: マニュアルの改訂のお知らせ
+    date: 日付
+    operation: 作業・版
+    memo: 変更内容
+    status: わたしの状態
+    open_manual: マニュアルを見る
+    no_memo: （メモなし）
   # 画面に出すアプリ名。変えるときはここだけ直す
   app_name: マニュあっぷ
 
