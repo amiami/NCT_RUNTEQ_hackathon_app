@@ -2,11 +2,11 @@
 # 管理者の画面だけで使う。スタッフの画面では呼ばない（HTML の属性にも出さない）
 module AdminAssessmentsHelper
   # 見立てごとのアイコンの形（16×16）。記号（admin_assessments の mark）と同じ形を、角を少し丸めて描く。
-  # 塗りの三角は、同じ色の線を重ねて角を丸める
+  # 塗りの三角は、同じ色の線を重ねて角を丸める。白抜きの ▽ は塗りより小さく見えるので、▼ の外側の大きさに合わせて大きめに描く
   ASSESSMENT_ICON_SHAPES = {
     "can_train" => { d: "M8 3.5 13 12H3Z", filled: true },              # ▲
     "needs_training" => { d: "M8 12.5 3 4h10Z", filled: true },         # ▼
-    "training_done" => { d: "M8 12.2 3.4 4.4h9.2Z", filled: false },    # ▽
+    "training_done" => { d: "M8 13.4 2.2 3.4h11.6Z", filled: false },   # ▽
     "backup_trainer" => { d: "M8 2.6 13.4 8 8 13.4 2.6 8Z", filled: false } # ◇
   }.freeze
 
