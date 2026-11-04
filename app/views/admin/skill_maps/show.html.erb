@@ -69,7 +69,8 @@
             <% capable_count = @capable_counts.fetch(operation.id, 0) %>
             <tr data-few-capable="<%= capable_count <= 1 %>">
               <th scope="row" class="skill-map-operation">
-                <span><%= operation.name %></span>
+                <%# 作業ツリーのその作業へ移る。画面を移るリンクなので、見立ての下書きがあれば共通部品（unsaved-changes）が確認を出す %>
+                <%= link_to operation.name, admin_operations_path(operation_id: operation.id), class: "skill-map-operation-link" %>
                 <% if capable_count <= 1 %>
                   <span class="capable-alert"><%= t(".capable_count", count: capable_count) %></span>
                 <% end %>

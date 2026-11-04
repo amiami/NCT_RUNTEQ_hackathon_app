@@ -251,6 +251,11 @@
     @apply px-2 text-left font-medium;
   }
 
+  /* 作業名は作業ツリーへのリンク。改訂履歴の「マニュアルを見る」と同じく、青い文字と下線で押せることを示す */
+  .skill-map-operation-link {
+    @apply text-link underline hover:text-link-hover;
+  }
+
   /* 管理者の見立ての印を右上の角に重ねるので relative にしておく */
   .skill-map-cell {
     @apply relative flex min-h-12 min-w-14 flex-col items-center justify-center gap-0.5 rounded-lg p-1 text-[15px] font-bold;
