@@ -33,6 +33,10 @@
           <% selected = candidate.id == operator[:selected_id] %>
           <%= form_with url: operator_path, method: :patch, class: "role-form" do %>
             <%= hidden_field_tag :user_id, candidate.id, id: nil %>
+            <%= hidden_field_tag :return_to, request.path, id: nil %>
+            <% if controller_path == "staff/operations" %>
+              <%= hidden_field_tag :operation_id, params[:operation_id], id: nil %>
+            <% end %>
             <%= button_tag candidate.name, type: "submit", class: "operator-button #{'operator-button-active' if selected}",
                            aria: { pressed: selected } %>
           <% end %>

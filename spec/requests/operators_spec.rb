@@ -88,6 +88,51 @@ RSpec.describe "操作する人の切り替え" do
     end
   end
 
+  describe "スタッフ同士の切り替えでは開いている画面を保つ" do
+    before { switch_to(nakamura) }
+
+    it "各スタッフ画面の名前ボタンで、同じ画面の別のスタッフに切り替わる" do
+      [ staff_operations_path, staff_skills_path, staff_manual_revisions_path ].each do |path|
+        get path
+        form = header_of(response).find(".operator-navigation").find_button("山本 直子").find(:xpath, "..")
+        destination = form.find('input[name="return_to"]', visible: false).value
+        patch operator_path, params: { user_id: yamamoto.id, return_to: destination }
+
+        expect(response).to redirect_to(path)
+        follow_redirect!
+        expect(header_of(response).find(".operator-navigation")).to have_css('button[aria-pressed="true"]', exact_text: "山本 直子")
+        switch_to(nakamura)
+      end
+    end
+
+    it "作業マニュアルで選択していた作業も保つ" do
+      operation = create(:manual).operation
+      get staff_operations_path(operation_id: operation.id)
+      form = header_of(response).find(".operator-navigation").find_button("山本 直子").find(:xpath, "..")
+      operation_id = form.find('input[name="operation_id"]', visible: false).value
+      patch operator_path, params: { user_id: yamamoto.id, return_to: staff_operations_path, operation_id: }
+
+      expect(response).to redirect_to(staff_operations_path(operation_id: operation.id))
+    end
+
+    it "外部URLや許可していない画面には移動しない" do
+      [ "https://example.com/", "//example.com/", admin_skill_map_path, "/staff/skills?user_id=0" ].each do |path|
+        patch operator_path, params: { user_id: yamamoto.id, return_to: path }
+        expect(response).to redirect_to(staff_operations_path)
+      end
+    end
+
+    it "管理者への切り替えは管理者の作業ツリーに戻る" do
+      patch operator_path, params: { user_id: "", return_to: staff_skills_path }
+      expect(response).to redirect_to(admin_operations_path)
+    end
+  end
+
+  it "管理者からスタッフへの切り替えは作業マニュアルを開く" do
+    patch operator_path, params: { user_id: yamamoto.id, return_to: staff_skills_path }
+    expect(response).to redirect_to(staff_operations_path)
+  end
+
   describe "AC-3: スタッフのとき" do
     before { switch_to(yamamoto) }
 
