@@ -778,6 +778,12 @@
     @apply fixed right-6 bottom-6 z-10 flex items-center gap-3 rounded-xl border border-line bg-base-100 px-4 py-3 shadow-lg;
   }
 
+  /* 枠が出ているあいだだけ、枠のすぐ外側の要素の下に、枠の分の余白を取る。
+     一番下までスクロールしたときに、表の最後の行やカードが枠の下に隠れて押せなくならないように */
+  :has(> .save-bar:not([hidden])) {
+    @apply pb-28;
+  }
+
   /* 「（まだ保存されていません!）」などの小さな文言 */
   .save-bar-note {
     @apply text-xs font-bold text-notification;
