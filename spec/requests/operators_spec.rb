@@ -46,22 +46,22 @@ RSpec.describe "操作する人の切り替え" do
         get path
 
         expect(response).to have_http_status(:ok)
-        expect(header_of(response)).to have_select("操作する人", selected: "中村 健太")
-        expect(header_of(response)).to have_css(".role-link-active", exact_text: "スタッフ")
+        expect(header_of(response)).to have_css('button[aria-pressed="true"]', exact_text: "中村 健太")
+        expect(header_of(response)).to have_css('button[aria-pressed="true"]', exact_text: "中村 健太")
       end
     end
 
     it "選べるのはスキルを持つ人（管理者以外）だけ" do
       get staff_operations_path
 
-      expect(header_of(response)).to have_select("操作する人", options: [ "山本 直子", "中村 健太" ])
+      expect(header_of(response).all("button").map(&:text)).to eq([ "管理者（部長）", "山本 直子", "中村 健太" ])
     end
 
     it "別のスタッフに選び直せる" do
       switch_to(yamamoto)
       get staff_skills_path
 
-      expect(header_of(response)).to have_select("操作する人", selected: "山本 直子")
+      expect(header_of(response)).to have_css('button[aria-pressed="true"]', exact_text: "山本 直子")
     end
 
     it "「管理者（部長）」を選ぶと部長に戻り、管理者の画面を開ける" do
@@ -108,7 +108,7 @@ RSpec.describe "操作する人の切り替え" do
 
       expect(response).to redirect_to(staff_operations_path)
       get staff_skills_path
-      expect(header_of(response)).to have_select("操作する人", selected: "中村 健太")
+      expect(header_of(response)).to have_css('button[aria-pressed="true"]', exact_text: "中村 健太")
     end
 
     it "存在しないIDでは切り替わらない（部長のまま）" do

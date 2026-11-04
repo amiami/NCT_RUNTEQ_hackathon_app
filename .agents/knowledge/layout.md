@@ -24,3 +24,5 @@
 - JavaScript が `<template>` を写して作る要素の文言（`aria-label` など）は、`ja.yml` に置き、`%{…}` を残したまま Stimulus の値で渡して、JavaScript で置き換える（`admin.trainings.index.plan_remove_label`・`training_due_on.date` など）。チップの「×」のように、押せる場所を示す飾りは `aria-hidden` にして、押せるのはチップ全体のままにする。（2026-11-04）
 - 「変更を保存」の枠（`.save-bar`、画面に固定）が出ているあいだは、枠のすぐ外側の要素に `:has(> .save-bar:not([hidden]))` で下の余白を付けている → `main` に付けても、ビューの `pb-6` などのクラス（`@layer utilities`）が `@layer components` より必ず勝つので効かない。枠を別の場所に置くときも、枠のすぐ外側の要素が一番下までの内容を包むようにする。（2026-11-04）
 - `turbo_frame_tag` で作る `<turbo-frame>` は何も指定しないと inline なので、`position: sticky` を付けても効かない → `flow-root`（または `block`）にする。`flow-root` なら中の要素の `mb-*` も枠の高さに入り、枠の背景で塗られる（下を流れる表が透けない）。スキルマップの詳細は `md` 以上だけ上に残し、狭い画面では残さない（詳細が縦に伸びて表が見えなくなるため。かわりに `autoscroll` で詳細までスクロールする）。（2026-11-04）
+
+- 操作する人の切り替えは、管理者と `User.skill_holders` の名前ボタンを常に表示する。選択中は `aria-pressed=true`。下書きの離脱確認は通常のフォーム送信で共通部品が受け持つ。（2026-11-04）

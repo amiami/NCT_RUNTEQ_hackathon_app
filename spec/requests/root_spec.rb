@@ -44,7 +44,7 @@ RSpec.describe "トップページ" do
       document = Capybara.string(response.body)
       expect(document).to have_no_css(".flash-message")
       expect(document).to have_css("main h1", exact_text: "スタッフ：作業マニュアル")
-      expect(document).to have_select("操作する人", selected: "中村 健太")
+      expect(document).to have_css('button[aria-pressed="true"]', exact_text: "中村 健太")
       expect(document).to have_css('nav[aria-label="画面切り替え"] a[aria-current="page"]', count: 1, text: "作業マニュアル")
       expect(response.body).not_to include("管理者の見立て", "▲", "▼", "▽", "◇")
     end

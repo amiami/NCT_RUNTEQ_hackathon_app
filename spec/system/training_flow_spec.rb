@@ -20,16 +20,12 @@ RSpec.describe "研修の流れ", :js do
     within('nav[aria-label="画面切り替え"]') { click_link label }
   end
 
-  # 右上の切り替えで、操作する人をスタッフに切り替える（画面の操作）。
-  # 部長のときはプルダウンがないので、先に「スタッフ」を押してから、プルダウンで選んで「切り替え」を押す。
-  # #126 で切り替えがスタッフ名のボタンになったら、ここを直す
+  # 名前のボタンで操作する人を切り替える。
   def switch_operator_to(name)
     within(%([role="group"][aria-label="#{I18n.t('operators.switch_label')}"])) do
-      click_button I18n.t("navigation.roles.staff") unless has_select?(I18n.t("operators.label"), wait: 0)
-      select name, from: I18n.t("operators.label")
-      click_button I18n.t("operators.submit")
+      click_button name
     end
-    expect(page).to have_select(I18n.t("operators.label"), selected: name)
+    expect(page).to have_css('button[aria-pressed="true"]', text: name)
   end
 
   context "下書きの動き（テスト用のデータ）" do

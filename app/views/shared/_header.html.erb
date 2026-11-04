@@ -13,22 +13,18 @@
     <% end %>
     <% operator = operator_switch %>
     <div role="group" aria-label="<%= t("operators.switch_label") %>" class="role-navigation">
-      <% if operator[:staff] %>
+      <%= form_with url: operator_path, method: :patch, class: "role-form" do %>
+        <%= hidden_field_tag :user_id, "", id: nil %>
+        <%= button_tag t("navigation.roles.admin"), type: "submit",
+                       class: "role-link #{'role-link-active' unless operator[:staff]}",
+                       aria: { pressed: !operator[:staff] } %>
+      <% end %>
+      <% operator[:candidates].each do |candidate| %>
+        <% selected = operator[:staff] && candidate.id == operator[:selected_id] %>
         <%= form_with url: operator_path, method: :patch, class: "role-form" do %>
-          <%= hidden_field_tag :user_id, "", id: nil %>
-          <%= button_tag t("navigation.roles.admin"), type: "submit", class: "role-link" %>
-        <% end %>
-        <span class="role-link role-link-active"><%= t("navigation.roles.staff") %></span>
-        <%= form_with url: operator_path, method: :patch, class: "role-form" do %>
-          <%= label_tag :user_id, t("operators.label"), class: "sr-only" %>
-          <%= select_tag :user_id, options_from_collection_for_select(operator[:candidates], :id, :name, operator[:selected_id]), class: "operator-select" %>
-          <%= button_tag t("operators.submit"), type: "submit", class: "role-link" %>
-        <% end %>
-      <% else %>
-        <span class="role-link role-link-active"><%= t("navigation.roles.admin") %></span>
-        <%= form_with url: operator_path, method: :patch, class: "role-form" do %>
-          <%= hidden_field_tag :user_id, operator[:candidates].first&.id, id: nil %>
-          <%= button_tag t("navigation.roles.staff"), type: "submit", class: "role-link", disabled: operator[:candidates].empty? %>
+          <%= hidden_field_tag :user_id, candidate.id, id: nil %>
+          <%= button_tag candidate.name, type: "submit", class: "role-link #{'role-link-active' if selected}",
+                         aria: { pressed: selected } %>
         <% end %>
       <% end %>
     </div>
