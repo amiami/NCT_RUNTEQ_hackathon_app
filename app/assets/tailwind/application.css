@@ -680,7 +680,7 @@
   }
 
   .operation-confirmation-hint {
-    @apply min-w-0 flex-1 basis-[200px] text-[13px] text-legend-content;
+    @apply min-w-0 flex-1 basis-[200px] text-xs text-legend-content;
   }
 
   .operation-confirm-button {
