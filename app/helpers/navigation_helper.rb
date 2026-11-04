@@ -1,6 +1,6 @@
 module NavigationHelper
   def demo_reset_available?
-    admin_page? && ENV["DEMO_RESET_ENABLED"] == "true" && current_user&.admin?
+    admin_page? && current_user&.admin?
   end
 
   def application_page?
