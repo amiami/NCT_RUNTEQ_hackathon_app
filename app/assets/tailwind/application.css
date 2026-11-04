@@ -33,12 +33,12 @@
   --color-link: #1F5FBF;
   --color-link-hover: #163F7E;
   --color-skill-0: #EEF0F3;
-  --color-skill-1: #E3EDFB;
-  --color-skill-2: #C7DAF6;
-  --color-skill-3: #9FC0EE;
-  --color-skill-4: #6E9FE3;
-  --color-skill-content: #1E3A5F;
-  --color-skill-strong-content: #0B2545;
+  --color-skill-1: #DBEAFE;
+  --color-skill-2: #EDE9FE;
+  --color-skill-3: #FFEDD5;
+  --color-skill-4: #BBF7D0;
+  --color-skill-content: #243247;
+  --color-skill-strong-content: #172B3A;
   --color-skill-bar: #1F5FBF; /* わたしのスキルの4段のバーの、塗った段 */
   --color-trained: #ECFDF5; /* 「研修済み」のバッジ（わたしのスキル） */
   --color-trained-content: #065F46;
