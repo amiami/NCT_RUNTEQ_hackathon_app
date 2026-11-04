@@ -28,3 +28,5 @@
 - 操作する人の切り替えは、「管理者（部長）／スタッフ」の立場スイッチと、スタッフ時だけ表示する `User.skill_holders` の丸い名前ボタンに分ける。各スイッチの選択中は `aria-pressed=true`。下書きの離脱確認は通常のフォーム送信で共通部品が受け持つ。（2026-11-04）
 
 - スタッフ名のボタンは `return_to` に現在の画面を渡す。`OperatorsController` はスタッフ同士の場合だけスタッフ3画面の許可リストで戻り先を決め、作業マニュアルの `operation_id` も保つ。立場の切り替えは従来のトップへ移る。（2026-11-04）
+- 管理者の見立ての名前・記号は `ja.yml` の `admin_assessments` だけに書く。マス・研修画面の名前の横・凡例の印は `AdminAssessmentsHelper#assessment_mark`（スキル）・`#assessment_icon`（見立ての値）で出す SVG アイコンで、色は `currentColor`（まわりの文字の色）→ 見立ての名前や印を画面ごとに書かない。名前を横に書く凡例では `labelled: false` で読み上げを二重にしない。（2026-11-04）
+- 凡例の説明は閉じた `<details>` の中なので、Request spec（`Capybara.string`）では見えない要素として扱われる → `all(..., visible: :all)` と `text(:all)` で読む。（2026-11-04）
