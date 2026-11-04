@@ -802,6 +802,21 @@
     @apply border border-dashed border-secondary-content;
   }
 
+  /* 下書きのチップの1行目：名前と「×」を横に並べる（期限は下の行） */
+  .plan-chip-head {
+    @apply flex items-center gap-2;
+  }
+
+  /* 取り消せることを示す飾りの「×」。押せるのはチップ全体。ふだんは薄く、チップにマウスを乗せる・キーボードで選ぶと赤くなる */
+  .plan-chip-remove {
+    @apply text-sm leading-none font-bold text-secondary-content/60;
+  }
+
+  .plan-chip-draft:hover .plan-chip-remove,
+  .plan-chip-draft:focus-visible .plan-chip-remove {
+    @apply text-error;
+  }
+
   /* 取り消す下書きにした保存済みの予定 */
   .plan-chip-cancelled,
   .assigned-training-cancelled {

@@ -9,7 +9,7 @@ import { Controller } from "@hotwired/stimulus"
 // カードの並び順と絞り込みの区分は、開いたときのまま変えない
 export default class extends Controller {
   static targets = ["card", "planTemplate", "form", "fields"]
-  static values = { dueLabel: String, noDueLabel: String, cancelLabel: String, undoCancelLabel: String }
+  static values = { dueLabel: String, noDueLabel: String, cancelLabel: String, undoCancelLabel: String, removePlanLabel: String }
 
   connect() {
     this.additions = [] // { operationId, trainerId, traineeId, element }
@@ -35,6 +35,9 @@ export default class extends Controller {
     picked.forEach((chip) => {
       const element = this.planTemplateTarget.content.firstElementChild.cloneNode(true)
       element.querySelector(".plan-chip-names").textContent = `${trainer.dataset.trainerName} → ${chip.dataset.traineeName}`
+      // 読み上げの名前は「○○ → ○○ の予定を取り消す」（「×」は飾りなので aria-hidden）
+      element.setAttribute("aria-label", this.removePlanLabelValue
+        .replace("%{trainer}", trainer.dataset.trainerName).replace("%{trainee}", chip.dataset.traineeName))
       card.querySelector(".plan-list").append(element)
       this.additions.push({
         operationId: card.dataset.operationId,

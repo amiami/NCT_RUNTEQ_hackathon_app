@@ -70,6 +70,9 @@ RSpec.describe "研修の流れ", :js do
         find(".trainer-chip", text: "管理者").click
 
         expect(page).to have_css(".plan-chip", text: "管理者 → 吉田")
+        # 下書きのチップには飾りの「×」があり、読み上げの名前は「予定を取り消す」になる（#158）
+        expect(page).to have_css(".plan-chip .plan-chip-remove", text: "×")
+        expect(page).to have_button("管理者 → 吉田 の予定を取り消す")
         expect(page).to have_no_css(".trainee-chip", text: "吉田")
         expect(page).to have_css(".trainee-chip", text: "加藤")
       end
