@@ -1,4 +1,35 @@
 <% content_for :title, "#{t('page_titles.staff', page: t('navigation.staff.manual_revisions'))} | #{t('app_name')}" %>
-<section class="card">
-  <h1 class="page-title"><%= t("page_titles.staff", page: t("navigation.staff.manual_revisions")) %></h1>
+<section class="card revision-list" aria-labelledby="revision-notices-title">
+  <h1 id="revision-notices-title" class="page-title"><%= t("page_titles.staff", page: t("navigation.staff.manual_revisions")) %></h1>
+  <% if @revisions.empty? %>
+    <p class="revision-list-empty"><%= t("revision_notices.empty") %></p>
+  <% else %>
+    <table class="revision-table" aria-label="<%= t('revision_notices.list_label') %>">
+      <thead><tr>
+        <% %w[date operation memo status].each do |column| %>
+          <th scope="col"><%= t("revision_notices.#{column}") %></th>
+        <% end %>
+        <th scope="col"><span class="sr-only"><%= t("revision_notices.open_manual") %></span></th>
+      </tr></thead>
+      <tbody>
+        <% @revisions.each do |revision| %>
+          <% operation = revision.manual.operation %>
+          <tr>
+            <td class="revision-table-date"><%= l(revision.created_at.in_time_zone.to_date, format: :operation_full_date) %></td>
+            <td>
+              <%= link_to operation.name, staff_operations_path(operation_id: operation.id), class: "revision-table-link" %>
+              <span class="revision-table-version"><%= t("operations.version", version: revision.version) %></span>
+            </td>
+            <td class="revision-table-memo"><%= revision.memo.presence || t("revision_notices.no_memo") %></td>
+            <td>
+              <% if @skills_by_operation[operation.id]&.unread? %>
+                <span class="operation-badge operation-badge-revision"><%= t("operations.relearn_badge") %></span>
+              <% end %>
+            </td>
+            <td><%= link_to t("revision_notices.open_manual"), staff_operations_path(operation_id: operation.id), class: "revision-table-link" %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
 </section>
