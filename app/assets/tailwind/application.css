@@ -525,8 +525,7 @@
 
 @layer components {
   .operation-browser {
-    @apply grid items-start gap-5;
-    grid-template-columns: minmax(280px, 380px) minmax(0, 1fr);
+    @apply grid grid-cols-1 items-start gap-5 lg:grid-cols-[minmax(280px,380px)_minmax(0,1fr)];
   }
 
   .operation-tree-panel {
