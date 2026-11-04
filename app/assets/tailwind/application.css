@@ -251,6 +251,11 @@
     @apply px-2 text-left font-medium;
   }
 
+  /* 作業名は作業ツリーへのリンク。表が目立ちすぎないよう普段は文字のまま、マウスを乗せたとき・キーボードで選んだときに青い文字と下線を出す */
+  .skill-map-operation-link {
+    @apply hover:text-link hover:underline focus-visible:text-link focus-visible:underline;
+  }
+
   /* 管理者の見立ての印を右上の角に重ねるので relative にしておく */
   .skill-map-cell {
     @apply relative flex min-h-12 min-w-14 flex-col items-center justify-center gap-0.5 rounded-lg p-1 text-[15px] font-bold;
