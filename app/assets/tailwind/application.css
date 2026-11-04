@@ -318,6 +318,14 @@
   }
 
   /* マスの詳細。表のカードの上に別のカードとして出し、枠の色で表のカードと区別する */
+  /* マスの詳細を入れる枠。広い画面（md 以上）では、表をスクロールしても画面の上に残す。
+     狭い画面で残すと、詳細が縦に伸びて表がほとんど見えなくなるので残さない。
+     turbo-frame は何も指定しないと inline で sticky が効かないので flow-root にする（中の詳細の mb-4 も枠の高さに入り、
+     その分も背景で塗られて、下を流れる表が透けない） */
+  .skill-detail-frame {
+    @apply flow-root bg-base-200 md:sticky md:top-0 md:z-5;
+  }
+
   .skill-detail {
     @apply mb-4 border-primary p-4;
   }
