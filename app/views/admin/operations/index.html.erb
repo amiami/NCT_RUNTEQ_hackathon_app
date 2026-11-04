@@ -1,12 +1,6 @@
 <% content_for :title, "#{t('page_titles.admin', page: t('navigation.admin.operations'))} | #{t('app_name')}" %>
 <section aria-labelledby="operations-page-title">
   <h1 id="operations-page-title" class="page-title mb-4"><%= t("page_titles.admin", page: t("navigation.admin.operations")) %></h1>
-  <% if ENV["DEMO_RESET_ENABLED"] == "true" && current_user&.admin? %>
-    <div class="mb-4">
-      <%= button_to t("demo_reset.button"), admin_demo_reset_path, method: :post,
-                    class: "btn", data: { turbo_confirm: t("demo_reset.confirm") } %>
-    </div>
-  <% end %>
   <%= render "operations/browser", categories: @categories, operations_by_category: @operations_by_category,
              operation: @operation, capable_counts: @capable_counts, skill_levels: nil, confirmation_skill: nil %>
 </section>
