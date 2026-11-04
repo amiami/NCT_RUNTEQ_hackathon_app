@@ -276,16 +276,26 @@
 
   /* 見立ての印は右上の角に置く。レベルと「未読」は中央に縦に並ぶので重ならない */
   .skill-map-cell > .assessment-mark {
-    @apply absolute top-0.5 right-1;
+    @apply absolute top-1 right-1.5;
   }
 
   .skill-map-unread {
     @apply rounded bg-unread px-1 text-[10px] leading-[15px] font-bold text-unread-content;
   }
 
-  /* 管理者の見立ての印（▲・▼・▽・◇）。置き場所は使う側で決める（スキルマップはマスの右上） */
+  /* 管理者の見立ての印（▲・▼・▽・◇ のアイコン。AdminAssessmentsHelper）。置き場所は使う側で決める（スキルマップはマスの右上）。
+     押せるように見えないよう土台は付けない。色はまわりの文字の色（マスなら数字と同じ色で、レベル4の濃い青の上では白） */
   .assessment-mark {
-    @apply cursor-help text-xs leading-none font-bold text-skill-strong-content;
+    @apply inline-flex size-3.5 shrink-0 items-center justify-center;
+  }
+
+  .assessment-mark > svg {
+    @apply size-full;
+  }
+
+  /* 凡例の見立て：アイコンと名前を横に並べる */
+  .assessment-legend-item {
+    @apply inline-flex items-center gap-1.5;
   }
 
   .capable-alert {
@@ -490,7 +500,7 @@
     @apply text-sm leading-[normal] text-muted;
   }
 
-  /* 見立ての印の大きさ・太さはスキルマップと共通（.assessment-mark）。研修画面ではチップの文字の色にそろえる */
+  /* 見立ての印の形と大きさはスキルマップと共通（.assessment-mark）。研修画面では、名前と少し区別がつくよう紺にする */
   .training-layout .assessment-mark {
     @apply text-secondary-content;
   }

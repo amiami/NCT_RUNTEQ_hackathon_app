@@ -131,7 +131,8 @@ ja:
     date: 期限：%{date}
     none: 期限：未設定
 
-  # 管理者の見立ての記号と説明（管理者の画面だけで使う。スタッフの画面には出さない）
+  # 管理者の見立ての記号と名前。見立ての名前・記号はここだけに書く（管理者の画面だけで使う。スタッフの画面には出さない）。
+  # 名前は凡例・マスの詳細の選択肢・マウスを乗せたときの説明で使う。マスや名前の横の印は記号と同じ形のアイコン（AdminAssessmentsHelper）
   admin_assessments:
     can_train:
       mark: ▲
@@ -307,21 +308,6 @@ ja:
     "2": 教えた人が「教え終わった」を押した
     "3": 本人が自己申告
     "4": 本人が自己申告
-
-  # マスや名前の横に出す印と、マウスを乗せたときの説明（admin/shared/_assessment_mark）
-  admin_assessment_marks:
-    can_train:
-      symbol: ▲
-      description: 指導できる：レベル3だが、すでに教えられる
-    needs_training:
-      symbol: ▼
-      description: 要研修：研修が必要
-    training_done:
-      symbol: ▽
-      description: 研修済み：▼の人が研修を受け終えた
-    backup_trainer:
-      symbol: ◇
-      description: 指導に不安あり：1人で作業はできるが、教えるのは少し不得意
 
   skills:
     assessments:

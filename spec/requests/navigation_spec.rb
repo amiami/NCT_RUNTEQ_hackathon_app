@@ -44,8 +44,18 @@ RSpec.describe "共通レイアウト" do
           end
         end
       else
-        it "管理者向けの見立ての説明を含める" do
-          expect(response.body).to include("▲ 指導できる", "▼ 要研修", "▽ 研修済み", "◇ 指導に不安あり")
+        it "管理者向けの見立ての説明を含める（マスと同じアイコンと、admin_assessments の名前。Skill.admin_assessments の順）" do
+          # 凡例の説明は閉じた <details> の中にあるので、見えない要素も探す
+          items = Capybara.string(response.body).all(".assessment-legend-item", visible: :all).map do |item|
+            [ item.find(".assessment-mark", visible: :all)[:class][/assessment-mark-(\w+)/, 1], item.text(:all).squish ]
+          end
+
+          expect(items).to eq [
+            [ "can_train", "指導できる" ],
+            [ "needs_training", "要研修" ],
+            [ "training_done", "研修済み（▼から研修を受け終えた）" ],
+            [ "backup_trainer", "指導に不安あり" ]
+          ]
         end
 
         it "見立ての古い名前は出さない" do
