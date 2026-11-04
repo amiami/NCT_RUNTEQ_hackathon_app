@@ -47,7 +47,7 @@ RSpec.describe "操作する人の切り替え" do
 
         expect(response).to have_http_status(:ok)
         expect(header_of(response)).to have_css('button[aria-pressed="true"]', exact_text: "中村 健太")
-        expect(header_of(response)).to have_css('button[aria-pressed="true"]', exact_text: "中村 健太")
+        expect(header_of(response)).to have_css('button[aria-pressed="true"]', count: 1)
       end
     end
 

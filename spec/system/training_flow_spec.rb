@@ -151,6 +151,13 @@ RSpec.describe "研修の流れ", :js do
       visit admin_trainings_path
       draft_training_from_yamamoto_to_yoshida
 
+      # 名前ボタンでの離脱も確認し、キャンセルなら下書きと操作中ユーザーを保つ。
+      dismiss_confirm("変更は保存されませんがよろしいですか？") do
+        within('[role="group"][aria-label="操作する人の切り替え"]') { click_button "吉田 あかり" }
+      end
+      expect(page).to have_current_path(admin_trainings_path)
+      expect(page).to have_css(".plan-chip", text: "山本 直子 → 吉田 あかり")
+
       # 2. 保存せずに「スキルマップ」タブへ移る。共通部品の確認を受け入れて移る
       accept_confirm("変更は保存されませんがよろしいですか？") { click_tab "スキルマップ" }
       expect(page).to have_current_path(admin_skill_map_path)
