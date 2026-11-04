@@ -31,6 +31,7 @@ RSpec.describe "スタッフの改訂のお知らせ" do
     expect(response).to have_http_status(:ok)
     expect(response.body).to include("改訂のお知らせはありません")
   end
+
   it "確認済みにすると再確認が消える" do
     manual = create(:manual, version: 2)
     create(:skill, user: staff, operation: manual.operation, level: 1, confirmed_version: 1)
@@ -60,5 +61,4 @@ RSpec.describe "スタッフの改訂のお知らせ" do
     after_count = sql_count { get staff_manual_revisions_path }
     expect(after_count).to eq(before_count)
   end
-
 end
