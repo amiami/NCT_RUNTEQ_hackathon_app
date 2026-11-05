@@ -6,9 +6,11 @@
     <%= link_to admin_skill_path(skill), class: "skill-map-cell skill-level-#{skill.level}",
                                          data: { turbo_frame: "skill_detail", skill_map_target: "cell", action: "skill-map#select",
                                                  skill_id: skill.id } do %>
-      <span><%= skill.level %></span>
-      <%# 管理者の見立ての印（右上）。今のレベルで意味のある見立てのときだけ出し、それ以外は値も HTML に出さない %>
-      <%= assessment_mark(skill) %>
+      <%# 管理者の見立ての印は数字のすぐ右。今のレベルで意味のある見立てのときだけ出し、それ以外は値も HTML に出さない %>
+      <span class="skill-map-level">
+        <span><%= skill.level %></span>
+        <%= assessment_mark(skill) %>
+      </span>
       <% if skill.unread? %>
         <span class="skill-map-unread" title="<%= t(".unread_description") %>"><%= t(".unread") %></span>
       <% end %>
