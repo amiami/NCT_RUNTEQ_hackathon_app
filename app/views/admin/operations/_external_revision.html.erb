@@ -1,15 +1,18 @@
+<% turbo_exempts_page_from_cache %>
 <div class="operation-revision">
   <% if @revision_error %>
     <p class="operation-revision-error" role="alert"><%= @revision_error %></p>
   <% end %>
   <%= form_with url: admin_operation_manual_path(operation), method: :patch, scope: :manual, class: "operation-revision-form",
-                data: { controller: "manual-revision", action: "input->manual-revision#refresh",
+                data: { controller: "unsaved-changes manual-revision",
+                        unsaved_changes_confirm_message_value: t("unsaved_changes.confirm_leaving"),
+                        action: "input->manual-revision#refresh",
                         turbo_confirm: t("operations.revision_confirm") } do |form| %>
     <%= form.hidden_field :version, value: @revision_version || manual.version %>
     <%= form.label :memo, t("operations.external_revision_label") + t("operations.revision_required") %>
     <div class="operation-revision-actions">
       <%= form.text_field :memo, value: @revision_memo, required: true, data: { manual_revision_target: "memo" }, placeholder: t("operations.external_revision_placeholder"), class: "operation-revision-field operation-external-revision-field" %>
-      <%= form.submit t("operations.external_revision_save"), class: "btn operation-revision-save", disabled: true, data: { manual_revision_target: "submit" } %>
+      <%= form.submit t("operations.external_revision_save"), class: "btn operation-revision-save", disabled: true, data: { manual_revision_target: "submit", unsaved_changes_skip: true } %>
     </div>
     <p class="operation-revision-hint"><%= t("operations.external_revision_hint") %></p>
   <% end %>

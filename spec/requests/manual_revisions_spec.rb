@@ -22,6 +22,12 @@ RSpec.describe "アプリ内マニュアルの改定" do
     expect(document).to have_button("改定して保存", disabled: true)
     expect(document).to have_css("textarea[name='manual[body]'][required]")
     expect(document).to have_css("input[name='manual[memo]'][required]")
+    form = document.find("form.operation-revision-form")
+    expect(form["data-controller"].split).to include("unsaved-changes", "manual-revision")
+    expect(form["data-unsaved-changes-skip"]).to be_nil
+    expect(form.find("input[type='submit']", visible: :all)["data-unsaved-changes-skip"]).to eq("true")
+    expect(form["data-unsaved-changes-confirm-message-value"]).to eq("変更は保存されませんがよろしいですか？")
+    expect(document).to have_css("meta[name='turbo-cache-control'][content='no-cache']", visible: :all)
     expect(document.find("form.operation-revision-form")["data-turbo-confirm"]).to eq("この内容でマニュアルを改定します。よろしいですか？")
   end
 

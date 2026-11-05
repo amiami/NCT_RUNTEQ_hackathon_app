@@ -16,6 +16,11 @@ export default class extends Controller {
       this.normalize(this.bodyTarget.value) !== this.normalize(this.originalBodyValue)
     )
     this.submitTarget.disabled = !(memoPresent && bodyChanged)
+    // 保存可否とは別。手順だけ・メモだけ・空白の入力も未保存の変更として扱う。
+    const changed = this.memoTarget.value !== "" || (
+      this.hasBodyTarget && this.normalize(this.bodyTarget.value) !== this.normalize(this.originalBodyValue)
+    )
+    this.dispatch("changed", { prefix: "unsaved-changes", detail: { changed } })
   }
 
   normalize(value) {
