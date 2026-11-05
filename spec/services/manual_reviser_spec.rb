@@ -17,9 +17,21 @@ RSpec.describe ManualReviser do
     end
   end
 
-  it "メモが空でも保存できる" do
-    revise(memo: "")
-    expect(manual.manual_revisions.sole.memo).to eq("")
+  it "空白だけのメモは保存しない" do
+    [ nil, "", " \n　" ].each do |memo|
+      expect { revise(memo: memo) }.to raise_error(described_class::InvalidInput)
+      expect(manual.reload.version).to eq(1)
+      expect(manual.manual_revisions).to be_empty
+    end
+  end
+
+  it "手順が同じならメモがあっても保存しない（改行コードだけの違いも同じと扱う）" do
+    manual.update!(body: "古い手順\n確認する")
+    [ "古い手順\n確認する", "古い手順\r\n確認する" ].each do |body|
+      expect { revise(body: body) }.to raise_error(described_class::InvalidInput)
+      expect(manual.reload.version).to eq(1)
+      expect(manual.manual_revisions).to be_empty
+    end
   end
 
   it "全スキルのレベル・見立て・確認版と変更履歴を変えない" do
@@ -99,9 +111,10 @@ RSpec.describe ManualReviser do
       expect(manual.manual_revisions.count).to eq(1)
     end
 
-    it "メモが空でも保存できる" do
-      revise(memo: "")
-      expect(manual.manual_revisions.sole.memo).to eq("")
+    it "空白だけのメモは保存しない" do
+      expect { revise(memo: "　 ") }.to raise_error(described_class::InvalidInput)
+      expect(manual.reload.version).to eq(1)
+      expect(manual.manual_revisions).to be_empty
     end
   end
 end
