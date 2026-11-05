@@ -4,9 +4,11 @@ import { Controller } from "@hotwired/stimulus"
 // どのマスの詳細を見ているかが分かるよう、押したマスに選択中の印（aria-current）を付け替える。
 // 「できる人が1人以下の作業だけ表示」も、ページを読み直さずに行を隠す（見立ての下書きを消さないため）。
 // 見立ての下書き：詳細で選んだ見立ては保存せず、ここで持つ（詳細は入れ替わるので、詳細の中に置くと別のマスを押したときに消える）。
-// 下書きが変わるたびに、共通部品（unsaved-changes）へ「変更あり／なし」を知らせ、「変更を保存」の直前に hidden の入力欄にする
+// 下書きが変わるたびに、共通部品（unsaved-changes）へ「変更あり／なし」を知らせ、「変更を保存（n件）」の件数を書き換える。
+// 「変更を保存」の直前に hidden の入力欄にする
 export default class extends Controller {
-  static targets = ["cell", "table", "assessment", "fields"]
+  static targets = ["cell", "table", "assessment", "fields", "saveLabel"]
+  static values = { saveLabel: String }
 
   // 詳細の targetConnected は connect より先に呼ばれることがあるので、下書きは initialize で用意する
   initialize() {
@@ -57,11 +59,12 @@ export default class extends Controller {
     this.fieldsTarget.replaceChildren(...inputs)
   }
 
-  // 下書きのあるマスに未保存の見た目を付け、共通部品に「変更あり／なし」を知らせる
+  // 下書きのあるマスに未保存の見た目を付け、件数を書き換えて、共通部品に「変更あり／なし」を知らせる
   refresh() {
     this.cellTargets.forEach((cell) => {
       cell.classList.toggle("skill-map-cell-draft", this.drafts.has(cell.dataset.skillId))
     })
+    this.saveLabelTarget.textContent = this.saveLabelValue.replace("%{count}", this.drafts.size)
     this.dispatch("changed", { prefix: "unsaved-changes", detail: { changed: this.drafts.size > 0 } })
   }
 }

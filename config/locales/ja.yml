@@ -150,7 +150,7 @@ ja:
   admin:
     trainings:
       index:
-        hint: 未研修の人を選んで「教える人」を押すと、研修予定の下書きができます（誰も選ばなければ、残っている未研修の人全員）。右下の「変更を保存」を押すと「指示済みの研修」に入ります。
+        hint: 未研修の人を選んで「教える人」を押すと、研修予定の下書きができます（誰も選ばなければ、残っている未研修の人全員）。「指示済みの研修」の上の「変更を保存」を押すと、「指示済みの研修」に入ります。
         filter_label: 作業の絞り込み
         filters:
           all: すべて
@@ -161,6 +161,8 @@ ja:
         assigned_title: 指示済みの研修（%{count}件）
         assigned_empty: まだありません。作業の「教える人」を押して下書きを作り、「変更を保存」を押すと、ここに出ます。
         save: 変更を保存
+        # 「変更を保存」の上に出す、まだ保存していない件数（%{count} は training-draft コントローラが入れる）
+        draft_count: "下書き（%{count}件）"
         unsaved_note: （まだ保存されていません!）
         plan_remove_label: "%{trainer} → %{trainee} の予定を取り消す"
       card:
@@ -191,6 +193,8 @@ ja:
         few_capable_warning_description: 担当者が休んだり辞めたりすると止まる恐れがあります。研修画面で優先して教える人を決めましょう。
         few_capable_filter: できる人が1人以下の作業だけ表示
         save: 変更を保存
+        # まだ保存していない件数を入れた「変更を保存」（%{count} は skill-map コントローラが入れる）
+        save_with_count: "変更を保存（%{count}件）"
         unsaved_note: （まだ保存されていません!）
       cell:
         unread: 未読

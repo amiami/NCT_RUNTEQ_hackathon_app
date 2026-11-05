@@ -303,7 +303,8 @@ RSpec.describe "スキルマップ（管理者）" do
     it "表のカードの上（カードの外）に、詳細を入れる空の枠（skill_detail）がある" do
       get admin_skill_map_path
 
-      expect(document).to have_css("turbo-frame#skill_detail + section.card .skill-map-scroll")
+      expect(document).to have_css(".skill-map-top > turbo-frame#skill_detail", visible: :all)
+      expect(document).to have_css(".skill-map-top + section.card .skill-map-scroll")
       expect(document.find("turbo-frame#skill_detail", visible: :all).text).to be_blank
     end
 
@@ -393,6 +394,19 @@ RSpec.describe "スキルマップ（管理者）" do
       expect(wrapper).to have_css("table.skill-map")
       expect(wrapper).to have_css(".save-bar", visible: :all)
       expect(wrapper["data-unsaved-changes-confirm-message-value"]).to eq "変更は保存されませんがよろしいですか？"
+    end
+
+    # 置き場所の見た目（幅・上に残る・狭い画面で下に回る）は CSS で決めるので、ここでは並びを確かめる
+    it "「変更を保存」は詳細の枠のすぐ右（同じ箱 .skill-map-top の中）にあり、詳細の枠（Turbo Frame）の外に置く" do
+      expect(wrapper).to have_css(".skill-map-top > turbo-frame#skill_detail + form.save-bar", visible: :all)
+      expect(wrapper).to have_no_css("turbo-frame#skill_detail .save-bar", visible: :all)
+    end
+
+    it "「変更を保存」のボタンの文言に、まだ保存していない件数を入れられる（%{count} を残して skill-map に渡す）" do
+      button = wrapper.find(".save-bar button.save-bar-button", visible: :all)
+
+      expect(button).to have_css("[data-skill-map-target='saveLabel']", exact_text: "変更を保存", visible: :all)
+      expect(wrapper["data-skill-map-save-label-value"]).to eq "変更を保存（%{count}件）"
     end
 
     it "AC-1: 「変更を保存」は最初は隠れていて、下書きがあるときだけ共通部品が出す" do
