@@ -60,6 +60,10 @@ ja:
     revision_cancel: やめる
     revision_hint: 保存すると版が上がります。スキルレベル・管理者の見立ては変わりません
     revised_notice: マニュアルを改定しました
+    revision_required: （入力必須）
+    revision_confirm: この内容でマニュアルを改定します。よろしいですか？
+    revision_memo_required: 改定メモを入力してください
+    revision_body_unchanged: 手順を変更してから保存してください
     revision_invalid: 手順を入力してください
     revision_stale: マニュアルが更新されました。「やめる」で最新の手順を確認してから、編集し直してください
     confirmation_label: マニュアルの確認

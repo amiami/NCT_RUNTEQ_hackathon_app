@@ -3,14 +3,17 @@
     <% if @revision_error %>
       <p class="operation-revision-error" role="alert"><%= @revision_error %></p>
     <% end %>
-    <%= form_with url: admin_operation_manual_path(operation), method: :patch, scope: :manual, class: "operation-revision-form" do |form| %>
+    <%= form_with url: admin_operation_manual_path(operation), method: :patch, scope: :manual, class: "operation-revision-form",
+                  data: { controller: "manual-revision", action: "input->manual-revision#refresh",
+                          manual_revision_original_body_value: @manual.body,
+                          turbo_confirm: t("operations.revision_confirm") } do |form| %>
       <%= form.hidden_field :version, value: @revision_version %>
-      <%= form.label :body, t("operations.revision_body") %>
-      <%= form.text_area :body, value: @revision_body, rows: 7, required: true, class: "operation-revision-field" %>
-      <%= form.label :memo, t("operations.revision_memo") %>
-      <%= form.text_field :memo, value: @revision_memo, placeholder: t("operations.revision_memo_example"), class: "operation-revision-field" %>
+      <%= form.label :body, t("operations.revision_body") + t("operations.revision_required") %>
+      <%= form.text_area :body, value: @revision_body, rows: 7, required: true, data: { manual_revision_target: "body" }, class: "operation-revision-field" %>
+      <%= form.label :memo, t("operations.revision_memo") + t("operations.revision_required") %>
+      <%= form.text_field :memo, value: @revision_memo, required: true, data: { manual_revision_target: "memo" }, placeholder: t("operations.revision_memo_example"), class: "operation-revision-field" %>
       <div class="operation-revision-actions">
-        <%= form.submit t("operations.revision_save"), class: "btn operation-revision-save" %>
+        <%= form.submit t("operations.revision_save"), class: "btn operation-revision-save", disabled: true, data: { manual_revision_target: "submit" } %>
         <%= link_to t("operations.revision_cancel"), admin_operations_path(operation_id: operation.id), class: "btn" %>
       </div>
     <% end %>

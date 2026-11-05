@@ -19,7 +19,7 @@
 - スキルマップの見立ての下書きは `skill-map` コントローラが `{ スキルの ID => 見立て }` で持つ → 詳細は Turbo Frame で入れ替わるので、詳細の中に置くと別のマスを押したときに消える。詳細が入れ替わったら `assessmentTargetConnected` で下書きを選び直す（targetConnected は connect より先に呼ばれることがあるので、下書きは `initialize` で用意する）。（2026-11-02）
 - `form_with` に `hidden: true` を渡しても `hidden` 属性にならない（知らないオプションは捨てられる）→ `html: { hidden: true }` で渡す。（2026-11-02）
 - 「できる人○人」のバッジは、作業ツリー・作業マニュアルの見出し・研修画面のカードで `.operation-badge`、スキルマップの行で `.capable-alert` を形に使い、4か所とも `capable_badge_class(count)` で色のクラス（0人は `.capable-badge-none`、1人は `.capable-badge-one`）を付ける。`.capable-warning` はスキルマップの上の警告カード専用。画面専用の目印には `training-capable-count` のように別のクラス名を付ける。（2026-11-05）
-- できる人のバッジの色は専用トークン（`--color-capable-none`・`--color-capable-one`・`--color-capable-badge-content`）で管理する。`--color-caution` は警告カードの枠・文字・アイコンと研修カードの枠、`--color-operation-warning` はマニュアル改定の保存ボタンに使う → バッジの色を変えても、ほかの部品の色は変えない。（2026-11-05）
+- できる人のバッジの色は専用トークン（`--color-capable-none`・`--color-capable-one`・`--color-capable-badge-content`）で管理する。`--color-caution` は警告カードの枠・文字・アイコンと研修カードの枠に使う → バッジの色を変えても、ほかの部品の色は変えない。（2026-11-05）
 - 「できる人%{count}人」の翻訳キーが3つある（`operations.capable_count`・`admin.trainings.card.capable_count`・`admin.skill_maps.show.capable_count`）→ 文言を変えるときは3つそろえて直す。1つにまとめるのは別の作業。（2026-11-03）
 - JavaScript が `<template>` を写して作る要素の文言（`aria-label` など）は、`ja.yml` に置き、`%{…}` を残したまま Stimulus の値で渡して、JavaScript で置き換える（`admin.trainings.index.plan_remove_label`・`training_due_on.date` など）。チップの「×」のように、押せる場所を示す飾りは `aria-hidden` にして、押せるのはチップ全体のままにする。（2026-11-04）
 - 「変更を保存」の枠（`.save-bar`）は画面に固定せず、選ぶ場所の近くに置く（スキルマップは `.skill-map-top` で詳細の右横、研修画面は `.training-side` で指示済みの研修の上）→ 上に残す `sticky` は枠ではなく、詳細・右の列と枠をまとめた箱に付ける。件数（スキルマップは `save_with_count` の「変更を保存（n件）」、研修画面は `draft_count` の「下書き（n件）」）は `%{count}` を残した文言を Stimulus の値で渡し、画面のコントローラが「変更あり／なし」を知らせるところで書き換える（件数が1以上のとき＝変更あり、とそろえる）。（2026-11-05）
@@ -30,3 +30,5 @@
 - スタッフ名のボタンは `return_to` に現在の画面を渡す。`OperatorsController` はスタッフ同士の場合だけスタッフ3画面の許可リストで戻り先を決め、作業マニュアルの `operation_id` も保つ。立場の切り替えは従来のトップへ移る。（2026-11-04）
 - 管理者の見立ての名前・記号は `ja.yml` の `admin_assessments` だけに書く。マス・研修画面の名前の横・凡例の印は `AdminAssessmentsHelper#assessment_mark`（スキル）・`#assessment_icon`（見立ての値）で出す SVG アイコンで、色は `currentColor`（まわりの文字の色）→ 見立ての名前や印を画面ごとに書かない。名前を横に書く凡例では `labelled: false` で読み上げを二重にしない。（2026-11-04）
 - 凡例の説明は閉じた `<details>` の中なので、Request spec（`Capybara.string`）では見えない要素として扱われる → `all(..., visible: :all)` と `text(:all)` で読む。（2026-11-04）
+
+- マニュアル改定は `manual-revision` コントローラで入力条件を判定し、保存ボタンの `disabled` を切り替える。無効時は薄グレー背景・`base-content` の文字色、有効時は「できる人0人」と同色の `caution` 背景・白文字。確認はフォームの `data-turbo-confirm`。アプリ内は手順変更とメモ、外部サイトはメモが必須で、`ManualReviser` もロック内で検証する。改行コードだけの違いは変更に数えず、過去の空メモ履歴は変更しない。（2026-11-05）

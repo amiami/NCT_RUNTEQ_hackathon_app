@@ -5,9 +5,9 @@ RSpec.describe "アプリ内マニュアルの改定" do
   let!(:manual) { create(:manual, body: "古い手順\n確認する") }
   let(:operation) { manual.operation }
 
-  def revise(body: "新しい手順", version: 1)
+  def revise(body: "新しい手順", version: 1, memo: "書類を変更")
     patch admin_operation_manual_path(operation), params: {
-      manual: { body: body, memo: "書類を変更", version: version, user_id: -1, kind: "external" }
+      manual: { body: body, memo: memo, version: version, user_id: -1, kind: "external" }
     }
   end
 
@@ -18,6 +18,11 @@ RSpec.describe "アプリ内マニュアルの改定" do
     expect(response).to have_http_status(:ok)
     expect(Capybara.string(response.body)).to have_field("手順（1行＝1ステップ）", with: manual.body)
     expect(Capybara.string(response.body)).to have_field("改定メモ")
+    document = Capybara.string(response.body)
+    expect(document).to have_button("改定して保存", disabled: true)
+    expect(document).to have_css("textarea[name='manual[body]'][required]")
+    expect(document).to have_css("input[name='manual[memo]'][required]")
+    expect(document.find("form.operation-revision-form")["data-turbo-confirm"]).to eq("この内容でマニュアルを改定します。よろしいですか？")
   end
 
   it "改定編集画面でも作業ツリーだけを現在のタブとして強調する" do
@@ -46,6 +51,20 @@ RSpec.describe "アプリ内マニュアルの改定" do
     expect(response).to have_http_status(:unprocessable_content)
     expect(Capybara.string(response.body)).to have_css("[role='alert']", text: "手順を入力してください")
     expect(Capybara.string(response.body)).to have_field("改定メモ", with: "書類を変更")
+    expect(manual.reload.version).to eq(1)
+  end
+
+  it "手順が同じなら保存せず、メモとエラーを再表示する" do
+    expect { revise(body: manual.body) }.not_to change(ManualRevision, :count)
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(Capybara.string(response.body)).to have_field("改定メモ", with: "書類を変更")
+    expect(manual.reload.version).to eq(1)
+  end
+
+  it "メモが空白だけなら保存せず、変更した手順を保持する" do
+    expect { revise(memo: "　 ") }.not_to change(ManualRevision, :count)
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(Capybara.string(response.body)).to have_field("手順（1行＝1ステップ）", with: "新しい手順")
     expect(manual.reload.version).to eq(1)
   end
 

@@ -581,7 +581,6 @@
 
 /* 作業ツリーとマニュアル。共通ヘッダーのスタイルから分けて管理する。 */
 @theme {
-  --color-operation-warning: #7C2D12;
   --color-operation-revision: #FFEDD5;
   --color-operation-revision-content: #9A3412;
   --color-operation-outline: #9CA3AF;
@@ -786,7 +785,7 @@
   }
 
   .operation-revision-save {
-    @apply border-operation-warning bg-operation-warning text-primary-content;
+    @apply border-caution bg-caution text-primary-content disabled:cursor-not-allowed disabled:border-control-line disabled:bg-control-background disabled:text-base-content;
   }
 
   .operation-revision-error {

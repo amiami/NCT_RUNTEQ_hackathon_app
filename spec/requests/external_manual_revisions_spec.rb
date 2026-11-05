@@ -16,7 +16,9 @@ RSpec.describe "外部サイトの改定あり" do
     get admin_operations_path, params: { operation_id: operation.id }
     document = Capybara.string(response.body)
     expect(document).to have_field("法改正・様式・サイトに変更があったとき")
-    expect(document).to have_button("改定あり")
+    expect(document).to have_button("改定あり", disabled: true)
+    expect(document).to have_css("input[name='manual[memo]'][required]")
+    expect(document.find("form.operation-revision-form")["data-turbo-confirm"]).to eq("この内容でマニュアルを改定します。よろしいですか？")
     expect(document).to have_no_field("手順（1行＝1ステップ）")
     expect(document).to have_no_css("input[name='manual[url]']")
   end
@@ -35,9 +37,11 @@ RSpec.describe "外部サイトの改定あり" do
     end
   end
 
-  it "空メモでも改定できる" do
-    expect { revise(memo: "") }.to change(ManualRevision, :count).by(1)
-    expect(manual.manual_revisions.sole.memo).to eq("")
+  it "空メモは保存せず、エラーと入力欄を再表示する" do
+    expect { revise(memo: "") }.not_to change(ManualRevision, :count)
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(Capybara.string(response.body)).to have_css("[role='alert']", text: "改定メモを入力してください")
+    expect(manual.reload.version).to eq(1)
   end
 
   it "スタッフにはボタンもメモ欄も出さず、直接送信も拒否する" do
