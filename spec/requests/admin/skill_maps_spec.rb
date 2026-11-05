@@ -81,8 +81,8 @@ RSpec.describe "スキルマップ（管理者）" do
     end
 
     it "0人・1人の作業の行に出る（◇・▼の人も数える）" do
-      expect(row(payroll)).to have_css(".capable-alert", exact_text: "できる人0人")
-      expect(row(attendance)).to have_css(".capable-alert", exact_text: "できる人1人")
+      expect(row(payroll)).to have_css(".capable-alert.capable-badge-none", exact_text: "できる人0人")
+      expect(row(attendance)).to have_css(".capable-alert.capable-badge-one", exact_text: "できる人1人")
     end
 
     it "2人以上の作業の行には出ない" do

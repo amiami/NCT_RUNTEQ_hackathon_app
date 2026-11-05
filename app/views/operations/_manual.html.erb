@@ -16,7 +16,7 @@
       <span class="operation-badge operation-badge-neutral"><%= t("operations.season", note: operation.season_note) %></span>
     <% end %>
     <% if capable_count <= 1 %>
-      <span class="operation-badge operation-badge-warning"><%= t("operations.capable_count", count: capable_count) %></span>
+      <span class="operation-badge <%= capable_badge_class(capable_count) %>"><%= t("operations.capable_count", count: capable_count) %></span>
     <% end %>
   </div>
 

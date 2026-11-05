@@ -44,8 +44,9 @@
   --color-trained: #ECFDF5; /* 「研修済み」のバッジ（わたしのスキル） */
   --color-trained-content: #065F46;
   --color-trained-line: #6EE7B7;
-  --color-capable-alert: #7C2D12; /* 「できる人○人」のバッジ */
-  --color-capable-alert-content: #fff;
+  --color-capable-none: #7C2D12; /* 「できる人0人」のバッジ */
+  --color-capable-one: #AB5E4B; /* 「できる人1人」のバッジ */
+  --color-capable-badge-content: #fff;
   --color-capable-warning: #FFF7ED; /* スキルマップの上の「できる人が1人以下」の警告の背景 */
   --color-unread: #FFEDD5; /* スキルマップの「未読」の印 */
   --color-unread-content: #9A3412;
@@ -304,17 +305,25 @@
   }
 
   .capable-alert {
-    @apply ml-2 inline-flex items-center rounded-md bg-capable-alert px-1.5 py-0.5 text-[11px] font-bold whitespace-nowrap text-capable-alert-content;
+    @apply ml-2 inline-flex items-center rounded-md px-1.5 py-0.5 text-[11px] font-bold whitespace-nowrap;
+  }
+
+  .capable-badge-none {
+    @apply bg-capable-none text-capable-badge-content;
+  }
+
+  .capable-badge-one {
+    @apply bg-capable-one text-capable-badge-content;
   }
 
   /* 表のカードの上の警告（できる人が1人以下の作業があるときだけ出る）。.card と組み合わせて使う。
      スキルマップ専用。研修画面の「できる人○人」には使わない（余白や背景がまざって見た目がずれる。そちらは operation-badge を使う） */
   .capable-warning {
-    @apply mb-4 flex flex-wrap items-center gap-3 border-capable-alert bg-capable-warning px-[18px] py-3.5;
+    @apply mb-4 flex flex-wrap items-center gap-3 border-caution bg-capable-warning px-[18px] py-3.5;
   }
 
   .capable-warning-icon {
-    @apply size-[22px] shrink-0 text-capable-alert;
+    @apply size-[22px] shrink-0 text-caution;
   }
 
   /* 狭い画面では、ボタンを文の下に回り込ませる */
@@ -323,7 +332,7 @@
   }
 
   .capable-warning-title {
-    @apply text-[15px] font-bold text-capable-alert;
+    @apply text-[15px] font-bold text-caution;
   }
 
   .capable-warning-description {
@@ -637,10 +646,6 @@
 
   .operation-badge {
     @apply inline-flex shrink-0 items-center rounded-md px-1.5 py-0.5 text-[11px] leading-[normal] font-bold whitespace-nowrap;
-  }
-
-  .operation-badge-warning {
-    @apply bg-operation-warning text-primary-content;
   }
 
   .operation-badge-revision {
