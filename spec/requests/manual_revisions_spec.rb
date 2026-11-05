@@ -18,6 +18,7 @@ RSpec.describe "アプリ内マニュアルの改定" do
     expect(response).to have_http_status(:ok)
     expect(Capybara.string(response.body)).to have_field("手順（1行＝1ステップ）", with: manual.body)
     expect(Capybara.string(response.body)).to have_field("改定メモ")
+    expect(Capybara.string(response.body)).to have_css("input.btn.btn-primary[type='submit'][value='改定を保存']")
   end
 
   it "改定編集画面でも作業ツリーだけを現在のタブとして強調する" do

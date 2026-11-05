@@ -4,7 +4,7 @@
     <%= form.label :memo, t("operations.external_revision_label") %>
     <div class="operation-revision-actions">
       <%= form.text_field :memo, placeholder: t("operations.external_revision_placeholder"), class: "operation-revision-field operation-external-revision-field" %>
-      <%= form.submit t("operations.external_revision_save"), class: "btn operation-revision-save" %>
+      <%= form.submit t("operations.external_revision_save"), class: "btn btn-primary" %>
     </div>
     <p class="operation-revision-hint"><%= t("operations.external_revision_hint") %></p>
   <% end %>

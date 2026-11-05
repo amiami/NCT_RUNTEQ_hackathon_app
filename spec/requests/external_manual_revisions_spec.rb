@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "外部サイトの改定あり" do
+RSpec.describe "外部サイトの改定の保存" do
   let!(:manager) { create(:user, :admin) }
   let!(:manual) { create(:manual, :external) }
   let(:operation) { manual.operation }
@@ -12,11 +12,11 @@ RSpec.describe "外部サイトの改定あり" do
     }
   end
 
-  it "管理者だけに変更内容のメモ欄と改定ありボタンを表示する" do
+  it "管理者だけに変更内容のメモ欄と改定を保存ボタンを表示する" do
     get admin_operations_path, params: { operation_id: operation.id }
     document = Capybara.string(response.body)
     expect(document).to have_field("法改正・様式・サイトに変更があったとき")
-    expect(document).to have_button("改定あり")
+    expect(document).to have_css("input.btn.btn-primary[type='submit'][value='改定を保存']")
     expect(document).to have_no_field("手順（1行＝1ステップ）")
     expect(document).to have_no_css("input[name='manual[url]']")
   end
@@ -43,7 +43,7 @@ RSpec.describe "外部サイトの改定あり" do
   it "スタッフにはボタンもメモ欄も出さず、直接送信も拒否する" do
     patch operator_path, params: { user_id: create(:user).id }
     get staff_operations_path, params: { operation_id: operation.id }
-    expect(Capybara.string(response.body)).to have_no_button("改定あり")
+    expect(Capybara.string(response.body)).to have_no_button("改定を保存")
     expect(Capybara.string(response.body)).to have_no_css("input[name='manual[memo]']")
     expect { revise }.not_to change(ManualRevision, :count)
     expect(response).to redirect_to(staff_operations_path)

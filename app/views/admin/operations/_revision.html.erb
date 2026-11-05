@@ -10,7 +10,7 @@
       <%= form.label :memo, t("operations.revision_memo") %>
       <%= form.text_field :memo, value: @revision_memo, placeholder: t("operations.revision_memo_example"), class: "operation-revision-field" %>
       <div class="operation-revision-actions">
-        <%= form.submit t("operations.revision_save"), class: "btn operation-revision-save" %>
+        <%= form.submit t("operations.revision_save"), class: "btn btn-primary" %>
         <%= link_to t("operations.revision_cancel"), admin_operations_path(operation_id: operation.id), class: "btn" %>
       </div>
     <% end %>
