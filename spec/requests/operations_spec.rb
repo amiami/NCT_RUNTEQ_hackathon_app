@@ -193,9 +193,9 @@ RSpec.describe "作業ツリーとマニュアル" do
       get admin_operations_path, params: { operation_id: operation.id }
 
       link = document.find("main a[href*='operation_id=#{operation.id}']")
-      expect(link).to have_text("できる人0人")
+      expect(link).to have_css(".operation-badge.capable-badge-none", exact_text: "できる人0人")
       expect(link).to have_no_text("改定 10/20")
-      expect(document.find("article[aria-labelledby='operation-title']")).to have_text("できる人0人")
+      expect(document.find("article[aria-labelledby='operation-title']")).to have_css(".operation-badge.capable-badge-none", exact_text: "できる人0人")
     end
 
     it "レベル3を数えず、レベル4の▼もできる人1人として表示する" do
@@ -204,7 +204,8 @@ RSpec.describe "作業ツリーとマニュアル" do
 
       get admin_operations_path
 
-      expect(document.find("main a[href*='operation_id=#{operation.id}']")).to have_text("できる人1人")
+      expect(document.find("main a[href*='operation_id=#{operation.id}']")).to have_css(".operation-badge.capable-badge-one", exact_text: "できる人1人")
+      expect(document.find("article[aria-labelledby='operation-title']")).to have_css(".operation-badge.capable-badge-one", exact_text: "できる人1人")
       expect(document).to have_no_text("できる人2人")
     end
 

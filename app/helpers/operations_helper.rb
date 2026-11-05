@@ -1,4 +1,11 @@
 module OperationsHelper
+  def capable_badge_class(count)
+    case count
+    when 0 then "capable-badge-none"
+    when 1 then "capable-badge-one"
+    end
+  end
+
   def operation_category_kind_label(operations)
     kinds = operations.filter_map { |operation| operation.manual&.kind }.uniq
     Manual.kinds.keys.filter_map do |kind|

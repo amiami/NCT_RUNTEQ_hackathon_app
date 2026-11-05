@@ -91,9 +91,10 @@ RSpec.describe "研修画面（S-3）" do
 
       open_screen
 
-      { "労働保険の年度更新" => "できる人0人", "給与計算" => "できる人1人" }.each do |name, text|
+      { "労働保険の年度更新" => [ "できる人0人", "capable-badge-none" ],
+        "給与計算" => [ "できる人1人", "capable-badge-one" ] }.each do |name, (text, color_class)|
         badge = card(name).find(".training-capable-count", exact_text: text)
-        expect(badge[:class].split).to include("operation-badge", "operation-badge-warning")
+        expect(badge[:class].split).to include("operation-badge", color_class)
         expect(badge[:class].split).not_to include("capable-warning", "badge", "badge-warning")
         expect(card(name)).to have_no_css(".capable-warning")
       end

@@ -30,7 +30,7 @@
                   <% if admin_page? %>
                     <% count = capable_counts.fetch(item.id, 0) %>
                     <% if count <= 1 %>
-                      <span class="operation-badge operation-badge-warning"><%= t("operations.capable_count", count: count) %></span>
+                      <span class="operation-badge <%= capable_badge_class(count) %>"><%= t("operations.capable_count", count: count) %></span>
                     <% elsif (date = operation_revision_date(item.manual)) %>
                       <span class="operation-badge operation-badge-revision"><%= t("operations.revision_badge", date: l(date, format: :operation_date)) %></span>
                     <% end %>
