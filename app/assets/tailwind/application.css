@@ -356,7 +356,19 @@
      turbo-frame は何も指定しないと inline で sticky が効かないので flow-root にする（中の詳細の mb-4 も枠の高さに入り、
      その分も背景で塗られて、下を流れる表が透けない） */
   .skill-detail-frame {
-    @apply flow-root bg-base-200 md:sticky md:top-0 md:z-5;
+    @apply flow-root;
+  }
+
+  /* マスの詳細と「変更を保存」の箱。広い画面（md 以上）では、右に「変更を保存」の列をいつも取っておく
+     （下書きがあってもなくても、詳細の幅が変わらないように）。表をスクロールしても箱ごと画面の上に残す。
+     背景で塗るのは、下を流れる表が透けないように。狭い画面では1列にして、「変更を保存」は詳細の下に回る。
+     広い画面では「変更を保存」を詳細と同じ高さに伸ばす（grid の stretch。詳細の下の mb-4 と同じだけ枠にも付けてそろえる） */
+  .skill-map-top {
+    @apply grid bg-base-200 md:sticky md:top-0 md:z-5 md:grid-cols-[minmax(0,1fr)_15rem] md:gap-x-4;
+  }
+
+  .skill-map-top > .save-bar {
+    @apply mb-4;
   }
 
   .skill-detail {
@@ -514,8 +526,19 @@
     @apply text-sm text-muted;
   }
 
+  /* 右の列（「変更を保存」と指示済みの研修）。広い画面では列ごと画面の上に残す */
+  .training-side {
+    @apply flex flex-col gap-4 lg:sticky lg:top-4;
+  }
+
+  /* 研修画面の「変更を保存」の枠は、下の指示済みの研修のカード（.assigned-trainings の p-5）と文字の左端をそろえ、
+     左寄せにする（共通の .save-bar は中央） */
+  .training-side > .save-bar {
+    @apply p-5 text-left;
+  }
+
   .assigned-trainings {
-    @apply flex flex-col gap-3 p-5 lg:sticky lg:top-4;
+    @apply flex flex-col gap-3 p-5;
   }
 
   .assigned-trainings-title {
@@ -809,15 +832,21 @@
 
 /* 下書きの「変更を保存」の枠（unsaved-changes コントローラの bar ターゲット）。研修画面・スキルマップで共通に使う */
 @layer components {
-  /* 画面の右下に固定する。変更がないときは hidden 属性で隠れる */
+  /* 選ぶ場所の近く（スキルマップは詳細の右横、研修画面は指示済みの研修の上）に置く。置き場所は使う側で決める。
+     まだ保存していない件数（スキルマップはボタンの中、研修画面はボタンの上）・ボタン・注意書きを縦に並べ、
+     枠の中で上下・左右の真ん中にそろえる。変更がないときは hidden 属性で隠れる */
   .save-bar {
-    @apply fixed right-6 bottom-6 z-10 flex items-center gap-3 rounded-xl border border-line bg-base-100 px-4 py-3 shadow-lg;
+    @apply flex flex-col items-stretch justify-center gap-2 rounded-xl border border-line bg-base-100 p-4 text-center;
   }
 
-  /* 枠が出ているあいだだけ、枠のすぐ外側の要素の下に、枠の分の余白を取る。
-     一番下までスクロールしたときに、表の最後の行やカードが枠の下に隠れて押せなくならないように */
-  :has(> .save-bar:not([hidden])) {
-    @apply pb-28;
+  /* 研修画面の「下書き（2件）」 */
+  .save-bar-title {
+    @apply text-sm font-bold;
+  }
+
+  /* 「変更を保存」は枠の幅いっぱいにして押しやすくする。押せることが分かるよう、マウスを乗せると少し明るくする */
+  .save-bar-button {
+    @apply w-full hover:bg-primary/85;
   }
 
   /* 「（まだ保存されていません!）」などの小さな文言 */
@@ -864,7 +893,7 @@
   }
 
   .save-bar-form {
-    @apply flex items-center gap-3;
+    @apply flex flex-col items-stretch gap-2;
   }
 }
 
