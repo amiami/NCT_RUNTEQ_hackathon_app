@@ -269,21 +269,26 @@
     @apply hover:text-link hover:underline focus-visible:text-link focus-visible:underline;
   }
 
-  /* 管理者の見立ての印を右上の角に重ねるので relative にしておく */
   .skill-map-cell {
-    @apply relative flex min-h-12 min-w-14 flex-col items-center justify-center gap-0.5 rounded-lg p-1 text-[15px] font-bold;
+    @apply flex min-h-12 min-w-14 flex-col items-center justify-center gap-0.5 rounded-lg p-1 text-[15px] font-bold;
   }
 
-  /* 見立ての印は右上の角に置く。レベルと「未読」は中央に縦に並ぶので重ならない */
-  .skill-map-cell > .assessment-mark {
-    @apply absolute top-1 right-1.5;
+  /* レベルの数字と見立ての印の箱。印はこの箱を基準に置くので relative にしておく */
+  .skill-map-level {
+    @apply relative;
+  }
+
+  /* 見立ての印は数字のすぐ右に付ける。absolute なので箱の幅に数えず、印があってもなくても数字はマスの真ん中のまま。
+     「未読」は箱の下の行に出るので重ならない */
+  .skill-map-level > .assessment-mark {
+    @apply absolute top-1/2 left-full ml-0.5 -translate-y-1/2;
   }
 
   .skill-map-unread {
     @apply rounded bg-unread px-1 text-[10px] leading-[15px] font-bold text-unread-content;
   }
 
-  /* 管理者の見立ての印（▲・▼・▽・◇ のアイコン。AdminAssessmentsHelper）。置き場所は使う側で決める（スキルマップはマスの右上）。
+  /* 管理者の見立ての印（▲・▼・▽・◇ のアイコン。AdminAssessmentsHelper）。置き場所は使う側で決める（スキルマップは数字のすぐ右）。
      押せるように見えないよう土台は付けない。色はまわりの文字の色（マスなら数字と同じ色で、レベル4の濃い青の上では白） */
   .assessment-mark {
     @apply inline-flex size-3.5 shrink-0 items-center justify-center;
