@@ -6,10 +6,14 @@ import { Controller } from "@hotwired/stimulus"
 //   - 期限：カードの日付を変える（その作業の予定すべての期限になる）
 // 下書きが変わるたびに、共通部品（unsaved-changes）へ「変更あり／なし」を知らせる。
 // 変更ありにするのは、追加・保存済みの予定の取り消し・予定がある作業の期限の変更だけ（予定がない作業の日付だけなら変更なし）。
+// 「変更を保存」の上には、その数（追加1人・取り消し1件・期限を変えた作業1つを、それぞれ1件）を「下書き（n件）」で出す。
 // カードの並び順と絞り込みの区分は、開いたときのまま変えない
 export default class extends Controller {
-  static targets = ["card", "planTemplate", "form", "fields"]
-  static values = { dueLabel: String, noDueLabel: String, cancelLabel: String, undoCancelLabel: String, removePlanLabel: String }
+  static targets = ["card", "planTemplate", "form", "fields", "draftCount"]
+  static values = {
+    dueLabel: String, noDueLabel: String, cancelLabel: String, undoCancelLabel: String, removePlanLabel: String,
+    draftCountLabel: String
+  }
 
   connect() {
     this.additions = [] // { operationId, trainerId, traineeId, element }
@@ -150,13 +154,16 @@ export default class extends Controller {
   }
 
   notify() {
-    this.dispatch("changed", { prefix: "unsaved-changes", detail: { changed: this.changed } })
+    const count = this.changeCount
+    this.draftCountTarget.textContent = this.draftCountLabelValue.replace("%{count}", count)
+    this.dispatch("changed", { prefix: "unsaved-changes", detail: { changed: count > 0 } })
   }
 
-  get changed() {
-    return this.additions.length > 0 ||
-      this.cancellations.size > 0 ||
-      this.cardTargets.some((card) => this.dueChanged(card) && this.hasPlans(card))
+  // まだ保存していない変更の数。1以上のときが「変更あり」
+  get changeCount() {
+    return this.additions.length +
+      this.cancellations.size +
+      this.cardTargets.filter((card) => this.dueChanged(card) && this.hasPlans(card)).length
   }
 
   // 予定がある作業か（保存済みで取り消していないもの＋下書きで追加したもの）

@@ -44,8 +44,9 @@
   --color-trained: #ECFDF5; /* 「研修済み」のバッジ（わたしのスキル） */
   --color-trained-content: #065F46;
   --color-trained-line: #6EE7B7;
-  --color-capable-alert: #7C2D12; /* 「できる人○人」のバッジ */
-  --color-capable-alert-content: #fff;
+  --color-capable-none: #7C2D12; /* 「できる人0人」のバッジ */
+  --color-capable-one: #AB5E4B; /* 「できる人1人」のバッジ */
+  --color-capable-badge-content: #fff;
   --color-capable-warning: #FFF7ED; /* スキルマップの上の「できる人が1人以下」の警告の背景 */
   --color-unread: #FFEDD5; /* スキルマップの「未読」の印 */
   --color-unread-content: #9A3412;
@@ -269,21 +270,26 @@
     @apply hover:text-link hover:underline focus-visible:text-link focus-visible:underline;
   }
 
-  /* 管理者の見立ての印を右上の角に重ねるので relative にしておく */
   .skill-map-cell {
-    @apply relative flex min-h-12 min-w-14 flex-col items-center justify-center gap-0.5 rounded-lg p-1 text-[15px] font-bold;
+    @apply flex min-h-12 min-w-14 flex-col items-center justify-center gap-0.5 rounded-lg p-1 text-[15px] font-bold;
   }
 
-  /* 見立ての印は右上の角に置く。レベルと「未読」は中央に縦に並ぶので重ならない */
-  .skill-map-cell > .assessment-mark {
-    @apply absolute top-1 right-1.5;
+  /* レベルの数字と見立ての印の箱。印はこの箱を基準に置くので relative にしておく */
+  .skill-map-level {
+    @apply relative;
+  }
+
+  /* 見立ての印は数字のすぐ右に付ける。absolute なので箱の幅に数えず、印があってもなくても数字はマスの真ん中のまま。
+     「未読」は箱の下の行に出るので重ならない */
+  .skill-map-level > .assessment-mark {
+    @apply absolute top-1/2 left-full ml-0.5 -translate-y-1/2;
   }
 
   .skill-map-unread {
     @apply rounded bg-unread px-1 text-[10px] leading-[15px] font-bold text-unread-content;
   }
 
-  /* 管理者の見立ての印（▲・▼・▽・◇ のアイコン。AdminAssessmentsHelper）。置き場所は使う側で決める（スキルマップはマスの右上）。
+  /* 管理者の見立ての印（▲・▼・▽・◇ のアイコン。AdminAssessmentsHelper）。置き場所は使う側で決める（スキルマップは数字のすぐ右）。
      押せるように見えないよう土台は付けない。色はまわりの文字の色（マスなら数字と同じ色で、レベル4の濃い青の上では白） */
   .assessment-mark {
     @apply inline-flex size-3.5 shrink-0 items-center justify-center;
@@ -299,17 +305,25 @@
   }
 
   .capable-alert {
-    @apply ml-2 inline-flex items-center rounded-md bg-capable-alert px-1.5 py-0.5 text-[11px] font-bold whitespace-nowrap text-capable-alert-content;
+    @apply ml-2 inline-flex items-center rounded-md px-1.5 py-0.5 text-[11px] font-bold whitespace-nowrap;
+  }
+
+  .capable-badge-none {
+    @apply bg-capable-none text-capable-badge-content;
+  }
+
+  .capable-badge-one {
+    @apply bg-capable-one text-capable-badge-content;
   }
 
   /* 表のカードの上の警告（できる人が1人以下の作業があるときだけ出る）。.card と組み合わせて使う。
      スキルマップ専用。研修画面の「できる人○人」には使わない（余白や背景がまざって見た目がずれる。そちらは operation-badge を使う） */
   .capable-warning {
-    @apply mb-4 flex flex-wrap items-center gap-3 border-capable-alert bg-capable-warning px-[18px] py-3.5;
+    @apply mb-4 flex flex-wrap items-center gap-3 border-caution bg-capable-warning px-[18px] py-3.5;
   }
 
   .capable-warning-icon {
-    @apply size-[22px] shrink-0 text-capable-alert;
+    @apply size-[22px] shrink-0 text-caution;
   }
 
   /* 狭い画面では、ボタンを文の下に回り込ませる */
@@ -318,7 +332,7 @@
   }
 
   .capable-warning-title {
-    @apply text-[15px] font-bold text-capable-alert;
+    @apply text-[15px] font-bold text-caution;
   }
 
   .capable-warning-description {
@@ -351,7 +365,19 @@
      turbo-frame は何も指定しないと inline で sticky が効かないので flow-root にする（中の詳細の mb-4 も枠の高さに入り、
      その分も背景で塗られて、下を流れる表が透けない） */
   .skill-detail-frame {
-    @apply flow-root bg-base-200 md:sticky md:top-0 md:z-5;
+    @apply flow-root;
+  }
+
+  /* マスの詳細と「変更を保存」の箱。広い画面（md 以上）では、右に「変更を保存」の列をいつも取っておく
+     （下書きがあってもなくても、詳細の幅が変わらないように）。表をスクロールしても箱ごと画面の上に残す。
+     背景で塗るのは、下を流れる表が透けないように。狭い画面では1列にして、「変更を保存」は詳細の下に回る。
+     広い画面では「変更を保存」を詳細と同じ高さに伸ばす（grid の stretch。詳細の下の mb-4 と同じだけ枠にも付けてそろえる） */
+  .skill-map-top {
+    @apply grid bg-base-200 md:sticky md:top-0 md:z-5 md:grid-cols-[minmax(0,1fr)_15rem] md:gap-x-4;
+  }
+
+  .skill-map-top > .save-bar {
+    @apply mb-4;
   }
 
   .skill-detail {
@@ -509,8 +535,19 @@
     @apply text-sm text-muted;
   }
 
+  /* 右の列（「変更を保存」と指示済みの研修）。広い画面では列ごと画面の上に残す */
+  .training-side {
+    @apply flex flex-col gap-4 lg:sticky lg:top-4;
+  }
+
+  /* 研修画面の「変更を保存」の枠は、下の指示済みの研修のカード（.assigned-trainings の p-5）と文字の左端をそろえ、
+     左寄せにする（共通の .save-bar は中央） */
+  .training-side > .save-bar {
+    @apply p-5 text-left;
+  }
+
   .assigned-trainings {
-    @apply flex flex-col gap-3 p-5 lg:sticky lg:top-4;
+    @apply flex flex-col gap-3 p-5;
   }
 
   .assigned-trainings-title {
@@ -544,7 +581,6 @@
 
 /* 作業ツリーとマニュアル。共通ヘッダーのスタイルから分けて管理する。 */
 @theme {
-  --color-operation-warning: #7C2D12;
   --color-operation-revision: #FFEDD5;
   --color-operation-revision-content: #9A3412;
   --color-operation-outline: #9CA3AF;
@@ -609,10 +645,6 @@
 
   .operation-badge {
     @apply inline-flex shrink-0 items-center rounded-md px-1.5 py-0.5 text-[11px] leading-[normal] font-bold whitespace-nowrap;
-  }
-
-  .operation-badge-warning {
-    @apply bg-operation-warning text-primary-content;
   }
 
   .operation-badge-revision {
@@ -753,7 +785,7 @@
   }
 
   .operation-revision-save {
-    @apply border-operation-warning bg-operation-warning text-primary-content;
+    @apply border-caution bg-caution text-primary-content disabled:cursor-not-allowed disabled:border-control-line disabled:bg-control-background disabled:text-base-content;
   }
 
   .operation-revision-error {
@@ -804,15 +836,21 @@
 
 /* 下書きの「変更を保存」の枠（unsaved-changes コントローラの bar ターゲット）。研修画面・スキルマップで共通に使う */
 @layer components {
-  /* 画面の右下に固定する。変更がないときは hidden 属性で隠れる */
+  /* 選ぶ場所の近く（スキルマップは詳細の右横、研修画面は指示済みの研修の上）に置く。置き場所は使う側で決める。
+     まだ保存していない件数（スキルマップはボタンの中、研修画面はボタンの上）・ボタン・注意書きを縦に並べ、
+     枠の中で上下・左右の真ん中にそろえる。変更がないときは hidden 属性で隠れる */
   .save-bar {
-    @apply fixed right-6 bottom-6 z-10 flex items-center gap-3 rounded-xl border border-line bg-base-100 px-4 py-3 shadow-lg;
+    @apply flex flex-col items-stretch justify-center gap-2 rounded-xl border border-line bg-base-100 p-4 text-center;
   }
 
-  /* 枠が出ているあいだだけ、枠のすぐ外側の要素の下に、枠の分の余白を取る。
-     一番下までスクロールしたときに、表の最後の行やカードが枠の下に隠れて押せなくならないように */
-  :has(> .save-bar:not([hidden])) {
-    @apply pb-28;
+  /* 研修画面の「下書き（2件）」 */
+  .save-bar-title {
+    @apply text-sm font-bold;
+  }
+
+  /* 「変更を保存」は枠の幅いっぱいにして押しやすくする。押せることが分かるよう、マウスを乗せると少し明るくする */
+  .save-bar-button {
+    @apply w-full hover:bg-primary/85;
   }
 
   /* 「（まだ保存されていません!）」などの小さな文言 */
@@ -859,7 +897,7 @@
   }
 
   .save-bar-form {
-    @apply flex items-center gap-3;
+    @apply flex flex-col items-stretch gap-2;
   }
 }
 

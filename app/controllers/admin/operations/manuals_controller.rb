@@ -13,6 +13,9 @@ module Admin
         ManualReviser.call(user: current_user, manual: @manual, **revision_params.to_h.symbolize_keys)
         redirect_to admin_operations_path(operation_id: @manual.operation_id),
           notice: t("operations.revised_notice"), status: :see_other
+      rescue ManualReviser::InvalidInput => error
+        @revision_error = t("operations.#{error.message}")
+        show_editor(status: :unprocessable_content)
       rescue ActiveRecord::RecordInvalid
         @revision_error = t("operations.revision_invalid")
         show_editor(status: :unprocessable_content)
@@ -41,6 +44,7 @@ module Admin
       end
 
       def show_editor(status: :ok)
+        @manual.reload
         @editing_manual = true
         @revision_body = action_name == "update" ? revision_params[:body] : @manual.body
         @revision_memo = action_name == "update" ? revision_params[:memo] : ""

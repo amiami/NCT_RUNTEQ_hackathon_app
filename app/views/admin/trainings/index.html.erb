@@ -11,7 +11,8 @@
      data-training-draft-no-due-label-value="<%= t("training_due_on.none") %>"
      data-training-draft-cancel-label-value="<%= t("admin.trainings.assigned_training.cancel") %>"
      data-training-draft-undo-cancel-label-value="<%= t("admin.trainings.assigned_training.undo_cancel") %>"
-     data-training-draft-remove-plan-label-value="<%= t(".plan_remove_label", trainer: "%{trainer}", trainee: "%{trainee}") %>">
+     data-training-draft-remove-plan-label-value="<%= t(".plan_remove_label", trainer: "%{trainer}", trainee: "%{trainee}") %>"
+     data-training-draft-draft-count-label-value="<%= t(".draft_count", count: "%{count}") %>">
   <section class="training-main" aria-label="<%= t(".cards_label") %>">
     <p class="training-hint"><%= t(".hint") %></p>
 
@@ -33,16 +34,33 @@
     <p class="card training-empty" data-training-filter-target="empty" <%= "hidden" if @cards.any? %>><%= t(".empty") %></p>
   </section>
 
-  <aside id="assigned-trainings" class="card assigned-trainings" aria-labelledby="assigned-trainings-title">
-    <h2 id="assigned-trainings-title" class="assigned-trainings-title"><%= t(".assigned_title", count: @assigned_trainings.size) %></h2>
-    <% if @assigned_trainings.any? %>
-      <ul class="assigned-training-list">
-        <%= render partial: "assigned_training", collection: @assigned_trainings %>
-      </ul>
-    <% else %>
-      <p class="assigned-trainings-empty"><%= t(".assigned_empty") %></p>
-    <% end %>
-  </aside>
+  <%# 右の列。「変更を保存」を指示済みの研修の上に置き、広い画面では列ごと画面の上に残す（.training-side）。
+      狭い画面では、列ごとカードの下に回る %>
+  <div class="training-side">
+    <%# 「変更を保存」の枠。下書きに変更があるときだけ共通部品が出す。送る直前に下書きを hidden の入力欄にする。
+        上の「下書き（n件）」は、training-draft コントローラが下書きの数で書き換える %>
+    <div class="save-bar" data-unsaved-changes-target="bar" hidden>
+      <p class="save-bar-title" data-training-draft-target="draftCount"></p>
+      <%= form_with url: admin_training_plan_path, method: :patch, class: "save-bar-form",
+                    data: { unsaved_changes_skip: true, training_draft_target: "form",
+                            action: "submit->training-draft#prepare" } do |form| %>
+        <div data-training-draft-target="fields"></div>
+        <%= form.button t(".save"), type: "submit", class: "btn btn-primary save-bar-button" %>
+        <span class="save-bar-note"><%= t(".unsaved_note") %></span>
+      <% end %>
+    </div>
+
+    <aside id="assigned-trainings" class="card assigned-trainings" aria-labelledby="assigned-trainings-title">
+      <h2 id="assigned-trainings-title" class="assigned-trainings-title"><%= t(".assigned_title", count: @assigned_trainings.size) %></h2>
+      <% if @assigned_trainings.any? %>
+        <ul class="assigned-training-list">
+          <%= render partial: "assigned_training", collection: @assigned_trainings %>
+        </ul>
+      <% else %>
+        <p class="assigned-trainings-empty"><%= t(".assigned_empty") %></p>
+      <% end %>
+    </aside>
+  </div>
 
   <%# 下書きで追加した予定のボタンのひな形。教える人を押すと、これを写してカードの研修予定の列に入れる。
       押せるのはチップ全体で、「×」は押せる場所を示す飾り（aria-hidden）。読み上げの名前（aria-label）は、
@@ -56,15 +74,4 @@
       <span class="plan-chip-due"></span>
     </button>
   </template>
-
-  <%# 「変更を保存」の枠。下書きに変更があるときだけ共通部品が出す。送る直前に下書きを hidden の入力欄にする %>
-  <div class="save-bar" data-unsaved-changes-target="bar" hidden>
-    <%= form_with url: admin_training_plan_path, method: :patch, class: "save-bar-form",
-                  data: { unsaved_changes_skip: true, training_draft_target: "form",
-                          action: "submit->training-draft#prepare" } do |form| %>
-      <div data-training-draft-target="fields"></div>
-      <%= form.button t(".save"), type: "submit", class: "btn btn-primary" %>
-      <span class="save-bar-note"><%= t(".unsaved_note") %></span>
-    <% end %>
-  </div>
 </div>

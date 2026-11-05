@@ -91,9 +91,10 @@ RSpec.describe "研修画面（S-3）" do
 
       open_screen
 
-      { "労働保険の年度更新" => "できる人0人", "給与計算" => "できる人1人" }.each do |name, text|
+      { "労働保険の年度更新" => [ "できる人0人", "capable-badge-none" ],
+        "給与計算" => [ "できる人1人", "capable-badge-one" ] }.each do |name, (text, color_class)|
         badge = card(name).find(".training-capable-count", exact_text: text)
-        expect(badge[:class].split).to include("operation-badge", "operation-badge-warning")
+        expect(badge[:class].split).to include("operation-badge", color_class)
         expect(badge[:class].split).not_to include("capable-warning", "badge", "badge-warning")
         expect(card(name)).to have_no_css(".capable-warning")
       end
@@ -345,6 +346,19 @@ RSpec.describe "研修画面（S-3）" do
       expect(bar[:hidden]).not_to be_nil
       expect(bar).to have_button("変更を保存", visible: :all)
       expect(bar.text(:all)).to include("（まだ保存されていません!）")
+    end
+
+    # 置き場所の見た目（上に残る・狭い画面で下に回る）は CSS で決めるので、ここでは並びを確かめる
+    it "「変更を保存」は右の列（.training-side）で、指示済みの研修のすぐ上にある" do
+      expect(page).to have_css(".training-layout > .training-side > [data-unsaved-changes-target=bar] + aside#assigned-trainings",
+                               visible: :all)
+    end
+
+    it "「変更を保存」の上に、まだ保存していない件数（下書き（n件））を出す場所があり、文言は %{count} を残して training-draft に渡す" do
+      bar = page.find("[data-unsaved-changes-target=bar]", visible: :all)
+
+      expect(bar).to have_css(".save-bar-title[data-training-draft-target='draftCount'] + form button.save-bar-button", visible: :all)
+      expect(page.find(".training-layout")["data-training-draft-draft-count-label-value"]).to eq "下書き（%{count}件）"
     end
 
     it "「変更を保存」のフォームは PATCH /admin/training_plan に送り、共通部品の確認を出さない印が付いている（AC-5）" do

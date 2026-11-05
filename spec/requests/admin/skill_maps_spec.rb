@@ -81,16 +81,19 @@ RSpec.describe "スキルマップ（管理者）" do
     end
 
     it "0人・1人の作業の行に出る（◇・▼の人も数える）" do
-      expect(row(payroll)).to have_css(".capable-alert", exact_text: "できる人0人")
-      expect(row(attendance)).to have_css(".capable-alert", exact_text: "できる人1人")
+      expect(row(payroll)).to have_css(".capable-alert.capable-badge-none", exact_text: "できる人0人")
+      expect(row(attendance)).to have_css(".capable-alert.capable-badge-one", exact_text: "できる人1人")
     end
 
     it "2人以上の作業の行には出ない" do
       expect(row(joining)).to have_no_css(".capable-alert")
     end
 
-    it "分類の見出しに、できる人が1人以下の作業の件数が出る" do
-      expect(document.find("tr.skill-map-category", text: "勤怠・給与")).to have_css(".capable-alert", exact_text: "できる人1人以下 2件")
+    it "できる人が1人以下の作業があっても、分類の見出しには分類名と作業の数だけが出る" do
+      heading = document.find("tr.skill-map-category", text: "勤怠・給与")
+
+      expect(heading.text.squish).to eq "勤怠・給与 2作業"
+      expect(heading).to have_no_css(".capable-alert")
     end
 
     it "できる人が1人以下の作業がない分類の見出しには出ない" do
@@ -264,14 +267,35 @@ RSpec.describe "スキルマップ（管理者）" do
       end
     end
 
-    it "AC-8: 「未読」と見立ての印は、マスの中で別々の印として出る（見立ては右上に重ねて置く）" do
-      create(:manual, operation: payroll, version: 2)
-      skill = create(:skill, user: yamamoto, operation: payroll, level: 3, admin_assessment: :can_train, confirmed_version: 1)
+    # 置き場所の見た目（真ん中・重ならない）は CSS で決めるので、ここではマスの中の並びを確かめる
+    describe "置き場所：レベルの数字のすぐ右" do
+      it "見立てのあるマスでは、数字と同じ箱（.skill-map-level）の中で、数字のすぐ後ろにアイコンが並ぶ" do
+        skill = skill_with(3, :can_train)
 
-      get admin_skill_map_path
+        get admin_skill_map_path
 
-      expect(cell(skill)).to have_css(".skill-map-cell > .assessment-mark.assessment-mark-can_train")
-      expect(cell(skill)).to have_css(".skill-map-cell > .skill-map-unread", exact_text: "未読")
+        expect(cell(skill)).to have_css(".skill-map-cell > .skill-map-level > span:first-child", exact_text: "3")
+        expect(cell(skill)).to have_css(".skill-map-level > span:first-child + .assessment-mark.assessment-mark-can_train")
+      end
+
+      it "見立てのないマスも、数字は同じ箱の中に置く（アイコンの有無で数字の置き方が変わらない）" do
+        skill = skill_with(4, nil)
+
+        get admin_skill_map_path
+
+        expect(cell(skill)).to have_css(".skill-map-cell > .skill-map-level > span:only-child", exact_text: "4")
+      end
+
+      it "「未読」は数字とアイコンの箱の外に、別の印として出る" do
+        create(:manual, operation: payroll, version: 2)
+        skill = create(:skill, user: yamamoto, operation: payroll, level: 3, admin_assessment: :can_train, confirmed_version: 1)
+
+        get admin_skill_map_path
+
+        expect(cell(skill)).to have_css(".skill-map-level > .assessment-mark.assessment-mark-can_train")
+        expect(cell(skill)).to have_css(".skill-map-cell > .skill-map-unread", exact_text: "未読")
+        expect(cell(skill)).to have_no_css(".skill-map-level .skill-map-unread")
+      end
     end
   end
 
@@ -279,7 +303,8 @@ RSpec.describe "スキルマップ（管理者）" do
     it "表のカードの上（カードの外）に、詳細を入れる空の枠（skill_detail）がある" do
       get admin_skill_map_path
 
-      expect(document).to have_css("turbo-frame#skill_detail + section.card .skill-map-scroll")
+      expect(document).to have_css(".skill-map-top > turbo-frame#skill_detail", visible: :all)
+      expect(document).to have_css(".skill-map-top + section.card .skill-map-scroll")
       expect(document.find("turbo-frame#skill_detail", visible: :all).text).to be_blank
     end
 
@@ -369,6 +394,19 @@ RSpec.describe "スキルマップ（管理者）" do
       expect(wrapper).to have_css("table.skill-map")
       expect(wrapper).to have_css(".save-bar", visible: :all)
       expect(wrapper["data-unsaved-changes-confirm-message-value"]).to eq "変更は保存されませんがよろしいですか？"
+    end
+
+    # 置き場所の見た目（幅・上に残る・狭い画面で下に回る）は CSS で決めるので、ここでは並びを確かめる
+    it "「変更を保存」は詳細の枠のすぐ右（同じ箱 .skill-map-top の中）にあり、詳細の枠（Turbo Frame）の外に置く" do
+      expect(wrapper).to have_css(".skill-map-top > turbo-frame#skill_detail + form.save-bar", visible: :all)
+      expect(wrapper).to have_no_css("turbo-frame#skill_detail .save-bar", visible: :all)
+    end
+
+    it "「変更を保存」のボタンの文言に、まだ保存していない件数を入れられる（%{count} を残して skill-map に渡す）" do
+      button = wrapper.find(".save-bar button.save-bar-button", visible: :all)
+
+      expect(button).to have_css("[data-skill-map-target='saveLabel']", exact_text: "変更を保存", visible: :all)
+      expect(wrapper["data-skill-map-save-label-value"]).to eq "変更を保存（%{count}件）"
     end
 
     it "AC-1: 「変更を保存」は最初は隠れていて、下書きがあるときだけ共通部品が出す" do

@@ -77,6 +77,7 @@ RSpec.describe "研修の流れ", :js do
       end
       expect(page).to have_button("変更を保存")
       expect(page).to have_text("（まだ保存されていません!）")
+      expect(page).to have_css(".save-bar-title", exact_text: "下書き（1件）")
       expect(assigned_list).to have_css("h2", text: "指示済みの研修（0件）")
 
       # 4. 下書きの予定を押すと消え、吉田が未研修に戻る。「変更を保存」も消える（AC-3・AC-4）
@@ -96,6 +97,10 @@ RSpec.describe "研修の流れ", :js do
           .to contain_exactly(a_string_including("管理者 → 吉田"), a_string_including("管理者 → 加藤"))
         expect(page).to have_no_css(".trainee-chip")
       end
+      # 追加した予定の数を件数に出す。予定がある作業の期限を変えると、その作業の分も1件と数える（#182）
+      expect(page).to have_css(".save-bar-title", exact_text: "下書き（2件）")
+      within(card("給与計算")) { fill_in "給与計算の研修期限", with: Date.new(2026, 12, 25) }
+      expect(page).to have_css(".save-bar-title", exact_text: "下書き（3件）")
 
       # 6. 下書きを変えても、カードの並び順は変わらない（AC-7）
       expect(card_titles).to eq initial_titles

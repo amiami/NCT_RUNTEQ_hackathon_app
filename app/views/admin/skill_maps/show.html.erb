@@ -6,7 +6,8 @@
 <%# 表は入れ替わらないので、どのマスの詳細を見ているかの印・絞り込み・見立ての下書きは skill-map コントローラ（Stimulus）で行う。
     警告のボタン・詳細・表・「変更を保存」をすべて操作するのでまとめて囲み、共通部品（unsaved-changes）も同じところに付ける %>
 <div data-controller="unsaved-changes skill-map"
-     data-unsaved-changes-confirm-message-value="<%= t("unsaved_changes.confirm_leaving") %>">
+     data-unsaved-changes-confirm-message-value="<%= t("unsaved_changes.confirm_leaving") %>"
+     data-skill-map-save-label-value="<%= t(".save_with_count", count: "%{count}") %>">
 <%# 全体の件数は、タブの件数と同じ数え方を使う（分類ごとの件数はコントローラで数える） %>
 <% few_capable_total = Operation.few_capable_count %>
 <% if few_capable_total.positive? %>
@@ -26,11 +27,29 @@
   </div>
 <% end %>
 
-<%# マスの詳細を入れる枠。表のカードの外（上）に置き、マスを押すと admin/skills/show の同じ id の枠の中身に入れ替わる。
-    広い画面では、表をスクロールしても画面の上に残す（.skill-detail-frame）。マスを続けて直すときに、詳細と表を行き来しなくて済むように。
-    狭い画面では残さないので、下のほうのマスを押したときも詳細が見えるよう、入れ替わったら枠までスクロールする
-    （Turbo の autoscroll。上に残っているときは見えているので動かない） %>
-<%= turbo_frame_tag "skill_detail", class: "skill-detail-frame", autoscroll: true, data: { autoscroll_block: "nearest", autoscroll_behavior: "smooth" } %>
+<%# 表のカードの上に、マスの詳細と「変更を保存」を横に並べる（.skill-map-top）。
+    広い画面では、表をスクロールしても両方を画面の上に残す。マスを続けて直すときに、詳細と表を行き来しなくて済むように。
+    狭い画面では残さず、「変更を保存」は詳細の下に回る %>
+<div class="skill-map-top">
+  <%# マスの詳細を入れる枠。マスを押すと admin/skills/show の同じ id の枠の中身に入れ替わる。
+      狭い画面では上に残さないので、下のほうのマスを押したときも詳細が見えるよう、入れ替わったら枠までスクロールする
+      （Turbo の autoscroll。上に残っているときは見えているので動かない） %>
+  <%= turbo_frame_tag "skill_detail", class: "skill-detail-frame", autoscroll: true, data: { autoscroll_block: "nearest", autoscroll_behavior: "smooth" } %>
+
+  <%# 「変更を保存」の枠。見立ての下書きがあるときだけ共通部品が出す。送る直前（prepare）に下書きを hidden の入力欄にする。
+      詳細の枠（Turbo Frame）の中に置くと、マスを押すたびに入れ替わって消えるので、枠の外の右横に置く。
+      研修画面と違い、フォームそのものを枠（.save-bar）にしている（枠の中に並べるための CSS を足さずに済むため）。
+      ボタンの文言は、skill-map コントローラが下書きの数を入れた「変更を保存（n件）」に書き換える %>
+  <%= form_with url: skills_assessment_path, method: :patch, class: "save-bar", html: { hidden: true },
+                data: { unsaved_changes_target: "bar", unsaved_changes_skip: true,
+                        action: "submit->skill-map#prepare" } do |form| %>
+    <div data-skill-map-target="fields"></div>
+    <%= form.button type: "submit", class: "btn btn-primary save-bar-button" do %>
+      <span data-skill-map-target="saveLabel"><%= t(".save") %></span>
+    <% end %>
+    <span class="save-bar-note"><%= t(".unsaved_note") %></span>
+  <% end %>
+</div>
 <section class="card">
   <div class="skill-map-scroll">
     <table class="skill-map" data-skill-map-target="table">
@@ -60,9 +79,6 @@
             <th scope="rowgroup" colspan="<%= @staff.size + 1 %>">
               <span class="skill-map-category-name"><%= category.name %></span>
               <span class="skill-map-operations-count"><%= t(".operations_count", count: category.operations.size) %></span>
-              <% if few_capable_count.positive? %>
-                <span class="capable-alert"><%= t(".few_capable_operations", count: few_capable_count) %></span>
-              <% end %>
             </th>
           </tr>
           <% category.operations.each do |operation| %>
@@ -72,7 +88,7 @@
                 <%# 作業ツリーのその作業へ移る。画面を移るリンクなので、見立ての下書きがあれば共通部品（unsaved-changes）が確認を出す %>
                 <%= link_to operation.name, admin_operations_path(operation_id: operation.id), class: "skill-map-operation-link" %>
                 <% if capable_count <= 1 %>
-                  <span class="capable-alert"><%= t(".capable_count", count: capable_count) %></span>
+                  <span class="capable-alert <%= capable_badge_class(capable_count) %>"><%= t(".capable_count", count: capable_count) %></span>
                 <% end %>
               </th>
               <% @staff.each do |user| %>
@@ -85,14 +101,4 @@
     </table>
   </div>
 </section>
-
-<%# 「変更を保存」の枠。見立ての下書きがあるときだけ共通部品が出す。送る直前（prepare）に下書きを hidden の入力欄にする。
-    研修画面と違い、フォームそのものを枠（.save-bar）にしている（枠の中に並べるための CSS を足さずに済むため） %>
-<%= form_with url: skills_assessment_path, method: :patch, class: "save-bar", html: { hidden: true },
-              data: { unsaved_changes_target: "bar", unsaved_changes_skip: true,
-                      action: "submit->skill-map#prepare" } do |form| %>
-  <div data-skill-map-target="fields"></div>
-  <%= form.button t(".save"), type: "submit", class: "btn btn-primary" %>
-  <span class="save-bar-note"><%= t(".unsaved_note") %></span>
-<% end %>
 </div>
