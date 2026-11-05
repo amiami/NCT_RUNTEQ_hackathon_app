@@ -11,27 +11,42 @@
         <span class="app-brand-department"><%= t("app_department") %></span>
       </span>
     <% end %>
+    <% if demo_reset_available? %>
+      <%= button_to t("demo_reset.button"), admin_demo_reset_path, method: :post,
+                    class: "btn", data: { turbo_confirm: t("demo_reset.confirm") } %>
+    <% end %>
     <% operator = operator_switch %>
-    <div role="group" aria-label="<%= t("operators.switch_label") %>" class="role-navigation">
-      <% if operator[:staff] %>
-        <%= form_with url: operator_path, method: :patch, class: "role-form" do %>
-          <%= hidden_field_tag :user_id, "", id: nil %>
-          <%= button_tag t("navigation.roles.admin"), type: "submit", class: "role-link" %>
-        <% end %>
-        <span class="role-link role-link-active"><%= t("navigation.roles.staff") %></span>
-        <%= form_with url: operator_path, method: :patch, class: "role-form" do %>
-          <%= label_tag :user_id, t("operators.label"), class: "sr-only" %>
-          <%= select_tag :user_id, options_from_collection_for_select(operator[:candidates], :id, :name, operator[:selected_id]), class: "operator-select" %>
-          <%= button_tag t("operators.submit"), type: "submit", class: "role-link" %>
-        <% end %>
-      <% else %>
-        <span class="role-link role-link-active"><%= t("navigation.roles.admin") %></span>
-        <%= form_with url: operator_path, method: :patch, class: "role-form" do %>
-          <%= hidden_field_tag :user_id, operator[:candidates].first&.id, id: nil %>
-          <%= button_tag t("navigation.roles.staff"), type: "submit", class: "role-link", disabled: operator[:candidates].empty? %>
-        <% end %>
+    <div role="group" aria-label="<%= t("operators.role_switch_label") %>" class="role-navigation">
+      <%= form_with url: operator_path, method: :patch, class: "role-form" do %>
+        <%= hidden_field_tag :user_id, "", id: nil %>
+        <%= button_tag t("navigation.roles.admin"), type: "submit",
+                       class: "role-link #{'role-link-active' unless operator[:staff]}",
+                       aria: { pressed: !operator[:staff] } %>
+      <% end %>
+      <%= form_with url: operator_path, method: :patch, class: "role-form" do %>
+        <%= hidden_field_tag :user_id, operator[:staff] ? operator[:selected_id] : operator[:candidates].first&.id, id: nil %>
+        <%= button_tag t("navigation.roles.staff"), type: "submit",
+                       class: "role-link #{'role-link-active' if operator[:staff]}",
+                       aria: { pressed: operator[:staff] }, disabled: operator[:candidates].empty? %>
       <% end %>
     </div>
+    <% if operator[:staff] %>
+      <div role="group" aria-label="<%= t("operators.switch_label") %>" class="operator-navigation">
+        <span class="operator-caption"><%= t("operators.current_label") %></span>
+        <% operator[:candidates].each do |candidate| %>
+          <% selected = candidate.id == operator[:selected_id] %>
+          <%= form_with url: operator_path, method: :patch, class: "role-form" do %>
+            <%= hidden_field_tag :user_id, candidate.id, id: nil %>
+            <%= hidden_field_tag :return_to, request.path, id: nil %>
+            <% if controller_path == "staff/operations" %>
+              <%= hidden_field_tag :operation_id, params[:operation_id], id: nil %>
+            <% end %>
+            <%= button_tag candidate.name, type: "submit", class: "operator-button #{'operator-button-active' if selected}",
+                           aria: { pressed: selected } %>
+          <% end %>
+        <% end %>
+      </div>
+    <% end %>
   </div>
   <%= render "shared/tabs", skill_map_count: local_assigns[:skill_map_count],
                             training_count: local_assigns[:training_count],

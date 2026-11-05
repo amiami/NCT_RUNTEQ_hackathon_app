@@ -29,6 +29,12 @@ RSpec.describe "研修画面（S-3）" do
     expect(response).to have_http_status(:ok)
   end
 
+  # チップの文字（レベルと名前）に、見立ての印があればその名前（読み上げ用の名前）を [ ] で付ける。例：「3 小林 [指導できる]」
+  def chip_with_mark(chip)
+    mark = chip.all(".assessment-mark").first
+    [ chip.text.squish, (mark && "[#{mark['aria-label']}]") ].compact.join(" ")
+  end
+
   describe "AC-1: カードに出す作業" do
     it "レベル0・1の人か▼の人がいる作業だけがカードで並ぶ" do
       skill_in(create(:operation, name: "給与計算"), 1, name: "吉田")
@@ -70,8 +76,41 @@ RSpec.describe "研修画面（S-3）" do
 
       open_screen
 
-      expect(card("給与計算")).to have_css(".capable-warning", exact_text: "できる人1人")
-      expect(card("入社手続き")).to have_no_css(".capable-warning")
+      expect(card("給与計算")).to have_css(".training-capable-count", exact_text: "できる人1人")
+      expect(card("入社手続き")).to have_no_css(".training-capable-count")
+    end
+
+    # 見た目（色・大きさ・位置）は作業ツリーと同じ部品でそろえる。スキルマップの警告カード（.capable-warning）の
+    # クラスを持つと、その見た目がまざって大きくずれるので、持たないことを確かめる
+    it "「できる人○人」は作業ツリーと同じ部品で出し、スキルマップの警告カードのクラスを持たない" do
+      zero = create(:operation, name: "労働保険の年度更新")
+      skill_in(zero, 0, name: "吉田")
+      one = create(:operation, name: "給与計算")
+      skill_in(one, 4, name: "山本")
+      skill_in(one, 1, name: "吉田")
+
+      open_screen
+
+      { "労働保険の年度更新" => "できる人0人", "給与計算" => "できる人1人" }.each do |name, text|
+        badge = card(name).find(".training-capable-count", exact_text: text)
+        expect(badge[:class].split).to include("operation-badge", "operation-badge-warning")
+        expect(badge[:class].split).not_to include("capable-warning", "badge", "badge-warning")
+        expect(card(name)).to have_no_css(".capable-warning")
+      end
+    end
+
+    it "できる人の数え方は変えない：レベル4の◇・▼もできる人に数える（2人なら出ず、1人なら出る）" do
+      two = create(:operation, name: "勤怠の締め")
+      skill_in(two, 4, :backup_trainer, name: "中村")
+      skill_in(two, 4, :needs_training, name: "高橋")
+      one = create(:operation, name: "年末調整")
+      skill_in(one, 4, :backup_trainer, name: "山本")
+      skill_in(one, 0, name: "吉田")
+
+      open_screen
+
+      expect(card("勤怠の締め")).to have_no_css(".training-capable-count")
+      expect(card("年末調整")).to have_css(".training-capable-count", exact_text: "できる人1人")
     end
 
     it "できる人が1人以下の作業のカードは、枠の色を変えて目立たせる" do
@@ -141,8 +180,8 @@ RSpec.describe "研修画面（S-3）" do
     it "教える人が #58 の順で並び、▲・◇は今のレベルで意味があるときだけ出る。管理者はレベルなしで最後" do
       open_screen
 
-      trainers = card("勤怠の締め").all(".trainer-chip").map { |chip| chip.text.squish }
-      expect(trainers).to eq [ "4 山本", "4 佐藤", "4 田中", "3 小林 ▲", "4 中村 ◇", "管理者" ]
+      trainers = card("勤怠の締め").all(".trainer-chip").map { |chip| chip_with_mark(chip) }
+      expect(trainers).to eq [ "4 山本", "4 佐藤", "4 田中", "3 小林 [指導できる]", "4 中村 [指導に不安あり]", "管理者" ]
     end
 
     # 凡例（ページの上）は main 側で直すので、ここではカードの中だけを確かめる
@@ -158,8 +197,8 @@ RSpec.describe "研修画面（S-3）" do
     it "未研修に、レベル0・1と▼の人が並び、▼が名前の横に出る" do
       open_screen
 
-      trainees = card("勤怠の締め").all(".trainee-chip").map { |chip| chip.text.squish }
-      expect(trainees).to eq [ "0 吉田", "3 加藤 ▼", "4 高橋 ▼" ]
+      trainees = card("勤怠の締め").all(".trainee-chip").map { |chip| chip_with_mark(chip) }
+      expect(trainees).to eq [ "0 吉田", "3 加藤 [要研修]", "4 高橋 [要研修]" ]
     end
 
     it "未研修の人がいなければ「対象者なし」と出る" do
@@ -325,6 +364,41 @@ RSpec.describe "研修画面（S-3）" do
       expect(card.find(".trainee-chip", text: "吉田")["data-trainee-id"]).to eq yoshida.id.to_s
       expect(card.find(".plan-chip", text: "加藤")["data-training-id"]).to eq saved.id.to_s
       expect(card.find("input[type=date]")["data-initial-value"]).to eq ""
+    end
+
+    # 下書きのチップは JavaScript が <template> を写して作る。<template> の中身は Capybara の HTML 解析では空になるので、
+    # レスポンスの HTML から中身を切り出して読む
+    def plan_template_chip
+      template_html = response.body[%r{<template[^>]*planTemplate[^>]*>(.*?)</template>}m, 1]
+      Capybara.string(template_html).find(".plan-chip-draft", visible: :all)
+    end
+
+    # 押せるのはチップ全体で、「×」は押せる場所を示す飾り（#158）
+    it "下書きのチップのひな形に、飾りの「×」が名前の右にある。「×」は押す対象ではなく、チップ全体のボタンは今までと同じ" do
+      chip = plan_template_chip
+
+      expect(chip.tag_name).to eq "button"
+      expect(chip["data-action"]).to eq "training-draft#removeDraft"
+      head = chip.find(".plan-chip-head", visible: :all)
+      expect(head).to have_css(".plan-chip-names", visible: :all)
+      remove = head.find(".plan-chip-remove", visible: :all)
+      expect(remove.text(:all)).to eq "×"
+      expect(remove["aria-hidden"]).to eq "true"
+      expect(remove["data-action"]).to be_nil
+      expect(remove).to have_no_css("button, a", visible: :all)
+    end
+
+    it "下書きのチップの読み上げ（aria-label）の文言は、画面のルートから Stimulus の値で渡す（名前は JavaScript がチップを作るときに入れる）" do
+      expect(page.find(".training-layout")["data-training-draft-remove-plan-label-value"])
+        .to eq "%{trainer} → %{trainee} の予定を取り消す"
+      expect(plan_template_chip["aria-label"]).to be_nil
+    end
+
+    it "保存済みのチップには「×」がなく、読み上げの名前も今までどおり" do
+      saved_chip = card("給与計算").find(".plan-chip", text: "加藤")
+
+      expect(saved_chip).to have_no_css(".plan-chip-remove", visible: :all)
+      expect(saved_chip["aria-label"]).to eq "山本 から 加藤 への研修予定"
     end
 
     it "右の一覧の未完了の予定に、取り消しの下書きにする「取り消す」ボタンがある（スタッフが担当の予定にも）" do

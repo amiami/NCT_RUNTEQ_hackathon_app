@@ -14,17 +14,12 @@
     <dl class="skill-detail-items">
       <div>
         <dt><%= t(".manual_status") %></dt>
-        <dd class="skill-detail-manual-status"><%= t(".manual_statuses.#{@skill.manual_status}") %></dd>
+        <%# 確認状況と研修の文は、作業ツリーのスタッフ状況と同じヘルパー（SkillsHelper）で出す %>
+        <dd class="skill-detail-manual-status"><%= skill_manual_status_label(@skill) %></dd>
       </div>
       <div>
         <dt><%= t(".training") %></dt>
-        <dd class="skill-detail-training">
-          <% if (training = @skill.latest_done_training) %>
-            <%= t(".trainings.done", trainer: training.trainer.admin? ? training.trainer.name : t(".staff_name", name: training.trainer.name), date: l(training.done_on)) %>
-          <% else %>
-            <%= t(".trainings.#{@skill.training_status}") %>
-          <% end %>
-        </dd>
+        <dd class="skill-detail-training"><%= skill_training_label(@skill) %></dd>
       </div>
       <div>
         <dt><%= t(".admin_assessment") %></dt>

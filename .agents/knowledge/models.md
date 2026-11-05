@@ -28,3 +28,6 @@
 - 教える予定（申告済みの判定つき）は `TrainingBoard.assigned_trainings(Training.where(trainer: user))`、教わる予定は `Training.learning_for(user)`（未完了 → 完了した予定は作業ごとに最新の1件）。条件を書き直さない。（2026-11-02）
 - わたしのスキルの一覧は `MySkillList.for(user)`（レベルごとの件数と、分類ごとの行）→ 「研修済み」は `Skill#training_status`、「再確認」は `Skill#unread?` を使う。`latest_done_training` は1件ずつ問い合わせるので、一覧では `Training.latest_done` をまとめて読んで `skill.latest_done_training = …`（`attr_writer`）で先に入れる。（2026-11-03）
 - 改訂履歴の並び順は `ManualRevision.newest_first`（`created_at` → `id` の新しい順）。一覧では `includes(manual: :operation)` で作業名と種類を先読みする。改訂の記録は種類を持たないので、種類はマニュアルの今の `kind` を出す。（2026-11-03）
+- 見立ての保存（`Skills::AssessmentUpdate`）は、トランザクションの中でスキルを ID の順にロックして読み直してから、付けられるレベルかを確かめる → ロックの外で確かめると、自己申告と同時のときに古いレベルのまま 4▲ などが保存される。複数の行をロックするときは、デッドロックを避けるために ID の順にそろえる。（2026-11-03）
+- マニュアル確認状況・研修は `Skill#manual_status`・`#training_status` で判定し、文は `SkillsHelper#skill_manual_status_label`・`#skill_training_label`（文言は `skill_statuses`）で出す → 作業ツリーのスタッフ状況（`OperationStaffStatus.rows` は人ごとに `Skill` を返す。スキルがない人は保存しないレベル0の `Skill`）とスキルマップの詳細で共通。判定や「さん」のきまりを画面ごとに書かない。（2026-11-04）
+- `operation.skills` で読んだスキルは、渡された `operation` の中に残る（同じオブジェクトでもう一度読むと、あとから増えたスキルが入らない）→ サービスで読むときは `Skill.where(operation:)` を使う。（2026-11-04）

@@ -97,6 +97,49 @@ RSpec.describe "作業ごとのスタッフ状況" do
     expect(panel).to have_text("スタッフが登録されていません")
   end
 
+  describe "AC-1: スキルマップのマスの詳細と同じ表示" do
+    # スタッフ状況の行の、確認状況のバッジと研修の文（「研修：」の前置きは除く）
+    def staff_status_texts(name)
+      details = row(name).find(".operation-staff-status-details")
+      [ details.find(".operation-badge").text, details.find("span:last-child").text.delete_prefix("研修：") ]
+    end
+
+    def skill_detail_texts(skill)
+      get admin_skill_path(skill)
+      detail = Capybara.string(response.body)
+      [ detail.find(".skill-detail-manual-status").text, detail.find(".skill-detail-training").text.strip ]
+    end
+
+    # 教わる人として登録できるよう、教わる人のスキルはレベル0のときに研修を作り、あとでレベルと確認した版を変える
+    def create_trainee(name, trainer:, level:, confirmed_version:)
+      skill = create(:skill, user: create(:user, name:), operation:, level: 0)
+      create(:skill, user: trainer, operation:, level: 4) unless trainer.admin? || Skill.exists?(user: trainer, operation:)
+      create(:training, operation:, trainer:, trainee: skill.user, status: :done, done_on: Date.new(2026, 10, 2))
+      skill.tap { |s| s.update!(level:, confirmed_version:) }
+    end
+
+    it "同じ人・作業なら、確認状況と研修の文が同じになる" do
+      staff_trainer = create(:user, name: "教えた人")
+      skills = [
+        create_trainee("管理者から教わった人", trainer: manager, level: 2, confirmed_version: 2),
+        create_trainee("スタッフから教わった人", trainer: staff_trainer, level: 2, confirmed_version: 1),
+        create(:skill, user: create(:user, name: "自分で習得した人"), operation:, level: 4, confirmed_version: 2),
+        create(:skill, user: create(:user, name: "まだの人"), operation:, level: 1, confirmed_version: nil)
+      ]
+
+      show_status
+      from_staff_status = skills.to_h { |skill| [ skill.user.name, staff_status_texts(skill.user.name) ] }
+
+      expect(from_staff_status).to eq(skills.to_h { |skill| [ skill.user.name, skill_detail_texts(skill) ] })
+      expect(from_staff_status).to eq(
+        "管理者から教わった人" => [ "確認済み", "済み（管理者から・2026/10/02）" ],
+        "スタッフから教わった人" => [ "改定後 未確認", "済み（教えた人さんから・2026/10/02）" ],
+        "自分で習得した人" => [ "確認済み", "なし（自分で習得）" ],
+        "まだの人" => [ "未確認", "まだ" ]
+      )
+    end
+  end
+
   it "マニュアル未登録でもスタッフ状況を表示できる" do
     create(:user, name: "対象者")
     get admin_operations_path, params: { operation_id: create(:operation).id }

@@ -27,8 +27,10 @@
 <% end %>
 
 <%# マスの詳細を入れる枠。表のカードの外（上）に置き、マスを押すと admin/skills/show の同じ id の枠の中身に入れ替わる。
-    下のほうのマスを押したときも詳細が見えるよう、入れ替わったら枠までスクロールする（Turbo の autoscroll。見えていれば動かない） %>
-<%= turbo_frame_tag "skill_detail", autoscroll: true, data: { autoscroll_block: "nearest", autoscroll_behavior: "smooth" } %>
+    広い画面では、表をスクロールしても画面の上に残す（.skill-detail-frame）。マスを続けて直すときに、詳細と表を行き来しなくて済むように。
+    狭い画面では残さないので、下のほうのマスを押したときも詳細が見えるよう、入れ替わったら枠までスクロールする
+    （Turbo の autoscroll。上に残っているときは見えているので動かない） %>
+<%= turbo_frame_tag "skill_detail", class: "skill-detail-frame", autoscroll: true, data: { autoscroll_block: "nearest", autoscroll_behavior: "smooth" } %>
 <section class="card">
   <div class="skill-map-scroll">
     <table class="skill-map" data-skill-map-target="table">
@@ -67,7 +69,8 @@
             <% capable_count = @capable_counts.fetch(operation.id, 0) %>
             <tr data-few-capable="<%= capable_count <= 1 %>">
               <th scope="row" class="skill-map-operation">
-                <span><%= operation.name %></span>
+                <%# 作業ツリーのその作業へ移る。画面を移るリンクなので、見立ての下書きがあれば共通部品（unsaved-changes）が確認を出す %>
+                <%= link_to operation.name, admin_operations_path(operation_id: operation.id), class: "skill-map-operation-link" %>
                 <% if capable_count <= 1 %>
                   <span class="capable-alert"><%= t(".capable_count", count: capable_count) %></span>
                 <% end %>

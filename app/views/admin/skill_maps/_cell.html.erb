@@ -7,7 +7,8 @@
                                          data: { turbo_frame: "skill_detail", skill_map_target: "cell", action: "skill-map#select",
                                                  skill_id: skill.id } do %>
       <span><%= skill.level %></span>
-      <%= render "admin/shared/assessment_mark", skill: %>
+      <%# 管理者の見立ての印（右上）。今のレベルで意味のある見立てのときだけ出し、それ以外は値も HTML に出さない %>
+      <%= assessment_mark(skill) %>
       <% if skill.unread? %>
         <span class="skill-map-unread" title="<%= t(".unread_description") %>"><%= t(".unread") %></span>
       <% end %>

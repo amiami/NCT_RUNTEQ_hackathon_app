@@ -24,11 +24,14 @@
     <% if admin %>
       <div class="mt-3 border-t border-line pt-3">
         <p class="font-bold">管理者の見立て</p>
+        <%# マスや名前の横と同じアイコンと、admin_assessments の名前を並べる %>
         <ul class="mt-2 flex flex-wrap gap-x-6 gap-y-2">
-          <li>▲ 指導できる</li>
-          <li>▼ 要研修</li>
-          <li>▽ 研修済み（▼から研修を受け終えた）</li>
-          <li>◇ 指導に不安あり</li>
+          <% Skill.admin_assessments.each_key do |assessment| %>
+            <li class="assessment-legend-item">
+              <%= assessment_icon(assessment, labelled: false) %>
+              <span><%= t("admin_assessments.#{assessment}.label") %></span>
+            </li>
+          <% end %>
         </ul>
       </div>
     <% end %>

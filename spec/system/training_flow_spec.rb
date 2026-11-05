@@ -20,16 +20,15 @@ RSpec.describe "研修の流れ", :js do
     within('nav[aria-label="画面切り替え"]') { click_link label }
   end
 
-  # 右上の切り替えで、操作する人をスタッフに切り替える（画面の操作）。
-  # 部長のときはプルダウンがないので、先に「スタッフ」を押してから、プルダウンで選んで「切り替え」を押す。
-  # #126 で切り替えがスタッフ名のボタンになったら、ここを直す
+  # 立場のスイッチをスタッフにしてから、名前のボタンで操作する人を切り替える。
   def switch_operator_to(name)
-    within(%([role="group"][aria-label="#{I18n.t('operators.switch_label')}"])) do
-      click_button I18n.t("navigation.roles.staff") unless has_select?(I18n.t("operators.label"), wait: 0)
-      select name, from: I18n.t("operators.label")
-      click_button I18n.t("operators.submit")
+    unless has_css?(".operator-navigation", wait: 0)
+      within(".role-navigation") { click_button I18n.t("navigation.roles.staff") }
     end
-    expect(page).to have_select(I18n.t("operators.label"), selected: name)
+    within(%([role="group"][aria-label="#{I18n.t('operators.switch_label')}"])) do
+      click_button name
+    end
+    expect(page).to have_css('button[aria-pressed="true"]', text: name)
   end
 
   context "下書きの動き（テスト用のデータ）" do
@@ -70,6 +69,9 @@ RSpec.describe "研修の流れ", :js do
         find(".trainer-chip", text: "管理者").click
 
         expect(page).to have_css(".plan-chip", text: "管理者 → 吉田")
+        # 下書きのチップには飾りの「×」があり、読み上げの名前は「予定を取り消す」になる（#158）
+        expect(page).to have_css(".plan-chip .plan-chip-remove", text: "×")
+        expect(page).to have_button("管理者 → 吉田 の予定を取り消す")
         expect(page).to have_no_css(".trainee-chip", text: "吉田")
         expect(page).to have_css(".trainee-chip", text: "加藤")
       end
@@ -151,6 +153,13 @@ RSpec.describe "研修の流れ", :js do
       # 1. 部長で研修画面を開き、山本 → 吉田 の下書きを作る
       visit admin_trainings_path
       draft_training_from_yamamoto_to_yoshida
+
+      # 立場のスイッチでの離脱も確認し、キャンセルなら下書きと操作中ユーザーを保つ。
+      dismiss_confirm("変更は保存されませんがよろしいですか？") do
+        within(".role-navigation") { click_button I18n.t("navigation.roles.staff") }
+      end
+      expect(page).to have_current_path(admin_trainings_path)
+      expect(page).to have_css(".plan-chip", text: "山本 直子 → 吉田 あかり")
 
       # 2. 保存せずに「スキルマップ」タブへ移る。共通部品の確認を受け入れて移る
       accept_confirm("変更は保存されませんがよろしいですか？") { click_tab "スキルマップ" }

@@ -169,4 +169,29 @@ RSpec.describe Skills::AssessmentUpdate do
       expect(other.reload.admin_assessment).to eq "needs_training"
     end
   end
+
+  describe "自己申告などと同時に保存したとき" do
+    it "下書きのあとにレベルが変わっていたら、保存の時点のレベルで確かめ、付けられない見立ては保存しない" do
+      skill = create(:skill, level: 3)
+      service = update(skill.id => "can_train")
+      skill.update!(level: 4) # 部長が「変更を保存」を押す前に、本人がレベル4を申告した
+
+      expect(service.save).to be false
+      expect(service.errors).to be_present
+      expect(skill.reload.admin_assessment).to be_nil
+    end
+
+    it "スキルを ID の順にロックして読み直してから確かめる（確かめたあとに、ほかの操作でレベルが変わらない）" do
+      skills = create_list(:skill, 2, level: 3)
+      service = update(skills.last.id => "can_train", skills.first.id => "needs_training")
+      queries = []
+      collect = ->(*, payload) { queries << payload[:sql] if payload[:sql].match?(/\b(FROM|UPDATE) "skills"/) }
+
+      ActiveSupport::Notifications.subscribed(collect, "sql.active_record") { service.save }
+
+      # スキルを読むのは、ロック付きの1回だけ。そのあとに保存する
+      expect(queries.grep(/\ASELECT/)).to contain_exactly(a_string_matching(/ORDER BY "skills"\."id" ASC.*FOR UPDATE/))
+      expect(queries.index { |sql| sql.start_with?("SELECT") }).to be < queries.index { |sql| sql.start_with?("UPDATE") }
+    end
+  end
 end

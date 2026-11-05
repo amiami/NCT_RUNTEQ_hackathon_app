@@ -35,10 +35,11 @@
   --color-skill-0: #EEF0F3;
   --color-skill-1: #E3EDFB;
   --color-skill-2: #C7DAF6;
-  --color-skill-3: #9FC0EE;
-  --color-skill-4: #6E9FE3;
+  --color-skill-3: #6E9FE3;
+  --color-skill-4: #1F5FBF;
   --color-skill-content: #1E3A5F;
   --color-skill-strong-content: #0B2545;
+  --color-skill-max-content: #FFFFFF; /* 最上位レベルの数字 */
   --color-skill-bar: #1F5FBF; /* わたしのスキルの4段のバーの、塗った段 */
   --color-trained: #ECFDF5; /* 「研修済み」のバッジ（わたしのスキル） */
   --color-trained-content: #065F46;
@@ -102,7 +103,7 @@
   }
 
   .role-navigation {
-    @apply flex items-center gap-1 rounded-[10px] bg-control-background p-1;
+    @apply flex flex-wrap items-center gap-1 rounded-[10px] bg-control-background p-1;
   }
 
   .role-link {
@@ -118,8 +119,20 @@
     @apply flex items-center gap-1;
   }
 
-  .operator-select {
-    @apply min-h-11 rounded-lg border border-control-line bg-base-100 px-3 text-sm leading-[normal] text-base-content;
+  .operator-navigation {
+    @apply flex flex-wrap items-center gap-1.5;
+  }
+
+  .operator-caption {
+    @apply text-xs leading-[normal] text-muted;
+  }
+
+  .operator-button {
+    @apply min-h-10 cursor-pointer rounded-full border border-control-line bg-base-100 px-3.5 py-2 text-[13px] leading-[normal] text-legend-content;
+  }
+
+  .operator-button-active {
+    @apply border-primary bg-primary text-primary-content;
   }
 
   .page-navigation {
@@ -191,7 +204,7 @@
   }
 
   .skill-level-4 {
-    @apply bg-skill-4 text-skill-strong-content;
+    @apply bg-skill-4 text-skill-max-content;
   }
 
   .flash-message {
@@ -251,6 +264,11 @@
     @apply px-2 text-left font-medium;
   }
 
+  /* 作業名は作業ツリーへのリンク。表が目立ちすぎないよう普段は文字のまま、マウスを乗せたとき・キーボードで選んだときに青い文字と下線を出す */
+  .skill-map-operation-link {
+    @apply hover:text-link hover:underline focus-visible:text-link focus-visible:underline;
+  }
+
   /* 管理者の見立ての印を右上の角に重ねるので relative にしておく */
   .skill-map-cell {
     @apply relative flex min-h-12 min-w-14 flex-col items-center justify-center gap-0.5 rounded-lg p-1 text-[15px] font-bold;
@@ -258,23 +276,34 @@
 
   /* 見立ての印は右上の角に置く。レベルと「未読」は中央に縦に並ぶので重ならない */
   .skill-map-cell > .assessment-mark {
-    @apply absolute top-0.5 right-1;
+    @apply absolute top-1 right-1.5;
   }
 
   .skill-map-unread {
     @apply rounded bg-unread px-1 text-[10px] leading-[15px] font-bold text-unread-content;
   }
 
-  /* 管理者の見立ての印（▲・▼・▽・◇）。置き場所は使う側で決める（スキルマップはマスの右上） */
+  /* 管理者の見立ての印（▲・▼・▽・◇ のアイコン。AdminAssessmentsHelper）。置き場所は使う側で決める（スキルマップはマスの右上）。
+     押せるように見えないよう土台は付けない。色はまわりの文字の色（マスなら数字と同じ色で、レベル4の濃い青の上では白） */
   .assessment-mark {
-    @apply cursor-help text-xs leading-none font-bold text-skill-strong-content;
+    @apply inline-flex size-3.5 shrink-0 items-center justify-center;
+  }
+
+  .assessment-mark > svg {
+    @apply size-full;
+  }
+
+  /* 凡例の見立て：アイコンと名前を横に並べる */
+  .assessment-legend-item {
+    @apply inline-flex items-center gap-1.5;
   }
 
   .capable-alert {
     @apply ml-2 inline-flex items-center rounded-md bg-capable-alert px-1.5 py-0.5 text-[11px] font-bold whitespace-nowrap text-capable-alert-content;
   }
 
-  /* 表のカードの上の警告（できる人が1人以下の作業があるときだけ出る）。.card と組み合わせて使う */
+  /* 表のカードの上の警告（できる人が1人以下の作業があるときだけ出る）。.card と組み合わせて使う。
+     スキルマップ専用。研修画面の「できる人○人」には使わない（余白や背景がまざって見た目がずれる。そちらは operation-badge を使う） */
   .capable-warning {
     @apply mb-4 flex flex-wrap items-center gap-3 border-capable-alert bg-capable-warning px-[18px] py-3.5;
   }
@@ -317,6 +346,14 @@
   }
 
   /* マスの詳細。表のカードの上に別のカードとして出し、枠の色で表のカードと区別する */
+  /* マスの詳細を入れる枠。広い画面（md 以上）では、表をスクロールしても画面の上に残す。
+     狭い画面で残すと、詳細が縦に伸びて表がほとんど見えなくなるので残さない。
+     turbo-frame は何も指定しないと inline で sticky が効かないので flow-root にする（中の詳細の mb-4 も枠の高さに入り、
+     その分も背景で塗られて、下を流れる表が透けない） */
+  .skill-detail-frame {
+    @apply flow-root bg-base-200 md:sticky md:top-0 md:z-5;
+  }
+
   .skill-detail {
     @apply mb-4 border-primary p-4;
   }
@@ -410,7 +447,7 @@
   }
 
   .training-card-title {
-    @apply flex flex-wrap items-center gap-2.5 px-3.5 py-2.5 text-[17px] font-bold;
+    @apply flex flex-wrap items-center gap-2 px-3.5 py-2.5 text-[17px] font-bold;
   }
 
   /* 日付の列だけ狭くする。狭い画面では2列ずつに折り返す */
@@ -463,7 +500,7 @@
     @apply text-sm leading-[normal] text-muted;
   }
 
-  /* 見立ての印の大きさ・太さはスキルマップと共通（.assessment-mark）。研修画面ではチップの文字の色にそろえる */
+  /* 見立ての印の形と大きさはスキルマップと共通（.assessment-mark）。研修画面では、名前と少し区別がつくよう紺にする */
   .training-layout .assessment-mark {
     @apply text-secondary-content;
   }
@@ -516,8 +553,7 @@
 
 @layer components {
   .operation-browser {
-    @apply grid items-start gap-5;
-    grid-template-columns: minmax(280px, 380px) minmax(0, 1fr);
+    @apply grid grid-cols-1 items-start gap-5 lg:grid-cols-[minmax(280px,380px)_minmax(0,1fr)];
   }
 
   .operation-tree-panel {
@@ -656,7 +692,7 @@
   }
 
   .operation-confirmation-summary {
-    @apply flex flex-wrap items-center gap-6;
+    @apply flex flex-wrap items-start gap-x-6 gap-y-3;
   }
 
   .operation-confirmation-caption {
@@ -672,7 +708,7 @@
   }
 
   .operation-confirmation-hint {
-    @apply min-w-0 flex-1 basis-[200px] text-[13px] text-legend-content;
+    @apply min-w-0 flex-1 basis-[200px] text-xs text-legend-content;
   }
 
   .operation-confirm-button {
@@ -752,10 +788,6 @@
     @apply flex items-center gap-2;
   }
 
-  .operation-staff-status-avatar {
-    @apply flex size-7 shrink-0 items-center justify-center rounded-full bg-secondary text-xs font-bold text-secondary-content;
-  }
-
   .operation-staff-status-level {
     @apply flex items-center gap-1.5;
   }
@@ -777,6 +809,12 @@
     @apply fixed right-6 bottom-6 z-10 flex items-center gap-3 rounded-xl border border-line bg-base-100 px-4 py-3 shadow-lg;
   }
 
+  /* 枠が出ているあいだだけ、枠のすぐ外側の要素の下に、枠の分の余白を取る。
+     一番下までスクロールしたときに、表の最後の行やカードが枠の下に隠れて押せなくならないように */
+  :has(> .save-bar:not([hidden])) {
+    @apply pb-28;
+  }
+
   /* 「（まだ保存されていません!）」などの小さな文言 */
   .save-bar-note {
     @apply text-xs font-bold text-notification;
@@ -793,6 +831,21 @@
   /* 下書きで追加した予定（まだ保存していない）。点線の枠で保存済みと見分ける */
   .plan-chip-draft {
     @apply border border-dashed border-secondary-content;
+  }
+
+  /* 下書きのチップの1行目：名前と「×」を横に並べる（期限は下の行） */
+  .plan-chip-head {
+    @apply flex items-center gap-2;
+  }
+
+  /* 取り消せることを示す飾りの「×」。押せるのはチップ全体。ふだんは薄く、チップにマウスを乗せる・キーボードで選ぶと赤くなる */
+  .plan-chip-remove {
+    @apply text-sm leading-none font-bold text-secondary-content/60;
+  }
+
+  .plan-chip-draft:hover .plan-chip-remove,
+  .plan-chip-draft:focus-visible .plan-chip-remove {
+    @apply text-error;
   }
 
   /* 取り消す下書きにした保存済みの予定 */

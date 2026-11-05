@@ -10,13 +10,4 @@ module TrainingsHelper
   def training_due_label(date)
     date ? t("training_due_on.date", date: l(date)) : t("training_due_on.none")
   end
-
-  # 管理者の見立ての記号（▲・▼・▽・◇）。今のレベルで意味のある見立てだけ出す（Skill#assessment_meaningful?）。
-  # 管理者の画面だけで使う。スタッフの画面では呼ばない（HTML の属性にも出さない）
-  def assessment_mark(skill)
-    return unless skill.assessment_meaningful?
-
-    key = skill.admin_assessment
-    tag.span(t("admin_assessments.#{key}.mark"), class: "assessment-mark", title: t("admin_assessments.#{key}.label"))
-  end
 end

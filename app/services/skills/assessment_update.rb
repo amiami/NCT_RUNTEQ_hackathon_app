@@ -20,17 +20,18 @@ module Skills
     end
 
     def save
-      changed = Skill.includes(:user, :operation).find(@assessments.keys).reject do |skill|
-        skill.admin_assessment == @assessments[skill.id]
-      end
-      changed.each { |skill| check_assignable(skill, @assessments[skill.id]) }
-      return false if errors.any?
-
-      now = Time.current
       Skill.transaction do
+        # 確かめたあとに自己申告などでレベルが変わらないよう、スキルをロックしてから読み直して確かめる。
+        # 2つの保存が互いのロックを待ち続けないよう、ロックは ID の順にかける
+        skills = Skill.lock.includes(:user, :operation).order(:id).find(@assessments.keys)
+        changed = skills.reject { |skill| skill.admin_assessment == @assessments[skill.id] }
+        changed.each { |skill| check_assignable(skill, @assessments[skill.id]) }
+        raise ActiveRecord::Rollback if errors.any?
+
+        now = Time.current
         changed.each { |skill| apply(skill, @assessments[skill.id], now) }
       end
-      true
+      errors.empty?
     end
 
     private
