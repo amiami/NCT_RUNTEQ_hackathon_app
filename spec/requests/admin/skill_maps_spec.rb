@@ -89,8 +89,11 @@ RSpec.describe "スキルマップ（管理者）" do
       expect(row(joining)).to have_no_css(".capable-alert")
     end
 
-    it "分類の見出しに、できる人が1人以下の作業の件数が出る" do
-      expect(document.find("tr.skill-map-category", text: "勤怠・給与")).to have_css(".capable-alert", exact_text: "できる人1人以下 2件")
+    it "できる人が1人以下の作業があっても、分類の見出しには分類名と作業の数だけが出る" do
+      heading = document.find("tr.skill-map-category", text: "勤怠・給与")
+
+      expect(heading.text.squish).to eq "勤怠・給与 2作業"
+      expect(heading).to have_no_css(".capable-alert")
     end
 
     it "できる人が1人以下の作業がない分類の見出しには出ない" do

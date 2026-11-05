@@ -60,9 +60,6 @@
             <th scope="rowgroup" colspan="<%= @staff.size + 1 %>">
               <span class="skill-map-category-name"><%= category.name %></span>
               <span class="skill-map-operations-count"><%= t(".operations_count", count: category.operations.size) %></span>
-              <% if few_capable_count.positive? %>
-                <span class="capable-alert"><%= t(".few_capable_operations", count: few_capable_count) %></span>
-              <% end %>
             </th>
           </tr>
           <% category.operations.each do |operation| %>
