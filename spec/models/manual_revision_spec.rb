@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe ManualRevision do
   describe "バリデーション" do
-    it "マニュアル・改定した人・版があれば保存できる" do
+    it "マニュアル・改訂した人・版があれば保存できる" do
       expect(build(:manual_revision)).to be_valid
     end
 
@@ -14,7 +14,7 @@ RSpec.describe ManualRevision do
       expect(build(:manual_revision, manual: nil)).not_to be_valid
     end
 
-    it "改定した人がいないと保存できない" do
+    it "改訂した人がいないと保存できない" do
       expect(build(:manual_revision, user: nil)).not_to be_valid
     end
 

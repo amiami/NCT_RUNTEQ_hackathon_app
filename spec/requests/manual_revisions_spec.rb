@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "アプリ内マニュアルの改定" do
+RSpec.describe "アプリ内マニュアルの改訂" do
   let!(:manager) { create(:user, :admin) }
   let!(:manual) { create(:manual, body: "古い手順\n確認する") }
   let(:operation) { manual.operation }
@@ -13,13 +13,13 @@ RSpec.describe "アプリ内マニュアルの改定" do
 
   it "管理者の内部マニュアルに編集リンクがあり、現在の手順が入った編集欄を開く" do
     get admin_operations_path, params: { operation_id: operation.id }
-    expect(Capybara.string(response.body)).to have_link("手順を書き直す（改定）", href: edit_admin_operation_manual_path(operation))
+    expect(Capybara.string(response.body)).to have_link("手順を書き直す（改訂）", href: edit_admin_operation_manual_path(operation))
     get edit_admin_operation_manual_path(operation)
     expect(response).to have_http_status(:ok)
     expect(Capybara.string(response.body)).to have_field("手順（1行＝1ステップ）", with: manual.body)
-    expect(Capybara.string(response.body)).to have_field("改定メモ")
+    expect(Capybara.string(response.body)).to have_field("改訂メモ")
     document = Capybara.string(response.body)
-    expect(document).to have_button("改定して保存", disabled: true)
+    expect(document).to have_button("改訂して保存", disabled: true)
     expect(document).to have_css("textarea[name='manual[body]'][required]")
     expect(document).to have_css("input[name='manual[memo]'][required]")
     form = document.find("form.operation-revision-form")
@@ -28,10 +28,10 @@ RSpec.describe "アプリ内マニュアルの改定" do
     expect(form.find("input[type='submit']", visible: :all)["data-unsaved-changes-skip"]).to eq("true")
     expect(form["data-unsaved-changes-confirm-message-value"]).to eq("変更は保存されませんがよろしいですか？")
     expect(document).to have_css("meta[name='turbo-cache-control'][content='no-cache']", visible: :all)
-    expect(document.find("form.operation-revision-form")["data-turbo-confirm"]).to eq("この内容でマニュアルを改定します。よろしいですか？")
+    expect(document.find("form.operation-revision-form")["data-turbo-confirm"]).to eq("この内容でマニュアルを改訂します。よろしいですか？")
   end
 
-  it "改定編集画面でも作業ツリーだけを現在のタブとして強調する" do
+  it "改訂編集画面でも作業ツリーだけを現在のタブとして強調する" do
     get edit_admin_operation_manual_path(operation)
     document = Capybara.string(response.body)
     expect(document).to have_css('nav[aria-label="画面切り替え"] a.page-tab-active[aria-current="page"]', count: 1,
@@ -39,7 +39,7 @@ RSpec.describe "アプリ内マニュアルの改定" do
     expect(document.find_link("作業ツリー（マニュアル）")[:href]).to eq(admin_operations_path)
   end
 
-  it "保存後は選択した作業に戻り、版・改定日・手順が反映される" do
+  it "保存後は選択した作業に戻り、版・改訂日・手順が反映される" do
     travel_to Time.zone.local(2026, 11, 2, 10) do
       expect { revise }.to change(ManualRevision, :count).by(1)
       expect(response).to redirect_to(admin_operations_path(operation_id: operation.id))
@@ -48,7 +48,7 @@ RSpec.describe "アプリ内マニュアルの改定" do
       expect(manual.manual_revisions.sole.user).to eq(manager)
       follow_redirect!
       expect(Capybara.string(response.body)).to have_css("li", text: "新しい手順")
-      expect(response.body).to include("第2版", "最終改定：2026/11/02")
+      expect(response.body).to include("第2版", "最終改訂：2026/11/02")
     end
   end
 
@@ -56,14 +56,14 @@ RSpec.describe "アプリ内マニュアルの改定" do
     expect { revise(body: "  \n") }.not_to change(ManualRevision, :count)
     expect(response).to have_http_status(:unprocessable_content)
     expect(Capybara.string(response.body)).to have_css("[role='alert']", text: "手順を入力してください")
-    expect(Capybara.string(response.body)).to have_field("改定メモ", with: "書類を変更")
+    expect(Capybara.string(response.body)).to have_field("改訂メモ", with: "書類を変更")
     expect(manual.reload.version).to eq(1)
   end
 
   it "手順が同じなら保存せず、メモとエラーを再表示する" do
     expect { revise(body: manual.body) }.not_to change(ManualRevision, :count)
     expect(response).to have_http_status(:unprocessable_content)
-    expect(Capybara.string(response.body)).to have_field("改定メモ", with: "書類を変更")
+    expect(Capybara.string(response.body)).to have_field("改訂メモ", with: "書類を変更")
     expect(manual.reload.version).to eq(1)
   end
 
@@ -74,7 +74,7 @@ RSpec.describe "アプリ内マニュアルの改定" do
     expect(manual.reload.version).to eq(1)
   end
 
-  it "編集中に改定されたら古い入力で上書きしない" do
+  it "編集中に改訂されたら古い入力で上書きしない" do
     revise
     revise(body: "上書き")
     expect(response).to have_http_status(:conflict)
@@ -82,7 +82,7 @@ RSpec.describe "アプリ内マニュアルの改定" do
     expect(manual.manual_revisions.count).to eq(1)
   end
 
-  it "スタッフには編集リンクがなく、直接開いても更新しても改定できない" do
+  it "スタッフには編集リンクがなく、直接開いても更新しても改訂できない" do
     staff = create(:user)
     patch operator_path, params: { user_id: staff.id }
     get staff_operations_path, params: { operation_id: operation.id }

@@ -59,14 +59,14 @@ RSpec.describe ManualReviser do
     expect(manual.manual_revisions).to be_empty
   end
 
-  it "古い編集画面からの再送で上書きや重複改定をしない" do
+  it "古い編集画面からの再送で上書きや重複改訂をしない" do
     revise
     expect { revise }.to raise_error(described_class::StaleVersion)
     expect(manual.reload.version).to eq(2)
     expect(manual.manual_revisions.count).to eq(1)
   end
 
-  it "スタッフと未選択のユーザーは改定できない" do
+  it "スタッフと未選択のユーザーは改訂できない" do
     [ create(:user), nil ].each do |user|
       expect { revise(user: user) }.to raise_error(described_class::NotAdmin)
     end
@@ -100,7 +100,7 @@ RSpec.describe ManualReviser do
       expect(manual.manual_revisions).to be_empty
     end
 
-    it "スタッフは外部サイトも改定できない" do
+    it "スタッフは外部サイトも改訂できない" do
       expect { revise(user: create(:user)) }.to raise_error(described_class::NotAdmin)
       expect(manual.reload.version).to eq(1)
     end

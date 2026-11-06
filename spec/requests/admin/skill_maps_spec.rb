@@ -176,7 +176,7 @@ RSpec.describe "スキルマップ（管理者）" do
   describe "「未読」の印" do
     let!(:manual) { create(:manual, operation: payroll, version: 2) }
 
-    it "AC-6: 改定後にマニュアルをまだ確認していない人のマスに出る" do
+    it "AC-6: 改訂後にマニュアルをまだ確認していない人のマスに出る" do
       skill = create(:skill, user: yamamoto, operation: payroll, level: 2, confirmed_version: 1)
 
       get admin_skill_map_path

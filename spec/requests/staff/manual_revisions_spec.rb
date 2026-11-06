@@ -6,7 +6,7 @@ RSpec.describe "スタッフの改訂のお知らせ" do
 
   before { patch operator_path, params: { user_id: staff.id } }
 
-  it "改定を新しい順に表示し、再確認とマニュアルへのリンクを出す" do
+  it "改訂を新しい順に表示し、再確認とマニュアルへのリンクを出す" do
     manual = create(:manual, version: 3)
     create(:skill, user: staff, operation: manual.operation, level: 1, confirmed_version: 1)
     create(:manual_revision, manual:, user: manager, version: 2, memo: "以前の変更", created_at: 2.days.ago)
@@ -26,7 +26,7 @@ RSpec.describe "スタッフの改訂のお知らせ" do
     expect(Capybara.string(response.body)).to have_no_css("tbody .operation-badge-revision")
   end
 
-  it "改定がないときは空の案内を出す" do
+  it "改訂がないときは空の案内を出す" do
     get staff_manual_revisions_path
     expect(response).to have_http_status(:ok)
     expect(response.body).to include("改訂のお知らせはありません")

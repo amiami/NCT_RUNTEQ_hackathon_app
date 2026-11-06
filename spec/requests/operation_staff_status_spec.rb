@@ -38,7 +38,7 @@ RSpec.describe "作業ごとのスタッフ状況" do
     show_status
     (0..4).each { |level| expect(row("スタッフ#{level}")).to have_css(".skill-level", exact_text: "レベル#{level}") }
     expect(row("スタッフ0")).to have_text("未確認")
-    expect(row("スタッフ1")).to have_text("改定後 未確認")
+    expect(row("スタッフ1")).to have_text("改訂後 未確認")
     expect(row("スタッフ2")).to have_text("確認済み")
     expect(row("スタッフ3")).to have_text("研修：なし（自分で習得）")
     expect(row("スタッフ4")).to have_text("研修：なし（自分で習得）")
@@ -133,7 +133,7 @@ RSpec.describe "作業ごとのスタッフ状況" do
       expect(from_staff_status).to eq(skills.to_h { |skill| [ skill.user.name, skill_detail_texts(skill) ] })
       expect(from_staff_status).to eq(
         "管理者から教わった人" => [ "確認済み", "済み（管理者から・2026/10/02）" ],
-        "スタッフから教わった人" => [ "改定後 未確認", "済み（教えた人さんから・2026/10/02）" ],
+        "スタッフから教わった人" => [ "改訂後 未確認", "済み（教えた人さんから・2026/10/02）" ],
         "自分で習得した人" => [ "確認済み", "なし（自分で習得）" ],
         "まだの人" => [ "未確認", "まだ" ]
       )

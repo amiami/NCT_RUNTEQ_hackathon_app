@@ -80,7 +80,7 @@ RSpec.describe "サンプルデータ" do # rubocop:disable RSpec/DescribeClass 
     end
   end
 
-  it "改定日と確認した版を再現する" do
+  it "改訂日と確認した版を再現する" do
     seed
     revisions = ManualRevision.includes(manual: :operation).map do |revision|
       [ revision.manual.operation.name, revision.version, revision.created_at.to_date.iso8601 ]

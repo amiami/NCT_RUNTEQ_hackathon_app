@@ -76,7 +76,7 @@ class Skill < ApplicationRecord
     confirmed_version.present? && manual.present? && confirmed_version < manual.version
   end
 
-  # マニュアル確認状況。:unconfirmed（未確認）／:unread（改定後 未確認）／:confirmed（確認済み）
+  # マニュアル確認状況。:unconfirmed（未確認）／:unread（改訂後 未確認）／:confirmed（確認済み）
   def manual_status
     if confirmed_version.nil?
       :unconfirmed
