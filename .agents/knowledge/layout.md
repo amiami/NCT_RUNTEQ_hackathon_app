@@ -13,7 +13,7 @@
 - 下書きの「変更を保存」と離脱確認は `unsaved-changes` コントローラ（研修画面・スキルマップで共通）→ 下書きの部分と「変更を保存」の枠（`data-unsaved-changes-target="bar" hidden`。中身は画面ごとに書く）を `data-controller="unsaved-changes"` の内側に置き、`data-unsaved-changes-confirm-message-value="<%= t('unsaved_changes.confirm_leaving') %>"` を付ける。画面のコントローラからは下書きが変わるたびに `this.dispatch("changed", { prefix: "unsaved-changes", detail: { changed: true／false } })` を送る（`prefix` がないとイベント名が送った側のコントローラ名になり届かない）。部品の中・外を問わず、画面を離れるリンク・フォームで確認する。「変更を保存」のフォームには `data: { unsaved_changes_skip: true }` を付ける（付け忘れると保存のたびに確認が出る）。Turbo Frame の中だけを入れ替えるもの（`data-turbo-frame` で枠を指定したリンクなど）は自動で確認しない。ブラウザの「戻る」・再読み込みでは確認しない（操作によって確認が出たり出なかったりしないように）。（2026-11-02）
 - 上の部品を使う画面は、ビューで `<% turbo_exempts_page_from_cache %>` を呼ぶ → 呼ばないと Turbo が下書きの入った画面を覚えていて、「戻る」でそのまま出てしまう。（2026-11-02）
 - 研修画面の下書きは `training-draft` コントローラ（追加・取り消し・期限）→ 「変更を保存」を押した直前（`prepare`）に hidden の入力欄を作って `PATCH /admin/training_plan` に送る。研修予定がある人の未研修のチップも `hidden` で置いておき、取り消しの下書きにしたら出す。並び順と絞り込みの区分（`data-needs-instruction`）は下書きで変えない。（2026-11-02）
-- マニュアル改定編集のURLは作業ツリーと異なるため、`NavigationHelper#navigation_current?` で `admin/operations/manuals` を管理者の作業ツリータブに対応させる。保存失敗時の再表示でも同じタブを強調する。（2026-11-02）
+- マニュアル改訂編集のURLは作業ツリーと異なるため、`NavigationHelper#navigation_current?` で `admin/operations/manuals` を管理者の作業ツリータブに対応させる。保存失敗時の再表示でも同じタブを強調する。（2026-11-02）
 - わたしのスキル（S-6）は左右2列の1画面 → 左（わたしのスキルの一覧）は `staff/skills/_skill_list.html.erb`、右（教える予定・教わる予定）は `staff/skills/_trainings.html.erb`。それぞれの部品の中だけを書き換えれば、もう片方とぶつからない。（2026-11-02）
 - 管理者の見立ての印は、今のレベルで意味のある見立て（`Skill#assessment_meaningful?`）のときだけ出す。置き場所は使う側の CSS で決める → スキルマップは数字と印を `.skill-map-level` に入れ、印を `absolute left-full` で数字のすぐ右に付ける（幅に数えないので、印の有無で数字が真ん中からずれない）。（2026-11-05）
 - スキルマップの見立ての下書きは `skill-map` コントローラが `{ スキルの ID => 見立て }` で持つ → 詳細は Turbo Frame で入れ替わるので、詳細の中に置くと別のマスを押したときに消える。詳細が入れ替わったら `assessmentTargetConnected` で下書きを選び直す（targetConnected は connect より先に呼ばれることがあるので、下書きは `initialize` で用意する）。（2026-11-02）
@@ -31,6 +31,6 @@
 - 管理者の見立ての名前・記号は `ja.yml` の `admin_assessments` だけに書く。マス・研修画面の名前の横・凡例の印は `AdminAssessmentsHelper#assessment_mark`（スキル）・`#assessment_icon`（見立ての値）で出す SVG アイコンで、色は `currentColor`（まわりの文字の色）→ 見立ての名前や印を画面ごとに書かない。名前を横に書く凡例では `labelled: false` で読み上げを二重にしない。（2026-11-04）
 - 凡例の説明は閉じた `<details>` の中なので、Request spec（`Capybara.string`）では見えない要素として扱われる → `all(..., visible: :all)` と `text(:all)` で読む。（2026-11-04）
 
-- マニュアル改定は `manual-revision` コントローラで入力条件を判定し、保存ボタンの `disabled` を切り替える。無効時は薄グレー背景・`base-content` の文字色、有効時は「できる人0人」と同色の `caution` 背景・白文字。確認はフォームの `data-turbo-confirm`。アプリ内は手順変更とメモ、外部サイトはメモが必須で、`ManualReviser` もロック内で検証する。改行コードだけの違いは変更に数えず、過去の空メモ履歴は変更しない。（2026-11-05）
+- マニュアル改訂は `manual-revision` コントローラで入力条件を判定し、保存ボタンの `disabled` を切り替える。無効時は薄グレー背景・`base-content` の文字色、有効時は「できる人0人」と同色の `caution` 背景・白文字。確認はフォームの `data-turbo-confirm`。アプリ内は手順変更とメモ、外部サイトはメモが必須で、`ManualReviser` もロック内で検証する。改行コードだけの違いは変更に数えず、過去の空メモ履歴は変更しない。（2026-11-05）
 
-- 改定フォームは `unsaved-changes manual-revision` を同じフォームに付け、保存可否と別に手順差分またはメモ入力があれば変更イベントを送る（空白も含む）。保存ボタンだけに `unsaved_changes_skip: true` を付けて保存時の離脱確認を除外し、Turboキャッシュから外す（フォームに付けると中の「やめる」も確認対象から外れるため）。確認時は既存の共通文言を使う。（2026-11-05）
+- 改訂フォームは `unsaved-changes manual-revision` を同じフォームに付け、保存可否と別に手順差分またはメモ入力があれば変更イベントを送る（空白も含む）。保存ボタンだけに `unsaved_changes_skip: true` を付けて保存時の離脱確認を除外し、Turboキャッシュから外す（フォームに付けると中の「やめる」も確認対象から外れるため）。確認時は既存の共通文言を使う。（2026-11-05）
