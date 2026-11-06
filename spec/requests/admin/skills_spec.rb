@@ -51,7 +51,7 @@ RSpec.describe "スキルマップのマスの詳細（管理者）" do
     before { create(:manual, operation: payroll, version: 2) }
 
     it "3つのうち正しいものが出る" do
-      { nil => "未確認", 1 => "改定後 未確認", 2 => "確認済み" }.each do |confirmed_version, text|
+      { nil => "未確認", 1 => "改訂後 未確認", 2 => "確認済み" }.each do |confirmed_version, text|
         skill = create(:skill, operation: payroll, confirmed_version:)
 
         get admin_skill_path(skill)

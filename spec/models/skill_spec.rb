@@ -174,7 +174,7 @@ RSpec.describe Skill do
       expect(create(:skill, operation:, confirmed_version: nil).manual_status).to eq :unconfirmed
     end
 
-    it "前の版を確認して、改定後に確認していなければ :unread（改定後 未確認）" do
+    it "前の版を確認して、改訂後に確認していなければ :unread（改訂後 未確認）" do
       skill = create(:skill, operation:, confirmed_version: 1)
       manual.update!(version: 2)
 

@@ -17,7 +17,7 @@ RSpec.describe "タブの件数" do
     create(:skill, operation: payroll, user: yamamoto, level: 4)
     create(:skill, operation: payroll, user: yoshida, level: 1)
     create(:training, operation: payroll, trainer: yamamoto, trainee: yoshida)
-    # 年末調整：改定で第2版。山本・吉田とも第1版を確認しただけ（未確認）。できる人は0人
+    # 年末調整：改訂で第2版。山本・吉田とも第1版を確認しただけ（未確認）。できる人は0人
     create(:manual, operation: year_end, version: 2)
     create(:skill, operation: year_end, user: yamamoto, level: 3, confirmed_version: 1)
     create(:skill, operation: year_end, user: yoshida, level: 2, confirmed_version: 1)

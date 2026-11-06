@@ -100,7 +100,7 @@ RSpec.describe "マニュアルの確認" do
     expect(document).to have_button("マニュアル確認済み", disabled: true)
   end
 
-  it "表示後に改定された場合は保存せず、最新の手順を再表示する" do
+  it "表示後に改訂された場合は保存せず、最新の手順を再表示する" do
     switch_to(staff)
     manual.update!(version: 2, body: "新しい手順")
 

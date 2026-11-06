@@ -1,9 +1,9 @@
 require "rails_helper"
 
-RSpec.describe "改定後の「再確認」と「改定されました」（作業マニュアル・スタッフ）" do
+RSpec.describe "改訂後の「再確認」と「改訂されました」（作業マニュアル・スタッフ）" do
   let!(:manager) { create(:user, :admin) }
   let!(:staff) { create(:user) }
-  # 第1版を確認したあと、第2版に改定された作業
+  # 第1版を確認したあと、第2版に改訂された作業
   let!(:revised_manual) { create(:manual, version: 2) }
   # 最新の版を確認済みの作業
   let!(:latest_manual) { create(:manual, version: 2) }
@@ -37,7 +37,7 @@ RSpec.describe "改定後の「再確認」と「改定されました」（作�
     queries.size
   end
 
-  it "AC-1: 改定前に確認していた作業にだけ、ツリーで「再確認」が出る" do
+  it "AC-1: 改訂前に確認していた作業にだけ、ツリーで「再確認」が出る" do
     switch_to(staff)
     show(latest_manual)
 
@@ -51,14 +51,14 @@ RSpec.describe "改定後の「再確認」と「改定されました」（作�
     show(revised_manual)
 
     expect(tree_link(revised_manual.operation)).to have_no_text("再確認")
-    expect(document).to have_no_text("このマニュアルは改定されました")
+    expect(document).to have_no_text("このマニュアルは改訂されました")
   end
 
   it "AC-3: 「再確認」の人がその作業を開くと、手順の上に注意が出る" do
     switch_to(staff)
     show(revised_manual)
 
-    expect(document).to have_css(".operation-revised-alert", text: "このマニュアルは改定されました")
+    expect(document).to have_css(".operation-revised-alert", text: "このマニュアルは改訂されました")
     expect(document).to have_css(".operation-revised-alert ~ .operation-manual-steps")
   end
 
@@ -66,7 +66,7 @@ RSpec.describe "改定後の「再確認」と「改定されました」（作�
     switch_to(staff)
     show(latest_manual)
 
-    expect(document).to have_no_text("このマニュアルは改定されました")
+    expect(document).to have_no_text("このマニュアルは改訂されました")
   end
 
   it "AC-4: 「マニュアルを確認した」を押すと、「再確認」と注意の両方が消える" do
@@ -76,10 +76,10 @@ RSpec.describe "改定後の「再確認」と「改定されました」（作�
 
     expect(revised_skill.reload.confirmed_version).to eq(2)
     expect(tree_link(revised_manual.operation)).to have_no_text("再確認")
-    expect(document).to have_no_text("このマニュアルは改定されました")
+    expect(document).to have_no_text("このマニュアルは改訂されました")
   end
 
-  it "AC-5: 管理者が改定しても、レベル・見立て・確認した版は変わらず、スタッフに「再確認」が出る" do
+  it "AC-5: 管理者が改訂しても、レベル・見立て・確認した版は変わらず、スタッフに「再確認」が出る" do
     revised_skill.update!(confirmed_version: 2)
     revised_manual.update!(version: 2)
     patch admin_operation_manual_path(revised_manual.operation),
@@ -91,7 +91,7 @@ RSpec.describe "改定後の「再確認」と「改定されました」（作�
     switch_to(staff)
     show(revised_manual)
     expect(tree_link(revised_manual.operation)).to have_css(".operation-badge", text: "再確認")
-    expect(document).to have_text("このマニュアルは改定されました")
+    expect(document).to have_text("このマニュアルは改訂されました")
   end
 
   it "AC-6: 管理者の作業ツリーと、管理者が開いたスタッフ画面には出ない" do
@@ -99,7 +99,7 @@ RSpec.describe "改定後の「再確認」と「改定されました」（作�
       get path, params: { operation_id: revised_manual.operation_id }
 
       expect(document).to have_no_text("再確認")
-      expect(document).to have_no_text("このマニュアルは改定されました")
+      expect(document).to have_no_text("このマニュアルは改訂されました")
     end
   end
 

@@ -111,23 +111,23 @@ RSpec.describe "作業ツリーとマニュアル" do
       end
     end
 
-    it "種類・版・日本時間の最終改定日・時期の目安を表示する" do
+    it "種類・版・日本時間の最終改訂日・時期の目安を表示する" do
       get public_send(page_path), params: { operation_id: external_operation.id }
 
       manual_panel = document.find("article[aria-labelledby='operation-title']")
       expect(manual_panel).to have_css("span", exact_text: "外部サイト")
       expect(manual_panel).to have_css("span", exact_text: "第3版")
-      expect(manual_panel).to have_css("span", exact_text: "最終改定：2026/10/20")
+      expect(manual_panel).to have_css("span", exact_text: "最終改訂：2026/10/20")
       expect(manual_panel).to have_no_text("10/21")
       expect(manual_panel).to have_css("span", exact_text: "時期：毎月25日")
     end
 
-    it "改定されていないアプリ内マニュアルは改定なしと表示する" do
+    it "改訂されていないアプリ内マニュアルは改訂なしと表示する" do
       get public_send(page_path), params: { operation_id: first_operation.id }
 
       expect(document).to have_css("main", text: "アプリ内")
       expect(document).to have_css("main", text: "第1版")
-      expect(document).to have_css("main", text: "改定なし")
+      expect(document).to have_css("main", text: "改訂なし")
     end
 
     it "存在しない作業を明示したときは404を返す" do
@@ -182,19 +182,19 @@ RSpec.describe "作業ツリーとマニュアル" do
     end
   end
 
-  describe "管理者の人数と改定バッジ" do
+  describe "管理者の人数と改訂バッジ" do
     let!(:category) { create(:category) }
     let!(:operation) { create(:operation, category: category) }
     let!(:manual) { create(:manual, operation: operation, version: 2) }
 
     before { create(:manual_revision, manual: manual, user: manager, version: 2, created_at: Time.zone.local(2026, 10, 20, 12)) }
 
-    it "できる人が0人ならツリーと作業の詳細に警告を表示し、改定バッジより優先する" do
+    it "できる人が0人ならツリーと作業の詳細に警告を表示し、改訂バッジより優先する" do
       get admin_operations_path, params: { operation_id: operation.id }
 
       link = document.find("main a[href*='operation_id=#{operation.id}']")
       expect(link).to have_css(".operation-badge.capable-badge-none", exact_text: "できる人0人")
-      expect(link).to have_no_text("改定 10/20")
+      expect(link).to have_no_text("改訂 10/20")
       expect(document.find("article[aria-labelledby='operation-title']")).to have_css(".operation-badge.capable-badge-none", exact_text: "できる人0人")
     end
 
@@ -209,14 +209,14 @@ RSpec.describe "作業ツリーとマニュアル" do
       expect(document).to have_no_text("できる人2人")
     end
 
-    it "レベル4の◇も数え、できる人が2人なら警告を出さず改定バッジを表示する" do
+    it "レベル4の◇も数え、できる人が2人なら警告を出さず改訂バッジを表示する" do
       create(:skill, operation: operation, user: staff, level: 4, admin_assessment: :backup_trainer)
       create(:skill, operation: operation, level: 4)
 
       get admin_operations_path
 
       link = document.find("main a[href*='operation_id=#{operation.id}']")
-      expect(link).to have_text("改定 10/20")
+      expect(link).to have_text("改訂 10/20")
       expect(document).to have_no_text("できる人")
     end
   end

@@ -1,7 +1,7 @@
 # マニュアル確認状況と研修の文。作業ツリーのスタッフ状況とスキルマップのマスの詳細で共通に使う。
 # 判定は Skill#manual_status・#training_status で行い、ここでは文にするだけ
 module SkillsHelper
-  # 「未確認」／「改定後 未確認」／「確認済み」
+  # 「未確認」／「改訂後 未確認」／「確認済み」
   def skill_manual_status_label(skill)
     t("skill_statuses.manual.#{skill.manual_status}")
   end

@@ -38,9 +38,9 @@ ja:
       external: 外部サイト
     version: "第%{version}版"
     capable_count: "できる人%{count}人"
-    revision_badge: "改定 %{date}"
-    last_revised: "最終改定：%{date}"
-    no_revision: 改定なし
+    revision_badge: "改訂 %{date}"
+    last_revised: "最終改訂：%{date}"
+    no_revision: 改訂なし
     season: "時期：%{note}"
     external_hint: 手順は外部サイト・ソフトのガイドを見てください
     open_site: サイトを開く
@@ -49,20 +49,20 @@ ja:
     empty_manual: 作業が登録されると、ここにマニュアルを表示します
     external_revision_label: 法改正・様式・サイトに変更があったとき
     external_revision_placeholder: 変更内容のメモ（例：届出の様式が変わった）
-    external_revision_save: 改定あり
+    external_revision_save: 改訂あり
     external_revision_hint: 保存すると版が上がります。URL・スキルレベル・管理者の見立ては変わりません
     external_revision_stale: マニュアルが更新されました。最新の版と変更内容を確認してから、改めて保存してください
-    revision_edit: 手順を書き直す（改定）
+    revision_edit: 手順を書き直す（改訂）
     revision_body: 手順（1行＝1ステップ）
-    revision_memo: 改定メモ（何が変わったか）
+    revision_memo: 改訂メモ（何が変わったか）
     revision_memo_example: 例：貸与物の返却リストを更新
-    revision_save: 改定して保存
+    revision_save: 改訂して保存
     revision_cancel: やめる
     revision_hint: 保存すると版が上がります。スキルレベル・管理者の見立ては変わりません
-    revised_notice: マニュアルを改定しました
+    revised_notice: マニュアルを改訂しました
     revision_required: （入力必須）
-    revision_confirm: この内容でマニュアルを改定します。よろしいですか？
-    revision_memo_required: 改定メモを入力してください
+    revision_confirm: この内容でマニュアルを改訂します。よろしいですか？
+    revision_memo_required: 改訂メモを入力してください
     revision_body_unchanged: 手順を変更してから保存してください
     revision_invalid: 手順を入力してください
     revision_stale: マニュアルが更新されました。「やめる」で最新の手順を確認してから、編集し直してください
@@ -86,7 +86,7 @@ ja:
     self_declared_notice: "レベル%{level}（%{name}）を申告しました"
     not_declarable: 今のレベルからは申告できません
     relearn_badge: 再確認
-    revised_alert: このマニュアルは改定されました
+    revised_alert: このマニュアルは改訂されました
 
   # アプリ固有の翻訳（モデル名・属性名など）はここに書く。
   # エラーメッセージや日付などの Rails 標準の翻訳は rails-i18n gem に入っている
@@ -202,7 +202,7 @@ ja:
         unsaved_note: （まだ保存されていません!）
       cell:
         unread: 未読
-        unread_description: 改定後のマニュアルをまだ確認していません
+        unread_description: 改訂後のマニュアルをまだ確認していません
     skills:
       show:
         title: "%{user} × %{operation}"
@@ -291,7 +291,7 @@ ja:
   skill_statuses:
     manual:
       unconfirmed: 未確認
-      unread: 改定後 未確認
+      unread: 改訂後 未確認
       confirmed: 確認済み
     training:
       done: "済み（%{trainer}から・%{date}）"
