@@ -104,7 +104,7 @@ GEM
       bigdecimal
       rexml
     crass (1.0.8)
-    cuprite (0.20)
+    cuprite (0.20.1)
       capybara (~> 3.0)
       ferrum (~> 0.20.1)
     date (3.6.0)
