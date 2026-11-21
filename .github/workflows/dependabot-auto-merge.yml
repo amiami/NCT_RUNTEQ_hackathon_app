@@ -1,0 +1,81 @@
+name: Dependabot auto-merge
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, reopened, synchronize, ready_for_review]
+
+jobs:
+  auto_merge:
+    # fetch-metadata v3.1.0 reads update metadata from the first commit.
+    if: >-
+      github.repository == 'amiami/NCT_RUNTEQ_hackathon_app' &&
+      github.event.pull_request.user.login == 'dependabot[bot]' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.pull_request.commits == 1 &&
+      !github.event.pull_request.draft
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Read Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@25dd0e34f4fe68f24cc83900b1fe3fe149efef98 # v3.1.0
+
+      - name: Check dependency update types
+        id: eligibility
+        shell: bash
+        env:
+          UPDATED_DEPENDENCIES: ${{ steps.metadata.outputs.updated-dependencies-json }}
+        run: |
+          if jq -es '
+            length == 1 and (.[0] | type == "array" and length > 0 and
+              all(.[]; type == "object" and
+                (.updateType == "version-update:semver-patch" or
+                 .updateType == "version-update:semver-minor")))
+          ' <<< "$UPDATED_DEPENDENCIES" > /dev/null; then
+            echo "eligible=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Skipping auto-merge: all updates must be identified as patch or minor."
+          fi
+
+      - name: Approve the checked commit
+        id: approval
+        if: steps.eligibility.outputs.eligible == 'true'
+        shell: bash
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          current_pr=$(gh pr view "$PR_URL" --json baseRefName,headRefOid,isDraft,reviewDecision,state)
+          if ! jq -e --arg head "$PR_HEAD_SHA" '
+            .state == "OPEN" and .baseRefName == "main" and
+            .headRefOid == $head and .isDraft == false
+          ' <<< "$current_pr" > /dev/null; then
+            echo "Skipping auto-merge: the PR changed since the workflow was triggered."
+            exit 0
+          fi
+
+          if jq -e '.reviewDecision == "APPROVED"' <<< "$current_pr" > /dev/null; then
+            echo "The PR already has the required approval."
+          else
+            gh api --method POST "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER/reviews" \
+              --raw-field event=APPROVE \
+              --raw-field "commit_id=$PR_HEAD_SHA" \
+              --raw-field 'body=Automated approval for a Dependabot patch or minor update. Required CI checks still apply.' \
+              --jq '"Review state: \(.state) for commit \(.commit_id)"'
+          fi
+
+          echo "request_merge=true" >> "$GITHUB_OUTPUT"
+
+      - name: Request squash auto-merge
+        if: steps.approval.outputs.request_merge == 'true'
+        shell: bash
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          GH_TOKEN: ${{ github.token }}
+        run: gh pr merge --auto --squash --match-head-commit "$PR_HEAD_SHA" "$PR_URL"
