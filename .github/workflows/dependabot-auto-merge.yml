@@ -7,7 +7,8 @@ on:
 
 jobs:
   auto_merge:
-    # fetch-metadata v3.1.0 reads update metadata from the first commit.
+    # fetch-metadata v3.1.0 は最初のコミットから更新内容を読む。
+    # 後からコミットが追加された PR を自動マージしないよう、1コミットの PR だけを対象にする。
     if: >-
       github.repository == 'amiami/NCT_RUNTEQ_hackathon_app' &&
       github.event.pull_request.user.login == 'dependabot[bot]' &&
